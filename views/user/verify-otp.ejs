@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | Verify Email</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <style>
+        :root {
+            --primary-green: #7cf1b8; 
+            --dark-blue-bg: #1a2332; 
+            --text-gray: #5b718e;
+            --input-border: #e0e0e0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--dark-blue-bg);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .verify-card {
+            background: white;
+            width: 90%;
+            max-width: 420px;
+            padding: 45px 35px;
+            border-radius: 16px;
+            text-align: center;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+        }
+
+        h2 {
+            font-size: 26px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: #111;
+        }
+
+        .instruction {
+            color: #444;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        /* OTP Input Styling */
+        .otp-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 25px;
+        }
+
+        .otp-input {
+            width: 48px;
+            height: 56px;
+            border: 1.5px solid var(--primary-green); /* Initial stage green border */
+            border-radius: 8px;
+            font-size: 22px;
+            font-weight: 600;
+            text-align: center;
+            outline: none;
+            color: #333;
+            transition: 0.2s;
+        }
+
+        .otp-input:focus {
+            box-shadow: 0 0 0 2px rgba(124, 241, 184, 0.4);
+        }
+
+        .timer-container {
+            text-align: right;
+            font-size: 13px;
+            font-weight: 500;
+            color: #111;
+            margin-bottom: 30px;
+        }
+
+        .btn-verify {
+            width: 100%;
+            background-color: var(--primary-green);
+            color: #1a2332;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 20px;
+        }
+
+        .btn-verify:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .resend-text {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 20px;
+        }
+
+        .resend-link {
+            color: var(--primary-green);
+            cursor: pointer;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .change-email {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            color: var(--text-gray);
+            font-size: 14px;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .material-symbols-outlined {
+            font-size: 18px;
+        }
+    </style>
+     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+
+</head>
+<body>
+
+    <div class="verify-card">
+        <h2>Verify your email</h2>
+        <p class="instruction">Please enter the 6-digit code sent to<br>your mail box</p>
+
+        <form id="otpForm" onsubmit="verifyOtp(); return false;">
+            <div class="otp-container" id="otp" name="otp">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+                <input type="text" class="otp-input" maxlength="1" inputmode="numeric">
+            </div>
+
+            <div class="timer-container">
+                OTP expires in <span id="timer">00:59</span>
+            </div>
+
+            <button type="submit" class="btn-verify">Verify</button>
+        </form>
+
+        <div class="resend-text">
+            Didn't receive the code? <span class="resend-link" onclick="resendOTP()">Resend</span>
+        </div>
+
+        <a class="change-email">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Change email
+        </a>
+    </div>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // --- 1. Timer Logic ---
+        let timeLeft = 59;
+        const timerElement = document.getElementById('timer');
+
+        const countdown = setInterval(() => {
+            if (timeLeft <= 0) {
+                clearInterval(countdown);
+                timerElement.innerText = "00:00";
+                timerElement.style.color = "red";
+            } else {
+                timeLeft--;
+                let seconds = timeLeft < 10 ? '0' + timeLeft : timeLeft;
+                timerElement.innerText = `00:${seconds}`;
+            }
+        }, 1000);
+
+        // --- 2. OTP Auto-Focus Logic ---
+        const inputs = document.querySelectorAll('.otp-input');
+        
+        inputs.forEach((input, index) => {
+            // Move to next input on typing
+            input.addEventListener('input', (e) => {
+                if (e.target.value.length === 1 && index < inputs.length - 1) {
+                    inputs[index + 1].focus();
+                }
+            });
+
+            // Handle Backspace
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                    inputs[index - 1].focus();
+                }
+            });
+        });
+
+
+async function verifyOtp() {
+  const inputs = document.querySelectorAll(".otp-input");
+  let otp = "";
+
+  inputs.forEach(input => {
+    otp += input.value;
+  });
+
+  console.log("OTP:", otp);
+
+  try {
+    const response = await fetch('/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ otp })
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      Toastify({
+        text: "OTP Verified Successfully!",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#4caf50", // green
+      }).showToast();
+
+      setTimeout(() => {
+        window.location.href = data.redirectUrl;
+      }, 1500);
+
+    } else {
+      Toastify({
+        text: data.message || "Invalid OTP, please try again",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#f44336", // red
+      }).showToast();
+    }
+
+  } catch (error) {
+    Toastify({
+      text: "Server Error. Please try again.",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "#f44336", // red
+    }).showToast();
+  }
+}
+
+
+async function resendOTP() {
+  // reset timer
+  timeLeft = 59;
+  timerElement.style.color = "black";
+  timerElement.innerText = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
+
+  const countdown = setInterval(() => {
+    timeLeft--;
+    if (timeLeft < 0) {
+      clearInterval(countdown);
+      timerElement.innerText = "00:00";
+      timerElement.style.color = "red";
+    } else {
+      let seconds = timeLeft < 10 ? '0' + timeLeft : timeLeft;
+      timerElement.innerText = `00:${seconds}`;
+    }
+  }, 1000);
+
+  try {
+    const response = await fetch('/resend-otp', { method: 'POST' });
+    const data = await response.json();
+
+    if (data.success) {
+      Toastify({
+        text: "New OTP has been sent to your email",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#4caf50",
+      }).showToast();
+    } else {
+      Toastify({
+        text: data.message || "Failed to resend OTP",
+        duration: 3000,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#f44336",
+      }).showToast();
+    }
+
+  } catch (error) {
+    Toastify({
+      text: "Server Error. Something went wrong",
+      duration: 3000,
+      gravity: "top",
+      position: "right",
+      backgroundColor: "#f44336",
+    }).showToast();
+  }
+}
+
+    </script>
+    
+
+</body>
+</html>

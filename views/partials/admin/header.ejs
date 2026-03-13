@@ -1,0 +1,178 @@
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
+
+<style>
+
+:root{
+--sidebar-bg:#e2dcd5;
+--main-bg:#f3f4f6;
+--snova-orange:#c86d4d;
+--border-color:#e5e7eb;
+--text-muted:#6b7280;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:240px;
+background:var(--sidebar-bg);
+display:flex;
+flex-direction:column;
+justify-content:space-between;
+border-right:1px solid var(--border-color);
+padding:20px 0;
+}
+
+/* LOGO */
+
+.logo-container{
+padding:0 20px 25px;
+}
+
+.logo{
+background:var(--snova-orange);
+color:white;
+padding:8px 15px;
+border-radius:8px;
+font-weight:bold;
+font-size:20px;
+display:inline-flex;
+align-items:center;
+gap:8px;
+}
+
+/* NAV */
+
+.nav-section{
+display:flex;
+flex-direction:column;
+gap:5px;
+padding:0 10px;
+}
+
+.section-title{
+font-size:12px;
+color:var(--text-muted);
+margin:10px 10px;
+text-transform:uppercase;
+}
+
+.nav-item{
+display:flex;
+align-items:center;
+gap:10px;
+padding:10px 15px;
+border-radius:8px;
+text-decoration:none;
+color:#333;
+font-size:14px;
+transition:0.2s;
+}
+
+.nav-item:hover{
+background:#d6cfc8;
+}
+
+.nav-item.active{
+background:white;
+font-weight:600;
+}
+
+/* USER PROFILE */
+
+.user-profile{
+display:flex;
+align-items:center;
+gap:10px;
+padding:15px 20px;
+border-top:1px solid var(--border-color);
+}
+
+.user-profile img{
+width:40px;
+height:40px;
+border-radius:50%;
+}
+
+.user-info h4{
+font-size:14px;
+margin:0;
+}
+
+.user-info p{
+font-size:12px;
+color:var(--text-muted);
+margin:0;
+}
+
+</style>
+<aside class="sidebar">
+
+<div>
+
+<div class="logo-container">
+<div class="logo">
+<span class="material-symbols-outlined">storefront</span>
+SNOVA
+</div>
+</div>
+
+<nav class="nav-section">
+
+<h3 class="section-title">Management</h3>
+
+<a href="/admin/dashboard" class="nav-item active">
+<span class="material-symbols-outlined">grid_view</span>
+Dashboard
+</a>
+
+<a href="/admin/orders" class="nav-item">
+<span class="material-symbols-outlined">shopping_bag</span>
+Orders
+</a>
+
+<a href="/admin/products" class="nav-item">
+<span class="material-symbols-outlined">inventory_2</span>
+Products
+</a>
+
+<a href="/admin/categories" class="nav-item">
+<span class="material-symbols-outlined">category</span>
+Categories
+</a>
+
+<a href="/admin/coupons" class="nav-item">
+<span class="material-symbols-outlined">confirmation_number</span>
+Coupons
+</a>
+
+<a href="/admin/offers" class="nav-item">
+<span class="material-symbols-outlined">local_offer</span>
+Offers
+</a>
+
+<a href="/admin/usermanagement" class="nav-item">
+<span class="material-symbols-outlined">group</span>
+Customers
+</a>
+
+<a href="/admin/banner" class="nav-item">
+<span class="material-symbols-outlined">ad_units</span>
+Banner
+</a>
+
+</nav>
+
+</div>
+
+<div class="user-profile">
+
+<img src="https://ui-avatars.com/api/?name=Sneha+KK&background=c86d4d&color=fff">
+
+<div class="user-info">
+<h4>Sneha KK</h4>
+<p>sneha@gmail.com</p>
+</div>
+
+</div>
+
+</aside>

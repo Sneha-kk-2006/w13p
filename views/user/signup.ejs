@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | Sign Up</title>
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+    <style>
+        :root {
+            --primary-green: #10b981;
+            --dark-bg: #111111;
+            --light-pink: #fdf2f2;
+            --text-gray: #666;
+            --border-color: #ddd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-pink);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .signup-card {
+            background: white;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: var(--dark-bg);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            color: var(--text-gray);
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: var(--dark-bg);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-green);
+        }
+
+        /* Password field container */
+        .password-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-gray);
+            display: flex;
+            align-items: center;
+            user-select: none;
+        }
+
+        .toggle-btn:hover {
+            color: var(--primary-green);
+        }
+
+        .btn-create {
+            width: 100%;
+            background: var(--dark-bg);
+            color: white;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.3s;
+        }
+
+        .btn-create:hover {
+            background: #222;
+        }
+
+        .footer-links {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--text-gray);
+        }
+
+        .footer-links a {
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .google-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .google-btn:hover {
+            background: #f9f9f9;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 13px;
+            display: none;
+        }
+        .input-box {
+  position: relative;
+}
+
+.input-box input {
+  width: 100%;
+  padding-right: 40px;
+}
+
+.input-box button {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+</head>
+
+<body>
+
+    <div class="signup-card">
+        <div class="header">
+            <h1>SIGN UP</h1>
+            <p>Enter your Information to get started</p>
+        </div>
+<form id="signform">
+
+  <div class="form-group">
+    <label for="name">Full Name</label>
+    <input type="text" id="name" name="name" placeholder="enter name">
+    <div id="error1" class="error-message"></div>
+  </div>
+
+  <div class="form-group">
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" placeholder="email@example.com">
+    <div id="error2" class="error-message"></div>
+  </div>
+
+  <div class="form-group password-field">
+    <label for="pass">Password</label>
+    <div class="input-box">
+      <input type="password" id="pass" name="password" placeholder="Enter password">
+      <button type="button" onclick="togglePass('pass', this)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+    </div>
+    <div id="error3" class="error-message"></div>
+  </div>
+
+  <div class="form-group password-field">
+    <label for="confirm-pass">Confirm Password</label>
+    <div class="input-box">
+      <input type="password" name="confirmpassword" id="confirm-pass">
+      <button type="button" onclick="togglePass('confirm-pass', this)">
+        <span class="material-symbols-outlined">visibility</span>
+      </button>
+    </div>
+    <div id="error4" class="error-message"></div>
+  </div>
+
+  <button type="submit" class="btn-create">Create Account</button>
+
+</form>
+
+        <div class="footer-links">
+            Already have an account? <a href="login">Log in</a>
+        </div>
+
+        <a href="/google" class="google-btn">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" alt="Google">
+            Continue with Google
+        </a>
+    </div>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script type="module">
+        window.togglePass = function(id, btn) {
+    const input = document.getElementById(id);
+    const icon = btn.querySelector(".material-symbols-outlined");
+
+    if (input.type === "password") {
+        input.type = "text";
+        icon.textContent = "visibility_off";
+    } else {
+        input.type = "password";
+        icon.textContent = "visibility";
+    }
+}
+
+        import { showToast  } from "/helpers/msg.helper.js"
+       
+        document.getElementById("signform").addEventListener("submit", async function (e) {
+
+            e.preventDefault()
+
+            const name = document.getElementById("name").value
+            const email = document.getElementById("email").value
+            const password = document.getElementById("pass").value
+            const confirmpassword = document.getElementById("confirm-pass").value
+
+            const response = await fetch("/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    password,
+                    confirmpassword
+                })
+            })
+
+            const data = await response.json()
+
+            if (data.success) {
+
+                showToast(data.message, 'success');
+
+                window.location.href = "/verify-otp"
+
+            } else {
+                showToast(data.message, 'error')
+            }
+        })
+
+        const nameid = document.getElementById("name")
+        const emailid = document.getElementById("email")
+        const passid = document.getElementById("pass")
+        const confirmpassid = document.getElementById("confirm-pass")
+        const error1 = document.getElementById("error1")
+        const error2 = document.getElementById("error2")
+        const error3 = document.getElementById("error3")
+        const error4 = document.getElementById("error4")
+        const signform = document.getElementById("signform")
+
+
+        function nameValidn(e) {
+            const nameVal = nameid.value;
+            const namePattern = /^[A-Za-z\s]{2,50}$/
+            if (nameVal.trim() === "") {
+                error1.style.display = "block";
+                error1.innerHTML = "please enter a name "
+            } else if (!namePattern.test(nameVal)) {
+                error1.style.display = "block";
+                error1.innerHTML = "enter a correct name"
+            } else {
+                error1.style.display = "none";
+                error1.innerHTML = "";
+            }
+        }
+
+        function emailValidn(e) {
+            const emailval = emailid.value;
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (!emailPattern.test(emailval)) {
+                error2.style.display = "block";
+                error2.innerHTML = "invalid email format"
+            } else {
+                error2.style.display = "none";
+                error2.innerHTML = ""
+            }
+        }
+
+        function passwordValidn(e) {
+            const passval = passid.value;
+            const confpassval = confirmpassid.value;
+            if (passval === "") {
+                error3.style.display = "block";
+                error3.innerHTML = "please enter a password";
+            } else if (passval.length < 6) {
+                error3.style.display = "block";
+                error3.innerHTML = "password must be at least 6 characters";
+            } else if (passval !== confpassval) {
+                error4.style.display = "block"; error4.innerHTML = "passwords do not match";
+            } else {
+                error4.style.display = "none"
+                    ; error4.innerHTML = "";
+            }
+        }
+
+    </script>
+</body>
+
+</html>

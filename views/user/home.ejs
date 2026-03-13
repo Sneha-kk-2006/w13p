@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SNOVA | Official Store</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <%- include('../partials/user/header') %>
+
+  <main class="hero-container">
+    <section class="hero">
+      <div class="hero-text">
+        <h1>Discover the Latest<br>fashion from SNOVA</h1>
+        <div style="display:flex; gap:15px; align-items: center;">
+          <button class="btn-green">Shop Now</button>
+          <span style="cursor:pointer; font-weight: 500;">View all ➔</span>
+        </div>
+      </div>
+      <div class="promo-box">
+        <p>Use code</p>
+        <h2 style="margin: 10px 0; font-size: 28px;">BR307</h2>
+        <p>and get ₹500 OFF</p>
+        <button class="btn-green" style="margin-top:15px; width:100%; background:#111">Claim Now</button>
+      </div>
+    </section>
+  </main>
+
+  <section class="section-wrapper">
+    <div class="section-header">
+      <h2>Shop by category</h2>
+      <a href="" style="color:var(--primary-green); font-weight: 600; text-decoration: none;">View all categories ➔</a>
+    </div>
+    <div class="cat-grid">
+      <div class="cat-card">Ethinic wears</div>
+      <div class="cat-card">Western wears</div>
+      <div class="cat-card">Mens wears</div>
+      <div class="cat-card">Kids wears</div>
+    </div>
+  </section>
+
+  <section class="section-wrapper">
+    <div class="section-header">
+      <h2>Trending Fashions</h2>
+      <button style="background:#eee; padding:8px 18px; border-radius:5px; border:none; font-weight: bold; cursor: pointer;">View All</button>
+    </div>
+    <div class="product-grid">
+      <div class="product-card">
+        <span class="badge">-25%</span>
+        <div class="wishlist-icon" onclick="toggleWishlist(this)">❤</div>
+        <img class="product-img" src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80" alt="Western Saree">
+        <div class="product-info">
+          <p style="font-weight: 500;">Western Sarees</p>
+          <div class="price-row">
+            <span style="font-weight:bold; font-size: 18px;">₹1,999.00</span>
+            <span style="text-decoration:line-through; color:var(--text-gray); font-size:14px">₹2,999.00</span>
+          </div>
+        </div>
+        <button class="cart-btn">🛒</button>
+      </div>
+
+      <div class="product-card">
+        <span class="badge">-15%</span>
+        <div class="wishlist-icon" onclick="toggleWishlist(this)">❤</div>
+        <img class="product-img" src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=600&q=80" alt="T-Shirt">
+        <div class="product-info">
+          <p style="font-weight: 500;">Premium T-shirts</p>
+          <div class="price-row">
+            <span style="font-weight:bold; font-size: 18px;">₹899.00</span>
+            <span style="text-decoration:line-through; color:var(--text-gray); font-size:14px">₹999.00</span>
+          </div>
+        </div>
+        <button class="cart-btn">🛒</button>
+      </div>
+
+      <div class="product-card">
+        <span class="badge">-30%</span>
+        <div class="wishlist-icon" onclick="toggleWishlist(this)">❤</div>
+        <img class="product-img" src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=600&q=80" alt="Gown">
+        <div class="product-info">
+          <p style="font-weight: 500;">Gown Dress</p>
+          <div class="price-row">
+            <span style="font-weight:bold; font-size: 18px;">₹4,999.00</span>
+            <span style="text-decoration:line-through; color:var(--text-gray); font-size:14px">₹5,999.00</span>
+          </div>
+        </div>
+        <button class="cart-btn">🛒</button>
+      </div>
+
+      <div class="product-card">
+        <span class="badge">-10%</span>
+        <div class="wishlist-icon" onclick="toggleWishlist(this)">❤</div>
+        <img class="product-img" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=600&q=80" alt="Jacket">
+        <div class="product-info">
+          <p style="font-weight: 500;">Stylish Jackets</p>
+          <div class="price-row">
+            <span style="font-weight:bold; font-size: 18px;">₹899.00</span>
+            <span style="text-decoration:line-through; color:var(--text-gray); font-size:14px">₹999.00</span>
+          </div>
+        </div>
+        <button class="cart-btn">🛒</button>
+      </div>
+    </div>
+  </section>
+
+<%- include('../partials/user/footer') %>
+
+  
+</body>
+</html>

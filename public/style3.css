@@ -1,0 +1,2518 @@
+.products,
+.products * {
+  box-sizing: border-box;
+}
+.products {
+  background: #ffffff;
+  height: 2466px;
+  position: relative;
+  overflow: hidden;
+}
+.container {
+  width: 1446px;
+  height: 2142px;
+  position: absolute;
+  left: -6px;
+  top: -99px;
+}
+.container2 {
+  background: #1d263b;
+  width: 1446px;
+  height: 2588px;
+  position: absolute;
+  left: 0px;
+  top: -6px;
+}
+.container3 {
+  background: #1c2433;
+  width: 1441px;
+  height: 2159px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.container4 {
+  background: #ffffff;
+  padding: 32px;
+  width: 1375px;
+  height: 1932px;
+  position: absolute;
+  left: 66px;
+  top: 224px;
+}
+.container5 {
+  width: 1089px;
+  height: 560px;
+  position: absolute;
+  left: 264px;
+  top: 126px;
+}
+.container6 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: 108px;
+  top: 0px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.container7 {
+  padding: 20px;
+  width: 253px;
+  height: 171px;
+  position: absolute;
+  left: 0.79px;
+  top: 364.41px;
+}
+.container8 {
+  width: 213px;
+  height: 23px;
+  position: absolute;
+  left: 20px;
+  top: 20px;
+}
+.container9 {
+  width: 118px;
+  height: 23px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.container10 {
+  width: 213px;
+  height: 40px;
+  position: absolute;
+  left: 20px;
+  top: 50.48px;
+  overflow: hidden;
+}
+.anarkali {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 199px;
+  height: 37px;
+}
+.container11 {
+  width: 213px;
+  height: 44px;
+  position: absolute;
+  left: 20px;
+  top: 106.47px;
+}
+.container12 {
+  width: 53px;
+  height: 44px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.container13 {
+  width: 53px;
+  height: 16px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.selling {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0.22px;
+  top: 0.13px;
+}
+.container14 {
+  width: 53px;
+  height: 28px;
+  position: absolute;
+  left: 0px;
+  top: 15.99px;
+}
+._240-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 122.78px;
+  height: 25px;
+}
+.button {
+  background: #e05d38;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 78px;
+  height: 32px;
+  position: absolute;
+  left: 135.42px;
+  top: 5.99px;
+  box-shadow: 0px 10px 15px -3px rgba(224, 93, 56, 0.2),
+    0px 4px 6px -4px rgba(224, 93, 56, 0.2);
+}
+.container15 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.add {
+  color: #ffffff;
+  text-align: center;
+  font-family: "Inter-Medium", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  position: absolute;
+  left: 38.97px;
+  top: 6px;
+  width: 30px;
+  height: 20px;
+}
+._269 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 97.21px;
+  top: 89.59px;
+  width: 39px;
+  height: 15px;
+}
+.regular-price {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 18.21px;
+  top: 88.59px;
+}
+.button2 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 155.42px;
+  top: -12px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.buy-now {
+  color: #ffffff;
+  text-align: center;
+  font-family: "Inter-Medium", sans-serif;
+  font-size: 13px;
+  line-height: 20px;
+  font-weight: 500;
+  position: absolute;
+  left: 10.16px;
+  top: 6px;
+  width: 60.72px;
+  height: 20px;
+}
+.container16 {
+  background: rgba(42, 48, 62, 0.3);
+  padding: 24px;
+  width: 253px;
+  height: 316px;
+  position: absolute;
+  left: 0.79px;
+  top: 24.78px;
+  overflow: hidden;
+}
+.image {
+  width: 205px;
+  height: 268px;
+  position: absolute;
+  left: 23.99px;
+  top: 23.99px;
+  object-fit: cover;
+  aspect-ratio: 205/268;
+}
+.container17 {
+  width: 42px;
+  height: 25px;
+  position: absolute;
+  left: 12px;
+  top: 12px;
+}
+.container18 {
+  background: #e05d38;
+  border-radius: 10px;
+  padding: 2px 8px 2px 8px;
+  width: 42px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 4.3px;
+  overflow: hidden;
+}
+.new {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  position: absolute;
+  left: 6.49px;
+  top: 1.99px;
+  width: 29px;
+  height: 16px;
+}
+.container19 {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  left: 208.52px;
+  top: 12px;
+}
+.button3 {
+  background: rgba(28, 36, 51, 0.8);
+  border-radius: 26394800px;
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(4px);
+}
+.container20 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.container21 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: 417px;
+  top: 0px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.container22 {
+  padding: 20px;
+  width: 253px;
+  height: 171px;
+  position: absolute;
+  left: 0.79px;
+  top: 364.42px;
+}
+.container23 {
+  width: 147px;
+  height: 23px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.printed-embroidery-anarkali-kurti {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 211px;
+  height: 37px;
+}
+.container24 {
+  width: 63px;
+  height: 44px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.container25 {
+  width: 63px;
+  height: 16px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.selling2 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0.22px;
+  top: 8.12px;
+}
+.container26 {
+  width: 63px;
+  height: 28px;
+  position: absolute;
+  left: 0px;
+  top: 15.99px;
+}
+._277-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 128.65px;
+  height: 25px;
+}
+.regular-price2 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0.22px;
+  top: -7.88px;
+}
+.button4 {
+  background: #e05d38;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 78px;
+  height: 32px;
+  position: absolute;
+  left: 135.44px;
+  top: 5.99px;
+  box-shadow: 0px 10px 15px -3px rgba(224, 93, 56, 0.2),
+    0px 4px 6px -4px rgba(224, 93, 56, 0.2);
+}
+.container27 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+._299 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 103.21px;
+  top: 99.58px;
+  width: 39px;
+  height: 15px;
+}
+.button5 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 155.43px;
+  top: -12px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.container28 {
+  width: 45px;
+  height: 25px;
+  position: absolute;
+  left: 12px;
+  top: 12px;
+}
+.container29 {
+  background: rgba(239, 68, 68, 0.6);
+  border-radius: 10px;
+  padding: 2px 8px 2px 8px;
+  width: 45px;
+  height: 21px;
+  position: absolute;
+  left: 0px;
+  top: 3.52px;
+  overflow: hidden;
+}
+._15 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  position: absolute;
+  left: 7.28px;
+  top: 2.78px;
+  width: 31px;
+  height: 16px;
+}
+.container30 {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  left: 208.53px;
+  top: 12px;
+}
+.container31 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.container32 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: 726px;
+  top: 0px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.container33 {
+  width: 93px;
+  height: 23px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.anarkali-trendy-fashion-women-kurti {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 185px;
+  height: 37px;
+}
+._899-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 118.39px;
+  height: 25px;
+}
+.selling3 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0.22px;
+  top: 5.12px;
+}
+.container34 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.container35 {
+  width: 53px;
+  height: 16px;
+  position: absolute;
+  left: 94.21px;
+  top: 93.58px;
+}
+._999 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 31px;
+  height: 15px;
+}
+.button6 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 150.4px;
+  top: -12px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.regular-price3 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 18.21px;
+  top: 93.58px;
+}
+.container36 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.container37 {
+  width: 45px;
+  height: 25px;
+  position: absolute;
+  left: 22.21px;
+  top: 12.22px;
+}
+.container38 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: -201px;
+  top: 0px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.anarkali-gown-printed-kurta {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 199px;
+  height: 37px;
+}
+.regular-price4 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 15.21px;
+  top: 77.59px;
+}
+.selling4 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: -3.78px;
+  top: 4.13px;
+}
+._262-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 122.78px;
+  height: 25px;
+}
+.container39 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+._399 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 34.21px;
+  top: 93.59px;
+  width: 39px;
+  height: 15px;
+}
+.button7 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 156.21px;
+  top: 348.41px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.image-51 {
+  width: 200px;
+  height: 267px;
+  position: absolute;
+  left: 26.21px;
+  top: 26.22px;
+  object-fit: cover;
+  aspect-ratio: 200/267;
+}
+.container40 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.button8 {
+  background: rgba(0, 0, 0, 0.63);
+  border-style: solid;
+  border-color: #333333;
+  border-width: 0.71px;
+  padding: 8px 12px 8px 12px;
+  width: 118px;
+  height: 49px;
+  position: absolute;
+  left: 1155px;
+  top: 24px;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+}
+.sort {
+  color: #f5f5f5;
+  text-align: center;
+  font-family: "Akshar-Medium", sans-serif;
+  font-size: 36px;
+  line-height: 20px;
+  font-weight: 500;
+  position: absolute;
+  left: 4.82px;
+  top: 14.5px;
+  width: 71.5px;
+  height: 20px;
+}
+.container41 {
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  left: 64.32px;
+  top: 4px;
+  overflow: hidden;
+}
+.vector {
+  width: 25.15%;
+  height: 39.95%;
+  position: absolute;
+  right: 3.37%;
+  left: 71.47%;
+  bottom: 39.03%;
+  top: 21.03%;
+  overflow: visible;
+}
+.container42 {
+  width: 1089px;
+  height: 560px;
+  position: absolute;
+  left: 320.79px;
+  top: 935px;
+}
+.container43 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: 102.21px;
+  top: 0px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.container44 {
+  width: 213px;
+  height: 40px;
+  position: absolute;
+  left: 18.21px;
+  top: 31.59px;
+  overflow: hidden;
+}
+.men-s-color-block-pattern-fashion-crew-neck-short-sleeve-quality-t-shirt-for-all-seasons {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 199px;
+  height: 37px;
+}
+._240-002 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 129.87px;
+  height: 18.43px;
+}
+.button9 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 141.22px;
+  top: 8px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+._300 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 99.21px;
+  top: 91.59px;
+  width: 39px;
+  height: 15px;
+}
+.button10 {
+  background: #e05d38;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 78px;
+  height: 32px;
+  position: absolute;
+  left: 155px;
+  top: -16px;
+  box-shadow: 0px 10px 15px -3px rgba(224, 93, 56, 0.2),
+    0px 4px 6px -4px rgba(224, 93, 56, 0.2);
+}
+.container45 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.regular-price5 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 18.21px;
+  top: 90.59px;
+}
+.container46 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.container47 {
+  width: 213px;
+  height: 40px;
+  position: absolute;
+  left: 20.42px;
+  top: 27.58px;
+  overflow: hidden;
+}
+.first-krush-mens-cotton-blend-navy-casual-wear-regular-fit-printed-tshirt {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 211px;
+  height: 37px;
+}
+._259-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 130.73px;
+  height: 25px;
+}
+.button11 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 129.23px;
+  top: 11px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.selling5 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: -3.58px;
+  top: 4.12px;
+}
+.container48 {
+  width: 63px;
+  height: 16px;
+  position: absolute;
+  left: 104.42px;
+  top: 85.58px;
+}
+._359 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 39px;
+  height: 15px;
+}
+.button12 {
+  background: #e05d38;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 78px;
+  height: 32px;
+  position: absolute;
+  left: 167px;
+  top: -16px;
+  box-shadow: 0px 10px 15px -3px rgba(224, 93, 56, 0.2),
+    0px 4px 6px -4px rgba(224, 93, 56, 0.2);
+}
+.container49 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.regular-price6 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 18.42px;
+  top: 85.58px;
+}
+.container50 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.container51 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: 731.79px;
+  top: 0px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.container52 {
+  width: 213px;
+  height: 40px;
+  position: absolute;
+  left: 19.62px;
+  top: 30.58px;
+  overflow: hidden;
+}
+.fit-short-sleeve-t-shirt {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: -0.37px;
+  top: 10.1px;
+}
+._252-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 123.43px;
+  height: 25px;
+}
+.button13 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 133.63px;
+  top: 6px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.selling6 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: -3.37px;
+  top: 4.12px;
+}
+.container53 {
+  width: 53px;
+  height: 16px;
+  position: absolute;
+  left: 99.62px;
+  top: 80.58px;
+}
+.button14 {
+  background: #e05d38;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 78px;
+  height: 32px;
+  position: absolute;
+  left: 159.15px;
+  top: -16px;
+  box-shadow: 0px 10px 15px -3px rgba(224, 93, 56, 0.2),
+    0px 4px 6px -4px rgba(224, 93, 56, 0.2);
+}
+.container54 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.regular-price7 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 18.62px;
+  top: 80.58px;
+}
+.container55 {
+  width: 32px;
+  height: 32px;
+  position: absolute;
+  left: 221.79px;
+  top: 20px;
+}
+.container56 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.image-11 {
+  width: 233.78px;
+  height: 291.94px;
+  position: absolute;
+  left: 743.8px;
+  top: 51.96px;
+  object-fit: cover;
+  aspect-ratio: 233.78/291.94;
+}
+.container57 {
+  width: 1089px;
+  height: 560px;
+  position: absolute;
+  left: 320.79px;
+  top: 1528px;
+}
+.container58 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: 112.21px;
+  top: 0px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.kids-lehenga-choli {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 199px;
+  height: 37px;
+}
+._200-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 114.28px;
+  height: 25px;
+}
+.container59 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.container60 {
+  width: 53px;
+  height: 16px;
+  position: absolute;
+  left: 102.21px;
+  top: 85.59px;
+}
+._259 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 39px;
+  height: 15px;
+}
+.regular-price8 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 18.21px;
+  top: 85.59px;
+}
+.container61 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.button15 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 146.21px;
+  top: 340.78px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.container62 {
+  width: 213px;
+  height: 40px;
+  position: absolute;
+  left: 19.42px;
+  top: 31.58px;
+  overflow: hidden;
+}
+.cutiepie-elegant-girls-top-bottom-sets-this-product-is-made-in-100-rayon-slub-fabric {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 211px;
+  height: 37px;
+}
+._300-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 131.02px;
+  height: 25px;
+}
+.container63 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.container64 {
+  width: 63px;
+  height: 16px;
+  position: absolute;
+  left: 103.42px;
+  top: 88.58px;
+}
+._3992 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 39px;
+  height: 15px;
+}
+.button16 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 131.21px;
+  top: 343px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.container65 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.container66 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: 721.79px;
+  top: 0px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.baby-girls-clothes {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 185px;
+  height: 37px;
+}
+._169-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 137.71px;
+  height: 25px;
+}
+.container67 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.container68 {
+  width: 53px;
+  height: 16px;
+  position: absolute;
+  left: 107.62px;
+  top: 92.58px;
+}
+._200 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 31px;
+  height: 15px;
+}
+.regular-price9 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 18.62px;
+  top: 88.58px;
+}
+.button17 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 157px;
+  top: 344.93px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.container69 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.line-8 {
+  margin-top: -1px;
+  border-style: solid;
+  border-color: #ffffff;
+  border-width: 1px 0 0 0;
+  width: 49.45px;
+  height: 0px;
+  position: absolute;
+  left: 403.97px;
+  top: 172.9px;
+}
+.line-9 {
+  margin-top: -1px;
+  border-style: solid;
+  border-color: #ffffff;
+  border-width: 1px 0 0 0;
+  width: 52.64px;
+  height: 0px;
+  position: absolute;
+  left: 408.71px;
+  top: 174.65px;
+  transform-origin: 0 0;
+  transform: rotate(-0.097deg) scale(1, 1);
+}
+.footer {
+  background: #171717;
+  border-style: solid;
+  border-color: #292929;
+  border-width: 0.79px 0px 0px 0px;
+  width: 1441px;
+  height: 430px;
+  position: absolute;
+  left: 5px;
+  top: 2159px;
+}
+.container70 {
+  padding: 48px 16px 48px 16px;
+  width: 1152px;
+  height: 429px;
+  position: absolute;
+  left: 105.91px;
+  top: -7.5px;
+}
+.container71 {
+  width: 1121px;
+  height: 220px;
+  position: absolute;
+  left: -12.25px;
+  top: 47.71px;
+}
+.container72 {
+  width: 429px;
+  height: 220px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.container73 {
+  width: 384px;
+  height: 97px;
+  position: absolute;
+  left: 0px;
+  top: 55.99px;
+}
+.your-trusted-destination-for-stylish-and-high-quality-dresses-discover-elegant-designs-premium-fabrics-secure-payments-and-exceptional-customer-service {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 370px;
+  height: 92px;
+}
+.container74 {
+  width: 429px;
+  height: 40px;
+  position: absolute;
+  left: 0px;
+  top: 176px;
+}
+.container75 {
+  background: #242424;
+  border-radius: 26394800px;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.container76 {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 9.99px;
+  top: 9.99px;
+  overflow: visible;
+}
+.container77 {
+  background: #242424;
+  border-radius: 26394800px;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: 51.99px;
+  top: 0px;
+}
+.container78 {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 9.99px;
+  top: 9.99px;
+  overflow: visible;
+}
+.container79 {
+  background: #242424;
+  border-radius: 26394800px;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: 103.98px;
+  top: 0px;
+}
+.container80 {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 9.99px;
+  top: 9.99px;
+  overflow: visible;
+}
+.container81 {
+  background: #242424;
+  border-radius: 26394800px;
+  width: 40px;
+  height: 40px;
+  position: absolute;
+  left: 155.97px;
+  top: 0px;
+}
+.container82 {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 9.99px;
+  top: 9.99px;
+  overflow: visible;
+}
+.logo {
+  width: 161px;
+  height: 46px;
+  position: absolute;
+  left: -0.19px;
+  top: 0px;
+}
+.container83 {
+  width: 36px;
+  height: 34px;
+  position: absolute;
+  left: 5px;
+  top: -1px;
+  overflow: visible;
+}
+.snova {
+  color: #ffffff;
+  text-align: left;
+  font-family: "GemunuLibre-ExtraBold", sans-serif;
+  font-size: 48px;
+  line-height: 20px;
+  font-weight: 800;
+  position: absolute;
+  left: 90.94px;
+  top: 3.72px;
+}
+.container84 {
+  width: 199px;
+  height: 220px;
+  position: absolute;
+  left: 460.79px;
+  top: 0px;
+}
+.container85 {
+  width: 199px;
+  height: 25px;
+  position: absolute;
+  left: -16.54px;
+  top: -10.71px;
+}
+.shop-by-category {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Outfit-Bold", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  font-weight: 700;
+  position: absolute;
+  left: 13px;
+  top: 0px;
+}
+.casual-dresses-party-wear-dresses-ethnic-wear-office-wear-summer-dresses-kids-wear {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Outfit-ExtraLight", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 200;
+  position: absolute;
+  left: -1.54px;
+  top: 25.29px;
+}
+.container86 {
+  width: 199px;
+  height: 220px;
+  position: absolute;
+  left: 691.2px;
+  top: 0px;
+}
+.container87 {
+  width: 199px;
+  height: 25px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.customer-support {
+  color: #e2e8f0;
+  text-align: left;
+  font-family: "Outfit-Bold", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 145px;
+  height: 20px;
+}
+.container88 {
+  width: 199px;
+  height: 180px;
+  position: absolute;
+  left: 0px;
+  top: 40px;
+}
+.container89 {
+  width: 199px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
+.container90 {
+  width: 73px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.contact-us {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 73px;
+  height: 19px;
+}
+.container91 {
+  width: 199px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 31.99px;
+}
+.container92 {
+  width: 80px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.track-order {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 80px;
+  height: 19px;
+}
+.container93 {
+  width: 199px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 63.99px;
+}
+.container94 {
+  width: 119px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.returns-refunds {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 119px;
+  height: 19px;
+}
+.container95 {
+  width: 199px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 95.98px;
+}
+.container96 {
+  width: 106px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.warranty-policy {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 106px;
+  height: 19px;
+}
+.container97 {
+  width: 199px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 127.97px;
+}
+.container98 {
+  width: 36px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.fa-qs {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 36px;
+  height: 19px;
+}
+.container99 {
+  width: 199px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 159.97px;
+}
+.container100 {
+  width: 87px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.shipping-info {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 87px;
+  height: 19px;
+}
+.container101 {
+  width: 199px;
+  height: 220px;
+  position: absolute;
+  left: 921.6px;
+  top: 0px;
+}
+.company-info {
+  color: #e2e8f0;
+  text-align: left;
+  font-family: "Outfit-Bold", sans-serif;
+  font-size: 16px;
+  line-height: 24px;
+  letter-spacing: 0.4px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 112px;
+  height: 20px;
+}
+.container102 {
+  width: 60px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.about-us {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 60px;
+  height: 19px;
+}
+.container103 {
+  width: 53px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.careers {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 53px;
+  height: 19px;
+}
+.container104 {
+  width: 92px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.press-media {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 92px;
+  height: 19px;
+}
+.privacy-policy {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 92px;
+  height: 19px;
+}
+.container105 {
+  width: 109px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.terms-of-service {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 109px;
+  height: 19px;
+}
+.container106 {
+  width: 55px;
+  height: 19px;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+}
+.sitemap {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 55px;
+  height: 19px;
+}
+.container107 {
+  background: #292929;
+  width: 1121px;
+  height: 1px;
+  position: absolute;
+  left: 15.99px;
+  top: 315.95px;
+}
+.container108 {
+  width: 1121px;
+  height: 32px;
+  position: absolute;
+  left: 15.99px;
+  top: 348.94px;
+}
+.container109 {
+  width: 264px;
+  height: 20px;
+  position: absolute;
+  left: 0px;
+  top: 6px;
+}
+._2026-snova-all-rights-reserved {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0.79px;
+  width: 264px;
+  height: 19px;
+}
+.container110 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: 119.79px;
+  top: 1528px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.container111 {
+  width: 213px;
+  height: 40px;
+  position: absolute;
+  left: 18.43px;
+  top: 31.59px;
+  overflow: hidden;
+}
+.three-pack-of-cute-cartoon-cat-print-short-seleeve {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 1.57px;
+  width: 199px;
+  height: 37px;
+}
+._195-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 122.78px;
+  height: 25px;
+}
+.container112 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.selling7 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: -3.57px;
+  top: 4.13px;
+}
+.container113 {
+  width: 53px;
+  height: 16px;
+  position: absolute;
+  left: 99.43px;
+  top: 85.59px;
+}
+._2002 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 39px;
+  height: 15px;
+}
+.regular-price10 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 18.43px;
+  top: 85.59px;
+}
+.container114 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.button18 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 136.05px;
+  top: 340.78px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.container115 {
+  background: #2a3040;
+  border-radius: 16px;
+  border-style: solid;
+  border-color: rgba(61, 67, 84, 0.5);
+  border-width: 0.79px;
+  padding: 24px 0px 24px 0px;
+  width: 255px;
+  height: 560px;
+  position: absolute;
+  left: 124.73px;
+  top: 935px;
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.1),
+    0px 1px 2px -1px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.men-s-regualr-fit-cotton-blend-half-sleeve-polo-t-shirt {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  position: absolute;
+  left: 24.49px;
+  top: 31.59px;
+  width: 199px;
+  height: 37px;
+}
+._218-00 {
+  color: #e5e5e5;
+  text-align: left;
+  font-family: "Inter-Bold", sans-serif;
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  position: absolute;
+  left: -1.5px;
+  top: 1.57px;
+  width: 122.78px;
+  height: 25px;
+}
+.button19 {
+  background: #006239;
+  border-radius: 26394800px;
+  padding: 0px 10px 0px 10px;
+  width: 88px;
+  height: 32px;
+  position: absolute;
+  left: 134.49px;
+  top: 8px;
+  box-shadow: 0px 4px 6px -4px rgba(44, 96, 49, 1);
+}
+.selling8 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: -3.51px;
+  top: 4.13px;
+}
+._318 {
+  color: #a3a3a3;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 106.49px;
+  top: 85.59px;
+  width: 39px;
+  height: 15px;
+}
+.container116 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 9.99px;
+  top: 8px;
+  overflow: visible;
+}
+.container117 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  overflow: visible;
+}
+.navigation {
+  width: 1472px;
+  height: 90px;
+  position: absolute;
+  left: 16.78px;
+  top: 0px;
+}
+.navigation2 {
+  background: rgba(0, 0, 0, 0.83);
+  border-style: solid;
+  border-color: rgba(41, 41, 41, 0.4);
+  border-width: 0px 0px 0.79px 0px;
+  width: 101.25%;
+  height: 100%;
+  position: absolute;
+  right: 0%;
+  left: -1.25%;
+  bottom: 0%;
+  top: 0%;
+  backdrop-filter: blur(12px);
+}
+.container118 {
+  padding: 0px 16px 0px 16px;
+  width: 1435px;
+  height: 74px;
+  position: absolute;
+  left: 3px;
+  top: 16px;
+}
+.container119 {
+  background: #006239;
+  border-radius: 26394800px;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 1165.83px;
+  top: 6px;
+  box-shadow: 0px 0px 0px 2px rgba(18, 18, 18, 1);
+}
+._2 {
+  color: #dde8e3;
+  text-align: center;
+  font-family: "Outfit-Bold", sans-serif;
+  font-size: 10px;
+  line-height: 15px;
+  letter-spacing: 0.4px;
+  font-weight: 700;
+  position: absolute;
+  left: 1.5px;
+  top: 0.49px;
+  width: 13px;
+  height: 16px;
+}
+.container120 {
+  width: 134px;
+  height: 21px;
+  position: absolute;
+  left: 841px;
+  top: 13.98px;
+}
+.container121 {
+  background: rgba(36, 36, 36, 0.5);
+  border-radius: 26394800px;
+  padding: 0px 16px 0px 40px;
+  width: 265px;
+  height: 40px;
+  position: absolute;
+  left: -126px;
+  top: -10px;
+}
+.search-mobiles-by-category-or-m {
+  color: #e2e8f0;
+  text-align: left;
+  font-family: "Outfit-Regular", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 400;
+  position: absolute;
+  left: 29.45px;
+  top: 10.5px;
+  width: 230.99px;
+  height: 19px;
+}
+.logo2 {
+  width: 129px;
+  height: 32px;
+  position: absolute;
+  left: 13px;
+  top: 14px;
+}
+.container122 {
+  width: 36px;
+  height: 34px;
+  position: absolute;
+  left: 5px;
+  top: -1px;
+  overflow: visible;
+}
+.zyrox {
+  color: #00ff1a;
+  text-align: left;
+  font-family: "GemunuLibre-ExtraBold", sans-serif;
+  font-size: 36px;
+  line-height: 20px;
+  font-weight: 800;
+  position: absolute;
+  left: 49px;
+  top: 4.96px;
+}
+.g {
+  width: 0%;
+  height: 0%;
+  position: absolute;
+  right: 4.62%;
+  left: 95.38%;
+  bottom: 80.42%;
+  top: 19.58%;
+  overflow: visible;
+}
+.g2 {
+  width: 2.63%;
+  height: 45.03%;
+  position: absolute;
+  right: 17.66%;
+  left: 79.71%;
+  bottom: 32.79%;
+  top: 22.18%;
+  overflow: visible;
+}
+.container123 {
+  width: 39px;
+  height: 38px;
+  position: absolute;
+  left: 1041.82px;
+  top: 8.98px;
+  overflow: visible;
+}
+.container124 {
+  width: 426px;
+  height: 32px;
+  position: absolute;
+  left: 328px;
+  top: 18px;
+}
+.container125 {
+  width: 37px;
+  height: 14px;
+  position: absolute;
+  left: 0px;
+  top: 5px;
+}
+.home {
+  color: rgba(225, 242, 225, 0.65);
+  text-align: left;
+  font-family: "Outfit-Medium", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 500;
+  position: absolute;
+  left: -1px;
+  top: -3.69px;
+  width: 41px;
+  height: 19px;
+}
+.container126 {
+  width: 38px;
+  height: 20px;
+  position: absolute;
+  left: 71px;
+  top: 0.79px;
+}
+.products2 {
+  color: #00ff04;
+  text-align: left;
+  font-family: "Outfit-Medium", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 500;
+  position: absolute;
+  left: -1px;
+  top: 0.79px;
+  width: 73.88px;
+  height: 19px;
+}
+.container127 {
+  width: 96px;
+  height: 20px;
+  position: absolute;
+  left: 187px;
+  top: 1.07px;
+}
+.categories {
+  color: #a2a2a2;
+  text-align: left;
+  font-family: "Outfit-Medium", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 500;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 72.36px;
+  height: 19px;
+}
+.container128 {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 395px;
+  top: 0px;
+  overflow: hidden;
+}
+.g3 {
+  width: 83.28%;
+  height: 83.28%;
+  position: absolute;
+  right: 8.39%;
+  left: 8.33%;
+  bottom: 8.39%;
+  top: 8.33%;
+  overflow: visible;
+}
+.user {
+  width: 3.33%;
+  height: 53.33%;
+  position: absolute;
+  right: 9.08%;
+  left: 87.59%;
+  bottom: 17.78%;
+  top: 28.89%;
+  overflow: visible;
+}
+.ellipse-4 {
+  background: rgba(217, 217, 217, 0);
+  border-radius: 50%;
+  border-style: solid;
+  border-color: #dedede;
+  border-width: 1px;
+  width: 3.74%;
+  height: 59.93%;
+  position: absolute;
+  right: 8.87%;
+  left: 87.38%;
+  bottom: 13.45%;
+  top: 26.62%;
+}
+.regular-price11 {
+  color: #ffffff;
+  text-align: left;
+  font-family: "Inter-Regular", sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 400;
+  position: absolute;
+  left: 139px;
+  top: 1281px;
+}
