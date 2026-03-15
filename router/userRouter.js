@@ -28,6 +28,6 @@ router.get('/products',userController.loadproducts)
 
 
 router.get('/profile',profileController.loadprofile)
-router.get('/address',profileController.loadaddress)
+
 
 module.exports=router;

@@ -23,7 +23,5 @@ const loadprofile = async (req, res) => {
 
 
 
-const loadaddress=async(req,res)=>{
-        res.render('user/address')
-}
-module.exports = { loadprofile ,loadaddress}
+
+module.exports = { loadprofile }

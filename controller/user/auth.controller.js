@@ -161,7 +161,7 @@ const resendOtp = async (req, res) => {
     if (!emailSent) {
       return res.json({ success: false, message: "Failed to resend OTP" });
     }
-
+  cnsole.log("hi")
     console.log("Resent OTP:", otp);
 
     res.json({ success: true, message: "OTP resent successfully" });
