@@ -4,6 +4,7 @@ const{isAuth,userAuth, isUser}=require("../middleware/auth")
 const passport=require('passport')
 const userController=require("../controller/user/auth.controller")
 const profileController=require('../controller/user/profileController')
+const upload = require('../middleware/multer');
 
 
 router.get('/',isUser,userController.loadHomepage)
@@ -28,6 +29,6 @@ router.get('/products',userController.loadproducts)
 
 
 router.get('/profile',profileController.loadprofile)
+router.post('/editProfile', upload.single("profileImage"),profileController.updateProfile)
 
-
-module.exports=router;
+module.exports=router;                

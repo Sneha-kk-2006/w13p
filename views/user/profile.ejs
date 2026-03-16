@@ -4,425 +4,430 @@
 
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>SNOVA | My Profile</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-
-<link rel="stylesheet"
-href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"/>
-
-<style>
-
-:root{
---primary:#10b981;
---sidebar:#0f172a;
---sidebar-hover:#1e293b;
---card-bg:#ffffff;
---border:#e5e7eb;
---danger:#ef4444;
---warning:#f59e0b;
---text-gray:#6b7280;
-}
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-font-family:Segoe UI,sans-serif;
-}
-
-body{
-background:#f1f5f9;
-}
-
-/* HEADER */
-
-.header{
-height:70px;
-background:#020617;
-display:flex;
-align-items:center;
-justify-content:space-between;
-padding:0 40px;
-color:white;
-}
-
-.logo{
-font-size:22px;
-font-weight:bold;
-color:#10b981;
-}
-
-.header-right{
-display:flex;
-align-items:center;
-gap:15px;
-}
-
-.header-avatar{
-width:40px;
-height:40px;
-border-radius:50%;
-overflow:hidden;
-}
-
-.header-avatar img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-/* DASHBOARD */
-
-.dashboard{
-display:flex;
-height:calc(100vh - 70px);
-}
-
-/* SIDEBAR */
-
-.sidebar{
-width:250px;
-background:var(--sidebar);
-color:white;
-padding:25px 15px;
-display:flex;
-flex-direction:column;
-gap:8px;
-}
-
-.sidebar h3{
-font-size:14px;
-color:#94a3b8;
-margin:10px 10px 5px;
-}
-
-.side-link{
-display:flex;
-align-items:center;
-gap:10px;
-padding:12px 14px;
-border-radius:8px;
-cursor:pointer;
-text-decoration:none;
-color:white;
-font-size:14px;
-transition:0.2s;
-}
-
-.side-link:hover{
-background:var(--sidebar-hover);
-}
-
-.side-link.active{
-background:#10b981;
-}
-
-/* CONTENT */
-
-.content{
-flex:1;
-display:flex;
-justify-content:center;
-align-items:center;
-padding:40px;
-}
-
-.profile-card{
-background:var(--card-bg);
-width:900px;
-border-radius:14px;
-padding:35px;
-box-shadow:0 15px 40px rgba(0,0,0,0.1);
-}
-
-/* PROFILE HEADER */
-
-.profile-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:25px;
-}
-
-/* PROFILE IMAGE */
-
-.avatar-wrapper{
-position:relative;
-}
-
-.avatar{
-width:110px;
-height:110px;
-border-radius:50%;
-overflow:hidden;
-border:3px solid var(--border);
-}
-
-.avatar img{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-.edit-avatar{
-position:absolute;
-bottom:0;
-right:0;
-background:var(--primary);
-width:32px;
-height:32px;
-border-radius:50%;
-display:flex;
-align-items:center;
-justify-content:center;
-color:white;
-cursor:pointer;
-border:2px solid white;
-}
-
-.joined{
-font-size:12px;
-color:var(--text-gray);
-text-align:center;
-margin-top:6px;
-}
-
-/* ACTION BUTTONS */
-
-.actions{
-display:flex;
-flex-direction:column;
-gap:10px;
-}
-
-.btn{
-border:none;
-border-radius:6px;
-padding:9px 14px;
-cursor:pointer;
-font-weight:600;
-display:flex;
-align-items:center;
-gap:6px;
-color:white;
-}
-
-.btn-edit{background:var(--warning);}
-.btn-logout{background:var(--danger);}
-
-/* INFO */
-
-.field{
-margin-bottom:18px;
-}
-
-.field label{
-font-size:13px;
-color:var(--text-gray);
-margin-bottom:4px;
-display:block;
-}
-
-.input-box{
-border:1px solid var(--border);
-border-radius:8px;
-padding:10px;
-background:#f9fafb;
-}
-
-.input-box input{
-border:none;
-background:transparent;
-width:100%;
-font-weight:600;
-}
-
-/* CHANGE PASSWORD */
-
-.password-section{
-margin-top:25px;
-padding-top:20px;
-border-top:1px solid var(--border);
-}
-
-.change-pass-btn{
-background:#6366f1;
-color:white;
-border:none;
-padding:10px 16px;
-border-radius:6px;
-cursor:pointer;
-font-weight:600;
-}
-
-/* MODAL */
-
-/* overlay */
-
-.modal-overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.6);
-display:none;   /* ✅ hidden by default */
-align-items:center;
-justify-content:center;
-z-index:999;
-}
-
-/* modal box */
-
-.modal{
-background:white;
-width:400px;
-padding:25px;
-border-radius:12px;
-box-shadow:0 10px 30px rgba(0,0,0,0.3);
-animation:modalPop 0.3s ease;
-}
-
-/* animation */
-
-@keyframes modalPop{
-from{
-transform:scale(0.8);
-opacity:0;
-}
-to{
-transform:scale(1);
-opacity:1;
-}
-}
-
-/* header */
-
-.modal-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:15px;
-}
-
-.modal-header h3{
-margin:0;
-}
-
-.close-btn{
-font-size:22px;
-cursor:pointer;
-color:#555;
-}
-
-/* avatar section */
-
-.image-edit{
-text-align:center;
-margin-bottom:20px;
-}
-
-.modal-avatar img{
-width:90px;
-height:90px;
-border-radius:50%;
-object-fit:cover;
-border:3px solid #00c46b;
-}
-
-/* image buttons */
-
-.image-buttons{
-margin-top:10px;
-display:flex;
-justify-content:center;
-gap:10px;
-}
-
-.img-btn{
-background:#00c46b;
-color:white;
-padding:6px 14px;
-border-radius:6px;
-cursor:pointer;
-font-size:13px;
-border:none;
-transition:0.2s;
-}
-
-.img-btn:hover{
-background:#00a95c;
-}
-
-.img-btn.remove{
-background:#ff4d4d;
-}
-
-.img-btn.remove:hover{
-background:#d93a3a;
-}
-
-/* fields */
-
-.field{
-margin-bottom:15px;
-}
-
-.field label{
-font-size:13px;
-display:block;
-margin-bottom:5px;
-color:#555;
-}
-
-.field input{
-width:100%;
-padding:8px;
-border-radius:6px;
-border:1px solid #ccc;
-}
-
-/* actions */
-
-.modal-actions{
-display:flex;
-justify-content:flex-end;
-gap:10px;
-margin-top:10px;
-}
-
-.btn-save{
-background:#00c46b;
-color:white;
-border:none;
-padding:8px 18px;
-border-radius:6px;
-cursor:pointer;
-}
-
-.btn-save:hover{
-background:#00a95c;
-}
-
-.btn-cancel{
-background:#eee;
-border:none;
-padding:8px 18px;
-border-radius:6px;
-cursor:pointer;
-}
-
-</style>
- 
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SNOVA | My Profile</title>
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+
+  <style>
+    :root {
+      --primary: #10b981;
+      --sidebar: #0f172a;
+      --sidebar-hover: #1e293b;
+      --card-bg: #ffffff;
+      --border: #e5e7eb;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --text-gray: #6b7280;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Segoe UI, sans-serif;
+    }
+
+    body {
+      background: #f1f5f9;
+    }
+
+    /* HEADER */
+
+    .header {
+      height: 70px;
+      background: #020617;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      color: white;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: bold;
+      color: #10b981;
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .header-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    .header-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* DASHBOARD */
+
+    .dashboard {
+      display: flex;
+      height: calc(100vh - 70px);
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      width: 250px;
+      background: var(--sidebar);
+      color: white;
+      padding: 25px 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar h3 {
+      font-size: 14px;
+      color: #94a3b8;
+      margin: 10px 10px 5px;
+    }
+
+    .side-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .side-link:hover {
+      background: var(--sidebar-hover);
+    }
+
+    .side-link.active {
+      background: #10b981;
+    }
+
+    /* CONTENT */
+
+    .content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .profile-card {
+      background: var(--card-bg);
+      width: 900px;
+      border-radius: 14px;
+      padding: 35px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+
+    /* PROFILE HEADER */
+
+    .profile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 25px;
+    }
+
+    /* PROFILE IMAGE */
+
+    .avatar-wrapper {
+      position: relative;
+    }
+
+    .avatar {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 3px solid var(--border);
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .edit-avatar {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: var(--primary);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      cursor: pointer;
+      border: 2px solid white;
+    }
+
+    .joined {
+      font-size: 12px;
+      color: var(--text-gray);
+      text-align: center;
+      margin-top: 6px;
+    }
+
+    /* ACTION BUTTONS */
+
+    .actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 6px;
+      padding: 9px 14px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: white;
+    }
+
+    .btn-edit {
+      background: var(--warning);
+    }
+
+    .btn-logout {
+      background: var(--danger);
+    }
+
+    /* INFO */
+
+    .field {
+      margin-bottom: 18px;
+    }
+
+    .field label {
+      font-size: 13px;
+      color: var(--text-gray);
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .input-box {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      background: #f9fafb;
+    }
+
+    .input-box input {
+      border: none;
+      background: transparent;
+      width: 100%;
+      font-weight: 600;
+    }
+
+    /* CHANGE PASSWORD */
+
+    .password-section {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+
+    .change-pass-btn {
+      background: #6366f1;
+      color: white;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+
+    /* MODAL */
+
+    /* overlay */
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      /* ✅ hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    /* modal box */
+
+    .modal {
+      background: white;
+      width: 400px;
+      padding: 25px;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      animation: modalPop 0.3s ease;
+    }
+
+    /* animation */
+
+    @keyframes modalPop {
+      from {
+        transform: scale(0.8);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* header */
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+    }
+
+    .close-btn {
+      font-size: 22px;
+      cursor: pointer;
+      color: #555;
+    }
+
+    /* avatar section */
+
+    .image-edit {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-avatar img {
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #00c46b;
+    }
+
+    /* image buttons */
+
+    .image-buttons {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .img-btn {
+      background: #00c46b;
+      color: white;
+      padding: 6px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      border: none;
+      transition: 0.2s;
+    }
+
+    .img-btn:hover {
+      background: #00a95c;
+    }
+
+    .img-btn.remove {
+      background: #ff4d4d;
+    }
+
+    .img-btn.remove:hover {
+      background: #d93a3a;
+    }
+
+    /* fields */
+
+    .field {
+      margin-bottom: 15px;
+    }
+
+    .field label {
+      font-size: 13px;
+      display: block;
+      margin-bottom: 5px;
+      color: #555;
+    }
+
+    .field input {
+      width: 100%;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    /* actions */
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .btn-save {
+      background: #00c46b;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .btn-save:hover {
+      background: #00a95c;
+    }
+
+    .btn-cancel {
+      background: #eee;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+  </style>
+
 
 </head>
 
 <body>
   <%- include('../partials/user/header') %>
- <!-- <header class="header">
+    <!-- <header class="header">
 
 <div class="logo">SNOVA</div>
 
@@ -436,231 +441,244 @@ cursor:pointer;
 
 </header>  -->
 
-<div class="dashboard">
+    <div class="dashboard">
 
-<aside class="sidebar">
+      <aside class="sidebar">
 
-<h3>ACCOUNT</h3>
+        <h3>ACCOUNT</h3>
 
-<a class="side-link active">
-<span class="material-symbols-outlined">person</span>Profile
-</a>
+        <a class="side-link active">
+          <span class="material-symbols-outlined">person</span>Profile
+        </a>
 
-<a class="side-link" href="address">
-<span class="material-symbols-outlined">location_on</span>Address
-</a>
+        <a class="side-link" href="address">
+          <span class="material-symbols-outlined">location_on</span>Address
+        </a>
 
-<a class="side-link">
-<span class="material-symbols-outlined">package</span>Orders
-</a>
+        <a class="side-link">
+          <span class="material-symbols-outlined">package</span>Orders
+        </a>
 
-<a class="side-link">
-<span class="material-symbols-outlined">favorite</span>Wishlist
-</a>
+        <a class="side-link">
+          <span class="material-symbols-outlined">favorite</span>Wishlist
+        </a>
 
-<a class="side-link">
-<span class="material-symbols-outlined">account_balance_wallet</span>Wallet
-</a>
+        <a class="side-link">
+          <span class="material-symbols-outlined">account_balance_wallet</span>Wallet
+        </a>
 
-</aside>
+      </aside>
 
-<main class="content">
+      <main class="content">
 
-<div class="profile-card">
+        <div class="profile-card">
 
-<div class="profile-header">
+          <div class="profile-header">
 
-<div>
-<h2>My Profile</h2>
-<p style="color:#6b7280;font-size:14px">Manage your personal details</p>
-</div>
+            <div>
+              <h2>My Profile</h2>
+              <p style="color:#6b7280;font-size:14px">Manage your personal details</p>
+            </div>
 
-<div>
+            <div>
 
-<div class="avatar-wrapper">
+              <div class="avatar-wrapper">
 
-<div class="avatar">
-<img id="profileImage" src="https://ui-avatars.com/api/?name=Sneha">
-</div>
+                <div class="avatar">
+                 <img id="profileImage"
+     src="<%= user.profileImage ? user.profileImage + '?t=' + Date.now() : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>"
+     alt="Profile Image">
+                </div>
 
-<div class="edit-avatar" onclick="openModal('editModal')">
-<span class="material-symbols-outlined">edit</span>
-</div>
+                <div class="edit-avatar" onclick="openModal('editModal')">
+                  <span class="material-symbols-outlined">edit</span>
+                </div>
 
-</div>
+              </div>
 
-<div class="joined">Joined Oct 2024</div>
+              <div class="joined">Joined Oct 2024</div>
 
-</div>
+            </div>
 
-<div class="actions">
+            <div class="actions">
 
-<button class="btn btn-edit" onclick="openModal('editModal')">
-<span class="material-symbols-outlined">edit</span>Edit
-</button>
+              <button class="btn btn-edit" onclick="openModal('editModal')">
+                <span class="material-symbols-outlined">edit</span>Edit
+              </button>
 
-<button class="btn btn-logout" onclick="openModal('logoutModal')">
-<span class="material-symbols-outlined">logout</span>Logout
-</button>
+              <button class="btn btn-logout" onclick="openModal('logoutModal')">
+                <span class="material-symbols-outlined">logout</span>Logout
+              </button>
 
-</div>
+            </div>
 
-</div>
+          </div>
 
-<div class="field">
-<label>Full Name</label>
-<div class="input-box">
-<input value="<%= user.name %>" type="text" name="name">
-</div>
-</div>
+          <div class="field">
+            <label>Full Name</label>
+            <div class="input-box">
+              <input value="<%= user.name %>" type="text" name="name">
+            </div>
+          </div>
 
-<div class="field">
-<label>Email</label>
-<div class="input-box">
-<input value="<%= user.email %>" type="email" name="email" readonly>
-</div>
-</div>
+          <div class="field">
+            <label>Email</label>
+            <div class="input-box">
+              <input value="<%= user.email %>" type="email" name="email" readonly>
+            </div>
+          </div>
 
-<div class="field">
-<label>Phone</label>
-<div class="input-box">
-<input value="" type="text" name="phone">
-</div>
-</div>
+          <div class="field">
+            <label>Phone</label>
+            <div class="input-box">
+              <input value="<%= user.phone %>" type="tel" name="phone">
+            </div>
+          </div>
 
-<div class="password-section">
+          <div class="password-section">
 
-<h3>Security</h3>
+            <h3>Security</h3>
 
-<button class="change-pass-btn">
-Change Password
-</button>
+            <button class="change-pass-btn">
+              Change Password
+            </button>
 
-</div>
+          </div>
 
-</div>
+        </div>
 
-</main>
+      </main>
 
-</div>
+    </div>
 
-<!-- EDIT MODAL -->
+    <!-- EDIT MODAL -->
+<!-- Edit Profile Modal -->
 <div class="modal-overlay" id="editModal">
+  <div class="modal">
 
-<div class="modal">
+    <!-- Modal Header -->
+    <div class="modal-header">
+      <h3>Edit Profile</h3>
+      <span class="close-btn" onclick="closeModal('editModal')">&times;</span>
+    </div>
 
-<div class="modal-header">
-<h3>Edit Profile</h3>
-<span class="close-btn" onclick="closeModal('editModal')">&times;</span>
+    <!-- Form -->
+    <form action="/editProfile" method="POST" enctype="multipart/form-data">
+
+      <!-- Image Edit Section -->
+      <div class="image-edit">
+        <div class="modal-avatar">
+          <img id="modalImage"
+            src="<%= user.profileImage ? user.profileImage + '?t=' + Date.now() : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>"
+            alt="Profile Image">
+        </div>
+
+        <div class="image-buttons">
+          <!-- Upload Button -->
+          <label class="img-btn" for="profileFile">Upload</label>
+          <input id="profileFile" name="profileImage" type="file" accept="image/*" hidden onchange="previewImage(event)">
+
+          <!-- Remove Button -->
+          <button type="button" class="img-btn remove" onclick="removeImage()">Remove</button>
+        </div>
+      </div>
+
+      <!-- Other Fields -->
+      <div class="field">
+        <label>Name</label>
+        <input type="text" name="name" value="<%= user.name %>" required>
+      </div>
+
+      <div class="field">
+        <label>Email</label>
+        <input type="email" name="email" value="<%= user.email %>" required>
+      </div>
+
+      <div class="field">
+        <label>Phone</label>
+        <input type="text" name="phone" value="<%= user.phone %>">
+      </div>
+
+      <!-- Actions -->
+      <div class="modal-actions">
+        <button type="submit" class="btn-save">Save Changes</button>
+        <button type="button" class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+      </div>
+
+    </form>
+
+  </div>
 </div>
+    <!-- LOGOUT MODAL -->
 
-<div class="image-edit">
+    <div class="modal-overlay" id="logoutModal">
 
-<div class="modal-avatar">
-<img id="modalImage" src="<%= user.profileImage || 'https://ui-avatars.com/api/?name=' + user.name %>">
-</div>
+      <div class="modal" style="text-align:center">
 
-<div class="image-buttons">
+        <span class="material-symbols-outlined" style="font-size:40px;color:#ef4444">logout</span>
 
-<label class="img-btn">
-Upload
-<input type="file" hidden accept="image/*" onchange="previewImage(event)">
-</label>
+        <h3>Logout</h3>
 
-<button class="img-btn remove" onclick="removeImage()">Remove</button>
+        <p style="color:#6b7280;margin-top:6px">
+          Are you sure you want to logout?
+        </p>
 
-</div>
+        <div class="modal-actions" style="justify-content:center">
 
-</div>
+          <button class="btn-save" onclick="location.href='/logout'">Logout</button>
 
-<div class="field">
-<label>Name</label>
-<input type="text" value="<%= user.name %>">
-</div>
+          <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
 
-<div class="field">
-<label>Email</label>
-<input type="email" value="<%= user.email %>">
-</div>
-<div class="field">
-<label>Phone</label>
-<input type="phone" value="<%= user.Phone %>">
-</div>
+        </div>
 
-<div class="modal-actions">
+      </div>
 
-<button class="btn-save">Save Changes</button>
+    </div>
 
-<button class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+    <script>
+      // Default avatar URL (fallback)
+      const defaultAvatar = "<%= user.profileImage || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>";
 
-</div>
+      // Open modal
+      function openModal(id) {
+        document.getElementById(id).style.display = "flex";
+      }
 
-</div>
+      // Close modal
+      function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+      }
 
-</div>
+      // Preview uploaded image
+      function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          document.getElementById("modalImage").src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
 
-<!-- LOGOUT MODAL -->
+      // Remove image (reset to default)
+      function removeImage() {
+        const modalImg = document.getElementById("modalImage");
+        modalImg.src = defaultAvatar;
 
-<div class="modal-overlay" id="logoutModal">
+        // Clear file input
+        const fileInput = document.querySelector('input[name="profileImage"]');
+        if (fileInput) fileInput.value = "";
+      }
 
-<div class="modal" style="text-align:center">
-
-<span class="material-symbols-outlined"
-style="font-size:40px;color:#ef4444">logout</span>
-
-<h3>Logout</h3>
-
-<p style="color:#6b7280;margin-top:6px">
-Are you sure you want to logout?
-</p>
-
-<div class="modal-actions" style="justify-content:center">
-
-<button class="btn-save" onclick="location.href='/logout'">Logout</button>
-
-<button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
-
-</div>
-
-</div>
-
-</div>
-
-<script>
-
-function openModal(id){
-document.getElementById(id).style.display="flex"
-}
-
-function closeModal(id){
-document.getElementById(id).style.display="none"
-}
-
-const defaultAvatar="https://ui-avatars.com/api/?name=Sneha"
-
-function previewImage(event){
-const reader=new FileReader()
-
-reader.onload=function(){
-document.getElementById("modalImage").src=reader.result
-}
-
-reader.readAsDataURL(event.target.files[0])
-}
-
-function removeImage(){
-document.getElementById("modalImage").src=defaultAvatar
-}
-
-function saveProfile(){
-
-document.getElementById("profileImage").src =
-document.getElementById("modalImage").src
-
-closeModal("editModal")
-}
-
-</script>
+      // Optional: preview save changes (front-end only)
+      function saveProfile() {
+        const profileImg = document.getElementById("profileImage"); // your main profile img outside modal
+        const modalImg = document.getElementById("modalImage");
+        if (profileImg && modalImg) {
+          profileImg.src = modalImg.src;
+        }
+        closeModal("editModal");
+      }
+    </script>
 
 </body>
+
 </html>

@@ -10,7 +10,10 @@ const userSchema= new Schema({
         type:String,
         required:true
     },
-  
+
+  phone:{
+    type:String
+  },
     googleId:{
         type:String,
         unique:true,
