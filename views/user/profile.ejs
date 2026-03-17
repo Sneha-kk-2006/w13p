@@ -443,31 +443,8 @@
 
     <div class="dashboard">
 
-      <aside class="sidebar">
 
-        <h3>ACCOUNT</h3>
-
-        <a class="side-link active">
-          <span class="material-symbols-outlined">person</span>Profile
-        </a>
-
-        <a class="side-link" href="address">
-          <span class="material-symbols-outlined">location_on</span>Address
-        </a>
-
-        <a class="side-link">
-          <span class="material-symbols-outlined">package</span>Orders
-        </a>
-
-        <a class="side-link">
-          <span class="material-symbols-outlined">favorite</span>Wishlist
-        </a>
-
-        <a class="side-link">
-          <span class="material-symbols-outlined">account_balance_wallet</span>Wallet
-        </a>
-
-      </aside>
+        <%- include('../partials/user/sidebar') %>
 
       <main class="content">
 
@@ -667,6 +644,18 @@
         const fileInput = document.querySelector('input[name="profileImage"]');
         if (fileInput) fileInput.value = "";
       }
+        // Tell server to remove image by adding a hidden input
+  let removeInput = document.getElementById("removeProfileImage");
+  if (!removeInput) {
+    removeInput = document.createElement("input");
+    removeInput.type = "hidden";
+    removeInput.name = "removeProfileImage";
+    removeInput.id = "removeProfileImage";
+    removeInput.value = "true";
+    document.querySelector("form").appendChild(removeInput);
+  } else {
+    removeInput.value = "true";
+  }
 
       // Optional: preview save changes (front-end only)
       function saveProfile() {

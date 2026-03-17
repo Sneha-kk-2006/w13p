@@ -5,7 +5,7 @@ const passport=require('passport')
 const userController=require("../controller/user/auth.controller")
 const profileController=require('../controller/user/profileController')
 const upload = require('../middleware/multer');
-
+const addressController=require('../controller/user/addressController')
 
 router.get('/',isUser,userController.loadHomepage)
 router.get('/errorPage',userController.errorPage)
@@ -31,4 +31,12 @@ router.get('/products',userController.loadproducts)
 router.get('/profile',profileController.loadprofile)
 router.post('/editProfile', upload.single("profileImage"),profileController.updateProfile)
 
-module.exports=router;                
+
+
+
+router.get("/address",addressController.loadAddress)
+router.post('/addAddress',addressController.addAddress)
+
+
+
+module.exports=router;               

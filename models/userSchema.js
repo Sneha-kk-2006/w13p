@@ -35,14 +35,11 @@ const userSchema= new Schema({
     type:Boolean,
     default:false
     },
-    cart:[{
-
-    }],
     createdOn:{
         type:Date,
         default:Date.now,
     }
-
+   
 })
 
 const User=mongoose.model("User",userSchema)

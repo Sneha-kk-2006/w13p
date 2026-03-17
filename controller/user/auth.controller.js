@@ -12,12 +12,11 @@ require("dotenv").config();
 const loadHomepage = async (req, res) => {
   try {
     const id = req.session.user;
-    console.log(user);
-    if (user) {
+    if (id) {
       const userData = await user.findById(id);
       res.render("user/home", { user: userData });
     } else {
-      return res.render("user/home");
+      return res.render("user/home", { user: null });
     }
   } catch (error) {
     console.error("Home page error:", error);
@@ -161,7 +160,6 @@ const resendOtp = async (req, res) => {
     if (!emailSent) {
       return res.json({ success: false, message: "Failed to resend OTP" });
     }
-  cnsole.log("hi")
     console.log("Resent OTP:", otp);
 
     res.json({ success: true, message: "OTP resent successfully" });

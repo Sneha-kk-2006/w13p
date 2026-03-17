@@ -1,0 +1,96 @@
+ <style>
+    
+    .dashboard {
+      display: flex;
+      height: calc(100vh - 70px);
+    }
+
+    /* SIDEBAR */
+
+    .sidebar {
+      width: 250px;
+      background:color(#0d1b2a red green blue);
+         /* background: var(--sidebar); */
+      color: white;
+      padding: 25px 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sidebar h3 {
+      font-size: 14px;
+      color: #94a3b8;
+      margin: 10px 10px 5px;
+    }
+
+    .side-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      color: white;
+      font-size: 14px;
+      transition: 0.2s;
+    }
+
+    .side-link:hover {
+      background: var(--sidebar-hover);
+    }
+
+    .side-link.active {
+      background: #10b981;
+    }
+
+    /* CONTENT */
+
+    .content {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+    }
+
+    .profile-card {
+      background: var(--card-bg);
+      width: 900px;
+      border-radius: 14px;
+      padding: 35px;
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    }
+
+ </style>
+ 
+ 
+ 
+ 
+ 
+ <aside class="sidebar">
+
+        <h3>ACCOUNT</h3>
+
+        <a class="side-link" href="profile">
+          <span class="material-symbols-outlined">person</span>Profile
+        </a>
+
+        <a class="side-link" href="address">
+          <span class="material-symbols-outlined">location_on</span>Address
+        </a>
+
+        <a class="side-link">
+          <span class="material-symbols-outlined">package</span>Orders
+        </a>
+
+        <a class="side-link">
+          <span class="material-symbols-outlined">favorite</span>Wishlist
+        </a>
+
+        <a class="side-link">
+          <span class="material-symbols-outlined">account_balance_wallet</span>Wallet
+        </a>
+
+      </aside>

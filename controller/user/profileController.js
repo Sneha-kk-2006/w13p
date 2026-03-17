@@ -38,6 +38,26 @@ const updateProfile = async (req, res) => {
       updateData.profileImage = '/uploads/' + req.file.filename; // save relative path
     }
 
+
+
+
+    //removing the images
+
+    if(req.body.removeProfileImage&&user.profileImage){
+      const oldPath=path.join(__dirname,"../../public",user.profileImage);
+      if(fs.existsSync(oldPath)){
+        fs.unlinkSync(oldPath);//deleting from server
+      }
+      updateData.profileImage=null;
+    }
+    
+         
+    if(req.file){
+      updateData.profileImage='/uploads'+req.file.filename
+    }
+
+
+
     const user = await User.findByIdAndUpdate(userId, updateData, { returnDocument:"after" });
     res.redirect('/profile');
   } catch (err) {
