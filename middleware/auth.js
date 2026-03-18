@@ -21,8 +21,8 @@ const userAuth = (req, res, next) => {
 
 const adminAuth = async (req, res, next) => {
   try {
-    if (req.session.user) {
-      const userData = await User.findById(req.session.user);
+    if (req.session.admin) {
+      const userData = await User.findById(req.session.admin);
       if (userData && userData.isAdmin) {
         return next();
       }

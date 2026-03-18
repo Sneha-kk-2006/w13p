@@ -18,6 +18,7 @@ router.get('/login',isAuth,userController.loadlogin)
 router.post('/login',isAuth,userController.login)
 router.get('/google',passport.authenticate('google',{scope:['profile','email']}))
 router.get('/google/callback', passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
+    req.session.user = req.user._id;
     res.redirect('/')
 });
 router.get('/forgotPassword',isAuth,userController.loadforgot)
@@ -28,15 +29,27 @@ router.get('/products',userController.loadproducts)
 
 
 
-router.get('/profile',profileController.loadprofile)
-router.post('/editProfile', upload.single("profileImage"),profileController.updateProfile)
+router.get('/profile',userAuth,profileController.loadprofile)
+router.post('/editProfile', userAuth, upload.single("profileImage"),profileController.updateProfile)
 
 
 
 
-router.get("/address",addressController.loadAddress)
-router.post('/addAddress',addressController.addAddress)
+router.get("/address",userAuth,addressController.loadAddress)
+router.post('/addAddress',userAuth,addressController.addAddress)
+router.get('/deleteAddress',userAuth,addressController.deleteAddress)
+router.get('/editAddress',userAuth,addressController.loadEditAddress)
+router.post('/editAddress',userAuth,addressController.editAddress)
+router.get('/setDefaultAddress',userAuth,addressController.setDefaultAddress)
 
 
 
+
+router.get('/changePassword',userAuth,profileController.loadChangePassword)
+router.post('/changePassword',userAuth,profileController.changePassword)
+
+
+
+
+router.post('/logout',profileController.logout)
 module.exports=router;               

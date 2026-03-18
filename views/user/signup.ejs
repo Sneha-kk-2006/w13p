@@ -262,41 +262,43 @@
 
         import { showToast  } from "/helpers/msg.helper.js"
        
-        document.getElementById("signform").addEventListener("submit", async function (e) {
+       document.getElementById("signform").addEventListener("submit", async function (e) {
 
-            e.preventDefault()
+    e.preventDefault();
 
-            const name = document.getElementById("name").value
-            const email = document.getElementById("email").value
-            const password = document.getElementById("pass").value
-            const confirmpassword = document.getElementById("confirm-pass").value
+    if (!validateForm()) {
+        return; // stop form submission if validation fails
+    }
 
-            const response = await fetch("/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    password,
-                    confirmpassword
-                })
-            })
+    const name = document.getElementById("name").value
+    const email = document.getElementById("email").value
+    const password = document.getElementById("pass").value
+    const confirmpassword = document.getElementById("confirm-pass").value
 
-            const data = await response.json()
-
-            if (data.success) {
-
-                showToast(data.message, 'success');
-
-                window.location.href = "/verify-otp"
-
-            } else {
-                showToast(data.message, 'error')
-            }
+    const response = await fetch("/signup", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name,
+            email,
+            password,
+            confirmpassword
         })
+    })
 
+    const data = await response.json()
+
+    if (data.success) {
+
+        showToast(data.message, 'success');
+        window.location.href = "/verify-otp"
+
+    } else {
+        showToast(data.message, 'error')
+    }
+});
         const nameid = document.getElementById("name")
         const emailid = document.getElementById("email")
         const passid = document.getElementById("pass")
@@ -307,50 +309,91 @@
         const error4 = document.getElementById("error4")
         const signform = document.getElementById("signform")
 
+function nameValidn() {
 
-        function nameValidn(e) {
-            const nameVal = nameid.value;
-            const namePattern = /^[A-Za-z\s]{2,50}$/
-            if (nameVal.trim() === "") {
-                error1.style.display = "block";
-                error1.innerHTML = "please enter a name "
-            } else if (!namePattern.test(nameVal)) {
-                error1.style.display = "block";
-                error1.innerHTML = "enter a correct name"
-            } else {
-                error1.style.display = "none";
-                error1.innerHTML = "";
-            }
-        }
+    const nameVal = nameid.value.trim();
+    const namePattern = /^[A-Za-z ]{2,50}$/;
 
-        function emailValidn(e) {
-            const emailval = emailid.value;
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-            if (!emailPattern.test(emailval)) {
-                error2.style.display = "block";
-                error2.innerHTML = "invalid email format"
-            } else {
-                error2.style.display = "none";
-                error2.innerHTML = ""
-            }
-        }
+    if (nameVal === " ") {
+        error1.style.display = "block";
+        error1.innerHTML = "Please enter your name";
+        return false;
+    }
 
-        function passwordValidn(e) {
-            const passval = passid.value;
-            const confpassval = confirmpassid.value;
-            if (passval === "") {
-                error3.style.display = "block";
-                error3.innerHTML = "please enter a password";
-            } else if (passval.length < 6) {
-                error3.style.display = "block";
-                error3.innerHTML = "password must be at least 6 characters";
-            } else if (passval !== confpassval) {
-                error4.style.display = "block"; error4.innerHTML = "passwords do not match";
-            } else {
-                error4.style.display = "none"
-                    ; error4.innerHTML = "";
-            }
-        }
+    if (!namePattern.test(nameVal)) {
+        error1.style.display = "block";
+        error1.innerHTML = "Name should contain only letters";
+        return false;
+    }
+
+    error1.style.display = "none";
+    error1.innerHTML = "";
+    return true;
+}
+
+
+function emailValidn() {
+
+    const emailVal = emailid.value.trim();
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (emailVal === "") {
+        error2.style.display = "block";
+        error2.innerHTML = "Please enter your email";
+        return false;
+    }
+
+    if (!emailPattern.test(emailVal)) {
+        error2.style.display = "block";
+        error2.innerHTML = "Invalid email format";
+        return false;
+    }
+
+    error2.style.display = "none";
+    error2.innerHTML = "";
+    return true;
+}
+
+
+function passwordValidn() {
+
+    const passVal = passid.value;
+    const confirmPassVal = confirmpassid.value;
+
+    if (passVal === "") {
+        error3.style.display = "block";
+        error3.innerHTML = "Please enter a password";
+        return false;
+    }
+
+    if (passVal.length < 6) {
+        error3.style.display = "block";
+        error3.innerHTML = "Password must be at least 6 characters";
+        return false;
+    }
+
+    error3.style.display = "none";
+    error3.innerHTML = "";
+
+    if (confirmPassVal !== passVal) {
+        error4.style.display = "block";
+        error4.innerHTML = "Passwords do not match";
+        return false;
+    }
+
+    error4.style.display = "none";
+    error4.innerHTML = "";
+
+    return true;
+}
+
+
+function validateForm() {
+    if (!nameValidn() || !emailValidn() || !passwordValidn()) {
+        return false;
+    }
+    return true;
+}
 
     </script>
 </body>

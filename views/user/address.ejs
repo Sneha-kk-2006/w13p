@@ -6,7 +6,7 @@
 <title>SNOVA | Address</title>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <style>
 
 body{
@@ -170,9 +170,16 @@ margin-top:0;
 .modal-content textarea{
 width:100%;
 padding:10px;
-margin-bottom:10px;
+margin-bottom:5px;
 border-radius:6px;
 border:1px solid #ccc;
+}
+
+.error{
+color:red;
+font-size:13px;
+margin-bottom:8px;
+display:block;
 }
 
 .modal-buttons{
@@ -184,29 +191,23 @@ text-align:right;
 
 <body>
 
-
-  <%- include('../partials/user/header') %>
+<%- include('../partials/user/header') %>
 
 <div class="container">
 
-<!-- SIDEBAR -->
-    <%- include('../partials/user/sidebar')%>
-<!-- MAIN -->
+<%- include('../partials/user/sidebar') %>
 
 <div class="main">
 
 <div class="address-container">
 
 <div class="address-header">
-
 <h2>My Addresses</h2>
-
-<button class="btn btn-add" onclick="openModal()">+ Add Address</button>
-
+<button class="btn btn-add" onclick="openAddModal()">+ Add Address</button>
 </div>
 
+<!-- ADDRESS LIST -->
 
-<!-- ADDRESS CARD -->
 <% if(addresses.length > 0){ %>
 
 <% addresses.forEach(address => { %>
@@ -216,20 +217,38 @@ text-align:right;
 <h4><%= address.type %> Address</h4>
 
 <p><%= address.fullName %></p>
-
 <p><%= address.addressline1 %></p>
-
 <p><%= address.city %>, <%= address.state %> - <%= address.pincode %></p>
-
 <p>Phone: <%= address.phone %></p>
 
 <div class="address-actions">
 
-<button class="btn btn-default">Default</button>
+<% if(address.isDefault){ %>
+<button class="btn btn-default" style="background:#1abc9c">Default</button>
+<% } else { %>
+<a href="/setDefaultAddress?id=<%= address._id %>" class="btn btn-default">Set Default</a>
+<% } %>
 
-<button class="btn btn-edit" onclick="openModal()">Edit</button>
+<button
+class="btn btn-edit"
+onclick="editAddress(
+'<%= address._id %>',
+'<%= address.type %>',
+'<%= address.fullName %>',
+'<%= address.phone %>',
+'<%= address.addressline1 %>',
+'<%= address.addressline2 %>',
+'<%= address.city %>',
+'<%= address.state %>',
+'<%= address.country %>',
+'<%= address.pincode %>'
+)">
+Edit
+</button>
 
-<button class="btn btn-delete">Delete</button>
+<button class="btn btn-delete" onclick="deleteAddress('<%= address._id %>')">
+Delete
+</button>
 
 </div>
 
@@ -243,13 +262,11 @@ text-align:right;
 
 <% } %>
 
-
 </div>
 
 </div>
 
 </div>
-
 
 <!-- MODAL -->
 
@@ -257,54 +274,178 @@ text-align:right;
 
 <div class="modal-content">
 
-<h3>Add Address</h3>
+<h3 id="modalTitle">Add Address</h3>
 
-<form action="/addAddress" method="post">
+<form id="addressForm" action="/addAddress" method="post">
 
-<input type="text" name="type"    placeholder="type :[work, home]">
+<input type="hidden" name="id" id="addressId">
 
-<input type="text"name="fullName"   placeholder="Full Name">
+<input type="text" name="type" id="type" placeholder="Type (Home / Work)">
+<span class="error" id="typeError"></span>
 
-<input type="text"name="phone" placeholder="Phone Number">
+<input type="text" name="fullName" id="fullName" placeholder="Full Name">
+<span class="error" id="nameError"></span>
 
-<textarea name="addressline1" Street Address line 1 , street address></textarea>
+<input type="text" name="phone" id="phone" placeholder="Phone Number">
+<span class="error" id="phoneError"></span>
 
-<textarea name="addressline2" placeholder="Street Address line 2(optional)"></textarea>
+<textarea name="addressline1" id="addressline1" placeholder="Street Address line 1"></textarea>
+<span class="error" id="addressError"></span>
 
-<input type="text" name="city" placeholder="City">
+<textarea name="addressline2" id="addressline2" placeholder="Street Address line 2 (optional)"></textarea>
 
-<input type="text"name="state" placeholder="State">
+<input type="text" name="city" id="city" placeholder="City">
+<span class="error" id="cityError"></span>
 
-<input type="text" name="country" placeholder="country">
+<input type="text" name="state" id="state" placeholder="State">
+<span class="error" id="stateError"></span>
 
-<input type="text" name="pincode" placeholder="Pincode">
+<input type="text" name="country" id="country" placeholder="Country">
+
+<input type="text" name="pincode" id="pincode" placeholder="Pincode">
+<span class="error" id="pincodeError"></span>
 
 <div class="modal-buttons">
-
-<button class="btn btn-add">Save changes</button>
-
-<button class="btn btn-delete" onclick="closeModal()">Cancel</button>
+<button class="btn btn-add">Save</button>
+<button type="button" class="btn btn-delete" onclick="closeModal()">Cancel</button>
+</div>
 
 </form>
 
 </div>
 
 </div>
-
-</div>
-
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 
-function openModal(){
+function openAddModal(){
 
-document.getElementById("addressModal").style.display="flex";
+document.getElementById("modalTitle").innerText="Add Address"
+document.getElementById("addressForm").action="/addAddress"
+document.getElementById("addressForm").reset()
+clearErrors()
+
+document.getElementById("addressModal").style.display="flex"
+
+}
+
+function editAddress(id,type,fullName,phone,addressline1,addressline2,city,state,country,pincode){
+
+document.getElementById("modalTitle").innerText="Edit Address"
+document.getElementById("addressForm").action="/editAddress"
+
+document.getElementById("addressId").value=id
+document.getElementById("type").value=type
+document.getElementById("fullName").value=fullName
+document.getElementById("phone").value=phone
+document.getElementById("addressline1").value=addressline1
+document.getElementById("addressline2").value=addressline2
+document.getElementById("city").value=city
+document.getElementById("state").value=state
+document.getElementById("country").value=country
+document.getElementById("pincode").value=pincode
+
+clearErrors()
+
+document.getElementById("addressModal").style.display="flex"
 
 }
 
 function closeModal(){
+document.getElementById("addressModal").style.display="none"
+}
 
-document.getElementById("addressModal").style.display="none";
+function clearErrors(){
+document.querySelectorAll(".error").forEach(el=>el.innerText="")
+}
+
+document.getElementById("addressForm").addEventListener("submit",function(e){
+
+let valid=true
+
+const name=document.getElementById("fullName").value.trim()
+const phone=document.getElementById("phone").value.trim()
+const address=document.getElementById("addressline1").value.trim()
+const city=document.getElementById("city").value.trim()
+const state=document.getElementById("state").value.trim()
+const pincode=document.getElementById("pincode").value.trim()
+
+const phonePattern=/^[0-9]{10}$/
+const pincodePattern=/^[0-9]{6}$/
+
+clearErrors()
+
+if(name===""){
+document.getElementById("nameError").innerText="Enter full name"
+valid=false
+}
+
+if(type===""){
+document.getElementById("typeError").innerText="Enter address type"
+valid=false
+}
+
+if(!phonePattern.test(phone)){
+document.getElementById("phoneError").innerText="Enter valid 10 digit phone"
+valid=false
+}
+
+if(address===""){
+document.getElementById("addressError").innerText="Enter address"
+valid=false
+}
+
+if(city===""){
+document.getElementById("cityError").innerText="Enter city"
+valid=false
+}
+
+if(state===""){
+document.getElementById("stateError").innerText="Enter state"
+valid=false
+}
+
+if(!pincodePattern.test(pincode)){
+document.getElementById("pincodeError").innerText="Enter valid 6 digit pincode"
+valid=false
+}
+
+if(!valid){
+e.preventDefault()
+}
+
+})
+function deleteAddress(id){
+
+Swal.fire({
+title: "Are you sure?",
+text: "This address will be permanently deleted!",
+icon: "warning",
+showCancelButton: true,
+confirmButtonColor: "#e74c3c",
+cancelButtonColor: "#6c757d",
+confirmButtonText: "Yes, delete it"
+}).then((result) => {
+
+if(result.isConfirmed){
+
+Toastify({
+text: "Address deleted successfully",
+duration: 2000,
+gravity: "top",
+position: "right",
+backgroundColor: "#e74c3c",
+}).showToast();
+
+setTimeout(()=>{
+window.location.href="/deleteAddress?id="+id
+},1500)
+
+}
+
+})
 
 }
 

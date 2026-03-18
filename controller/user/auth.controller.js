@@ -138,6 +138,7 @@ const verifyOtp = async (req, res) => {
       });
     }
   } catch (error) {
+    console.log("hi");
     console.error("Verify OTP error:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
@@ -190,9 +191,8 @@ const login = async (req, res) => {
       return res.json({ success: false, message: "Incorrect password" });
     }
 
-    const user = await userService
-      .findById(findUser._id);
-      
+    const user = await userService.findById(findUser._id);
+
     req.session.user = findUser._id;
     res.locals.user = user;
     res.json({ success: true, redirectUrl: "/" });

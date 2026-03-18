@@ -2,9 +2,12 @@ const User = require("../../models/userSchema");
 const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 
-const loadlogin = (req, res) => {
+const loadlogin = async (req, res) => {
   if (req.session.admin) {
-    return res.render("admin/dashboard");
+    const admin = await User.findById(req.session.admin);
+    if (admin && admin.isAdmin) {
+      return res.redirect("/admin/dashboard");
+    }
   }
   res.render("admin/login", { message: null });
 };
@@ -16,13 +19,13 @@ const login = async (req, res) => {
     if (admin) {
       const passwordMatch = await bcrypt.compare(password, admin.password);
       if (passwordMatch) {
-        req.session.admin = true;
+        req.session.admin = admin._id;
         return res.redirect("/admin/dashboard");
       } else {
-        return res.redirect("/admin/login");
+        return res.render("admin/login", { message: "Invalid password" });
       }
     } else {
-      return res.redirect("/admin/login");
+      return res.render("admin/login", { message: "Admin not found" });
     }
   } catch (error) {
     console.log("log error", error);
@@ -31,12 +34,10 @@ const login = async (req, res) => {
 };
 
 const loadDashboard = async (req, res) => {
-  if (req.session.admin) {
-    try {
-      res.render("admin/dashboard");
-    } catch (error) {
-      res.render("/admin/error");
-    }
+  try {
+    res.render("admin/dashboard");
+  } catch (error) {
+    res.render("admin/error");
   }
 };
 

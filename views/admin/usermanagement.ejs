@@ -6,7 +6,7 @@
 <title>SNOVA | User Management</title>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
 <style>
 
 :root {
@@ -192,6 +192,8 @@ color:white;
 </head>
 
 <body>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <%- include('../partials/admin/header') %>
 
@@ -255,7 +257,7 @@ Clear
 </tr>
 
 </thead>
- <% let limit = 10 %>
+ <% let limit = 5 %>
 <tbody>
 
 <% users.forEach((user,index)=>{ %>
@@ -295,21 +297,16 @@ Clear
 
 <% if(!user.isBlocked){ %>
 
-<a
-href="/admin/blockUser?id=<%= user._id %>"
-onclick="return confirm('Block this user?')"
->
+<button onclick="blockUser('<%= user._id %>')">
 Block
-</a>
+</button>
 
 <% }else{ %>
 
-<a
-href="/admin/unblockUser?id=<%= user._id %>"
-onclick="return confirm('Unblock this user?')"
->
+<button onclick="unblockUser('<%= user._id %>')">
 Unblock
-</a>
+</button>
+
 
 <% } %>
 
@@ -371,6 +368,69 @@ Next
 </div>
 
 </main>
+<script>
+   function blockUser(userId){
+
+Swal.fire({
+title: "Block user?",
+text: "This user will be blocked",
+icon: "warning",
+showCancelButton: true,
+confirmButtonText: "Yes, block",
+cancelButtonText: "Cancel"
+}).then((result)=>{
+
+if(result.isConfirmed){
+
+Toastify({
+text: "User blocked successfully",
+duration: 2000,
+gravity: "top",
+position: "right",
+backgroundColor: "#ef4444"
+}).showToast();
+
+setTimeout(()=>{
+window.location.href="/admin/blockUser?id="+userId
+},1500)
+
+}
+
+})
+
+}
+function unblockUser(userId){
+
+Swal.fire({
+title: "Unblock user?",
+text: "This user will be able to login again.",
+icon: "question",
+showCancelButton: true,
+confirmButtonText: "Yes, unblock",
+cancelButtonText: "Cancel"
+}).then((result)=>{
+
+if(result.isConfirmed){
+
+Toastify({
+text: "User unblocked successfully",
+duration: 2000,
+gravity: "top",
+position: "right",
+backgroundColor: "#10b981"
+}).showToast();
+
+setTimeout(()=>{
+window.location.href="/admin/unblockUser?id="+userId
+},1500)
+
+}
+
+})
+
+}
+</script>
 
 </body>
+
 </html>

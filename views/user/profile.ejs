@@ -420,6 +420,20 @@
       border-radius: 6px;
       cursor: pointer;
     }
+
+
+    .logout-btn {
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .logout-btn:hover {
+      background: #e60000;
+    }
   </style>
 
 
@@ -427,165 +441,155 @@
 
 <body>
   <%- include('../partials/user/header') %>
-    <!-- <header class="header">
 
-<div class="logo">SNOVA</div>
-
-<div class="header-right">
-<span class="material-symbols-outlined">notifications</span>
-
-<div class="header-avatar">
-<img src="https://ui-avatars.com/api/?name=Sneha">
-</div>
-</div>
-
-</header>  -->
 
     <div class="dashboard">
 
 
-        <%- include('../partials/user/sidebar') %>
+      <%- include('../partials/user/sidebar') %>
 
-      <main class="content">
+        <main class="content">
 
-        <div class="profile-card">
+          <div class="profile-card">
 
-          <div class="profile-header">
+            <div class="profile-header">
 
-            <div>
-              <h2>My Profile</h2>
-              <p style="color:#6b7280;font-size:14px">Manage your personal details</p>
-            </div>
+              <div>
+                <h2>My Profile</h2>
+                <p style="color:#6b7280;font-size:14px">Manage your personal details</p>
+              </div>
 
-            <div>
+              <div>
 
-              <div class="avatar-wrapper">
+                <div class="avatar-wrapper">
 
-                <div class="avatar">
-                 <img id="profileImage"
-     src="<%= user.profileImage ? user.profileImage + '?t=' + Date.now() : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>"
-     alt="Profile Image">
+                  <div class="avatar">
+                    <img id="profileImage"
+                      src="<%= user.profileImage ? user.profileImage + '?t=' + Date.now() : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>"
+                      alt="Profile Image">
+                  </div>
+
+                  <div class="edit-avatar" onclick="openModal('editModal')">
+                    <span class="material-symbols-outlined">edit</span>
+                  </div>
+
                 </div>
 
-                <div class="edit-avatar" onclick="openModal('editModal')">
-                  <span class="material-symbols-outlined">edit</span>
-                </div>
+                <div class="joined">Joined Oct 2024</div>
 
               </div>
 
-              <div class="joined">Joined Oct 2024</div>
+              <div class="actions">
+
+                <button class="btn btn-edit" onclick="openModal('editModal')">
+                  <span class="material-symbols-outlined">edit</span>Edit
+                </button>
+
+                <button class="btn btn-logout" onclick="openModal('logoutModal')">
+                  <span class="material-symbols-outlined">logout</span>Logout
+                </button>
+
+              </div>
 
             </div>
 
-            <div class="actions">
+            <div class="field">
+              <label>Full Name</label>
+              <div class="input-box">
+                <input value="<%= user.name %>" type="text" name="name">
+              </div>
+            </div>
 
-              <button class="btn btn-edit" onclick="openModal('editModal')">
-                <span class="material-symbols-outlined">edit</span>Edit
+            <div class="field">
+              <label>Email</label>
+              <div class="input-box">
+                <input value="<%= user.email %>" type="email" name="email" readonly>
+              </div>
+            </div>
+
+            <div class="field">
+              <label>Phone</label>
+              <div class="input-box">
+                <input value="<%= user.phone %>" type="tel" name="phone">
+              </div>
+            </div>
+
+            <div class="password-section">
+
+              <h3>Security</h3>
+
+              <button class="change-pass-btn">
+                <a href="/changePassword">Change Password</a>
               </button>
 
-              <button class="btn btn-logout" onclick="openModal('logoutModal')">
-                <span class="material-symbols-outlined">logout</span>Logout
-              </button>
-
             </div>
 
           </div>
 
-          <div class="field">
-            <label>Full Name</label>
-            <div class="input-box">
-              <input value="<%= user.name %>" type="text" name="name">
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Email</label>
-            <div class="input-box">
-              <input value="<%= user.email %>" type="email" name="email" readonly>
-            </div>
-          </div>
-
-          <div class="field">
-            <label>Phone</label>
-            <div class="input-box">
-              <input value="<%= user.phone %>" type="tel" name="phone">
-            </div>
-          </div>
-
-          <div class="password-section">
-
-            <h3>Security</h3>
-
-            <button class="change-pass-btn">
-              Change Password
-            </button>
-
-          </div>
-
-        </div>
-
-      </main>
+        </main>
 
     </div>
 
     <!-- EDIT MODAL -->
-<!-- Edit Profile Modal -->
-<div class="modal-overlay" id="editModal">
-  <div class="modal">
+    <!-- Edit Profile Modal -->
+    <div class="modal-overlay" id="editModal">
+      <div class="modal">
 
-    <!-- Modal Header -->
-    <div class="modal-header">
-      <h3>Edit Profile</h3>
-      <span class="close-btn" onclick="closeModal('editModal')">&times;</span>
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h3>Edit Profile</h3>
+          <span class="close-btn" onclick="closeModal('editModal')">&times;</span>
+        </div>
+
+        <!-- Form -->
+        <form action="/editProfile" method="POST" enctype="multipart/form-data">
+
+          <!-- Image Edit Section -->
+          <div class="image-edit">
+            <div class="modal-avatar">
+              <img id="modalImage"
+                src="<%= user.profileImage ? user.profileImage + '?t=' + Date.now() : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>"
+                alt="Profile Image">
+            </div>
+
+            <div class="image-buttons">
+              <!-- Upload Button -->
+              <label class="img-btn" for="profileFile">Upload</label>
+              <input id="profileFile" name="profileImage" type="file" accept="image/*" hidden
+                onchange="previewImage(event)">
+
+              <!-- Remove Button -->
+              <button type="button" class="img-btn remove" onclick="removeImage()">Remove</button>
+            </div>
+          </div>
+          <input type="hidden" name="removeProfileImage" id="removeProfileImage" value="false">
+
+          <!-- Other Fields -->
+          <div class="field">
+            <label>Name</label>
+            <input type="text" name="name" value="<%= user.name %>" required>
+          </div>
+
+          <div class="field">
+            <label>Email</label>
+            <input type="email" name="email" value="<%= user.email %>" required>
+          </div>
+
+          <div class="field">
+            <label>Phone</label>
+            <input type="text" name="phone" value="<%= user.phone %>">
+          </div>
+
+          <!-- Actions -->
+          <div class="modal-actions">
+            <button type="submit" class="btn-save">Save Changes</button>
+            <button type="button" class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
+          </div>
+
+        </form>
+
+      </div>
     </div>
-
-    <!-- Form -->
-    <form action="/editProfile" method="POST" enctype="multipart/form-data">
-
-      <!-- Image Edit Section -->
-      <div class="image-edit">
-        <div class="modal-avatar">
-          <img id="modalImage"
-            src="<%= user.profileImage ? user.profileImage + '?t=' + Date.now() : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>"
-            alt="Profile Image">
-        </div>
-
-        <div class="image-buttons">
-          <!-- Upload Button -->
-          <label class="img-btn" for="profileFile">Upload</label>
-          <input id="profileFile" name="profileImage" type="file" accept="image/*" hidden onchange="previewImage(event)">
-
-          <!-- Remove Button -->
-          <button type="button" class="img-btn remove" onclick="removeImage()">Remove</button>
-        </div>
-      </div>
-
-      <!-- Other Fields -->
-      <div class="field">
-        <label>Name</label>
-        <input type="text" name="name" value="<%= user.name %>" required>
-      </div>
-
-      <div class="field">
-        <label>Email</label>
-        <input type="email" name="email" value="<%= user.email %>" required>
-      </div>
-
-      <div class="field">
-        <label>Phone</label>
-        <input type="text" name="phone" value="<%= user.phone %>">
-      </div>
-
-      <!-- Actions -->
-      <div class="modal-actions">
-        <button type="submit" class="btn-save">Save Changes</button>
-        <button type="button" class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
-      </div>
-
-    </form>
-
-  </div>
-</div>
     <!-- LOGOUT MODAL -->
 
     <div class="modal-overlay" id="logoutModal">
@@ -602,7 +606,9 @@
 
         <div class="modal-actions" style="justify-content:center">
 
-          <button class="btn-save" onclick="location.href='/logout'">Logout</button>
+          <form action="/logout" method="POST">
+            <button type="submit" class="logout-btn">Logout</button>
+          </form>
 
           <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
 
@@ -614,8 +620,7 @@
 
     <script>
       // Default avatar URL (fallback)
-      const defaultAvatar = "<%= user.profileImage || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>";
-
+      const defaultAvatar = "https://ui-avatars.com/api/?name=<%= encodeURIComponent(user.name) %>";
       // Open modal
       function openModal(id) {
         document.getElementById(id).style.display = "flex";
@@ -635,28 +640,38 @@
         reader.readAsDataURL(event.target.files[0]);
       }
 
+      // Tell server to remove image by adding a hidden input
+      let removeInput = document.getElementById("removeProfileImage");
+      if (!removeInput) {
+        removeInput = document.createElement("input");
+        removeInput.type = "hidden";
+        removeInput.name = "removeProfileImage";
+        removeInput.id = "removeProfileImage";
+        removeInput.value = "true";
+        document.querySelector("form").appendChild(removeInput);
+      } else {
+        removeInput.value = "true";
+      }
+
+
+
+
       // Remove image (reset to default)
       function removeImage() {
+
         const modalImg = document.getElementById("modalImage");
-        modalImg.src = defaultAvatar;
 
-        // Clear file input
-        const fileInput = document.querySelector('input[name="profileImage"]');
+        // show default avatar
+        modalImg.src = "https://ui-avatars.com/api/?name=<%= encodeURIComponent(user.name) %>";
+
+        // clear uploaded file
+        const fileInput = document.getElementById("profileFile");
         if (fileInput) fileInput.value = "";
-      }
-        // Tell server to remove image by adding a hidden input
-  let removeInput = document.getElementById("removeProfileImage");
-  if (!removeInput) {
-    removeInput = document.createElement("input");
-    removeInput.type = "hidden";
-    removeInput.name = "removeProfileImage";
-    removeInput.id = "removeProfileImage";
-    removeInput.value = "true";
-    document.querySelector("form").appendChild(removeInput);
-  } else {
-    removeInput.value = "true";
-  }
 
+        // mark image for removal in backend
+        document.getElementById("removeProfileImage").value = "true";
+
+      }
       // Optional: preview save changes (front-end only)
       function saveProfile() {
         const profileImg = document.getElementById("profileImage"); // your main profile img outside modal
