@@ -3,7 +3,7 @@ const MESSAGES = {
   USER_BLOCKED: "User is blocked by admin",
   INVALID_PASSWORD: "Incorrect password",
   OTP_EXPIRED: "OTP expired",
-  INVALID_OTP: "Invalid OTP"
+  INVALID_OTP: "Invalid OTP",
 };
 
 module.exports = MESSAGES;

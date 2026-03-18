@@ -4,8 +4,8 @@ const multer = require("multer");
 const path = require("path");
 const env = require("dotenv").config();
 const db = require("./config/db");
-const userRouter = require("./router/userRouter");
-const adminRouter = require("./router/adminRouter");
+const userRouter = require("./routes/userRouter");
+const adminRouter = require("./routes/adminRouter");
 const session = require("express-session");
 const morgan = require("morgan");
 const passport = require("./config/passport");
@@ -27,7 +27,7 @@ app.use(
       httpOnly: true,
       maxAge: 72 * 60 * 60 * 1000,
     },
-  }),
+  })
 );
 
 app.use((req, res, next) => {

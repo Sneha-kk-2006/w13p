@@ -29,7 +29,7 @@ const login = async (req, res) => {
     }
   } catch (error) {
     console.log("log error", error);
-    return res.redirect("error");
+    return res.redirect("/admin/error");
   }
 };
 
@@ -44,8 +44,11 @@ const loadDashboard = async (req, res) => {
 const loadsales = async (req, res) => {
   try {
     res.render("admin/salesreport");
-  } catch (error) {}
+  } catch (error) {
+    console.error("Load sales error:", error);
+  }
 };
+
 const loaduser = async (req, res) => {
   try {
     let search = req.query.search || "";
@@ -58,9 +61,8 @@ const loaduser = async (req, res) => {
     };
 
     const totalUsers = await User.countDocuments(query);
-
     const users = await User.find(query)
-      .sort({ createdAt: -1 }) // latest first
+      .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
 
@@ -79,14 +81,10 @@ const loaduser = async (req, res) => {
 const blockUser = async (req, res) => {
   try {
     const id = req.query.id;
-
     await User.updateOne(
       { _id: id },
-      {
-        $set: { isBlocked: true },
-      },
+      { $set: { isBlocked: true } }
     );
-
     res.redirect("/admin/usermanagement");
   } catch (error) {
     console.log(error);
@@ -96,14 +94,10 @@ const blockUser = async (req, res) => {
 const unblockUser = async (req, res) => {
   try {
     const id = req.query.id;
-
     await User.updateOne(
       { _id: id },
-      {
-        $set: { isBlocked: false },
-      },
+      { $set: { isBlocked: false } }
     );
-
     res.redirect("/admin/usermanagement");
   } catch (error) {
     console.log(error);
@@ -113,6 +107,7 @@ const unblockUser = async (req, res) => {
 const loaderror = async (req, res) => {
   res.render("admin/error");
 };
+
 module.exports = {
   loadlogin,
   login,

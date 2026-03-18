@@ -25,24 +25,26 @@ const updateProfile = async (req, res) => {
       return res.redirect("/login");
     }
 
-    const user = await User.findById(userId);
 
+    const user = await User.findById(userId);
     const { name, email, phone } = req.body;
 
     // EMAIL CHANGE → OTP FLOW
     if (email !== user.email) {
       const otp = Math.floor(100000 + Math.random() * 900000);
 
-      req.session.emailOtp = otp;
-      req.session.newEmail = email;
-      req.session.oldEmail = user.email;
+      req.session.auth = {
+        otp,
+        email,
+        type: "emailUpdate",
+      };
 
       await sendOtp(user.email, otp);
       await sendOtp(email, otp);
 
       console.log(`OTP sent to ${user.email} and ${email}: ${otp}`);
 
-      return res.render("user/verify-otp");
+      return res.redirect(303, "/verify-otp");
     }
 
     let updateData = {
@@ -79,7 +81,6 @@ const updateProfile = async (req, res) => {
     }
 
     await User.findByIdAndUpdate(userId, updateData);
-
     res.redirect("/profile");
   } catch (err) {
     console.error(err);
@@ -99,17 +100,15 @@ const loadChangePassword = async (req, res) => {
 const changePassword = async (req, res) => {
   try {
     const userId = req.session.user;
-
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
-    if (newPassword !== confirmNewPassword) {
+    if (newPassword !== confirmPassword) {
       return res.render("user/changePassword", {
         message: "New passwords do not match",
       });
     }
 
     const user = await User.findById(userId);
-
     const isMatch = await bcrypt.compare(currentPassword, user.password);
 
     if (!isMatch) {
@@ -119,7 +118,6 @@ const changePassword = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-
     user.password = hashedPassword;
 
     await user.save();

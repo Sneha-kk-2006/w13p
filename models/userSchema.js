@@ -1,46 +1,42 @@
 const mongoose = require("mongoose");
+const { Schema } = mongoose;
 
-const {Schema}=mongoose;
-const userSchema= new Schema({
-    name:{
-        type:String,
-        required:true
+const userSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
     },
-    email:{
-        type:String,
-        required:true
+    email: {
+      type: String,
+      required: true,
+      unique: true,
     },
-
-  phone:{
-    type:String
+    password: {
+      type: String,
+      required: false,
+    },
+    googleId: {
+      type: String,
+      unique: true,
+      sparse: true,
+    },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
+    profileImage: {
+      type: String,
+      default: "",
+    },
   },
-    googleId:{
-        type:String,
-        unique:true,
-        sparse:true
-    },
-    password:{
-        type:String,
-        required:false//bcz we don't entering password during the single signup
-    },
-    profileImage:{
-        type:String,
-        required:false
-    },
-    isBlocked:{
-        type:Boolean,
+  { timestamps: true }
+);
 
-    },
-    isAdmin:{
-    type:Boolean,
-    default:false
-    },
-    createdOn:{
-        type:Date,
-        default:Date.now,
-    }
-   
-})
+const User = mongoose.model("User", userSchema);
 
-const User=mongoose.model("User",userSchema)
-module.exports=User
+module.exports = User;

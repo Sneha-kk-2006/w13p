@@ -11,7 +11,7 @@ const userAuth = (req, res, next) => {
         }
       })
       .catch((error) => {
-        console.log("error occured in user auth middleware");
+        console.log("error occurred in user auth middleware");
         res.status(500).send("internal server error");
       });
   } else {
@@ -41,7 +41,6 @@ const isUser = async (req, res, next) => {
 
       if (user && user.isBlocked) {
         req.session.destroy();
-
         return res.redirect("/login");
       }
     }
@@ -49,7 +48,6 @@ const isUser = async (req, res, next) => {
     next();
   } catch (error) {
     console.log(error);
-
     res.redirect("/login");
   }
 };

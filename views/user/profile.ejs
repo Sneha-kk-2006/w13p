@@ -638,19 +638,8 @@
           document.getElementById("modalImage").src = reader.result;
         };
         reader.readAsDataURL(event.target.files[0]);
-      }
-
-      // Tell server to remove image by adding a hidden input
-      let removeInput = document.getElementById("removeProfileImage");
-      if (!removeInput) {
-        removeInput = document.createElement("input");
-        removeInput.type = "hidden";
-        removeInput.name = "removeProfileImage";
-        removeInput.id = "removeProfileImage";
-        removeInput.value = "true";
-        document.querySelector("form").appendChild(removeInput);
-      } else {
-        removeInput.value = "true";
+        // If a new image is selected, don't remove it
+        document.getElementById("removeProfileImage").value = "false";
       }
 
 
