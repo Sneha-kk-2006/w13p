@@ -333,25 +333,52 @@ function nameValidn() {
 
 
 function emailValidn() {
+  // Ensure we select the element properly
+  const emailInput = document.getElementById('emailid') || document.querySelector('[name="email"]');
+  if (!emailInput) return false;
 
-    const emailVal = emailid.value.trim();
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const emailVal = emailInput.value.trim();
+  
+  // Standard RFC 5322 based regex
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    if (emailVal === "") {
-        error2.style.display = "block";
-        error2.innerHTML = "Please enter your email";
-        return false;
-    }
+  // 1. Empty check
+  if (emailVal === "") {
+    showError("Please enter your email");
+    return false;
+  }
 
-    if (!emailPattern.test(emailVal)) {
-        error2.style.display = "block";
-        error2.innerHTML = "Invalid email format";
-        return false;
-    }
+  // 2. Format check (This covers s@gmail.com correctly)
+  if (!emailPattern.test(emailVal)) {
+    showError("Enter a valid email (example: user@gmail.com)");
+    return false;
+  }
 
-    error2.style.display = "none";
-    error2.innerHTML = "";
-    return true;
+  // 3. Logic checks for edge cases
+  if (emailVal.includes("..")) {
+    showError("Email should not contain consecutive dots");
+    return false;
+  }
+
+  if (emailVal.startsWith(".") || emailVal.endsWith(".")) {
+    showError("Email should not start or end with a dot");
+    return false;
+  }
+
+  clearError();
+  return true;
+}
+
+
+// 🔧 Helper functions (clean code)
+function showError(message) {
+  error2.style.display = "block";
+  error2.innerHTML = message;
+}
+
+function clearError() {
+  error2.style.display = "none";
+  error2.innerHTML = "";
 }
 
 

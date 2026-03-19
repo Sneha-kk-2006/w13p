@@ -503,7 +503,7 @@
             <div class="field">
               <label>Email</label>
               <div class="input-box">
-                <input value="<%= user.email %>" type="email" name="email" readonly>
+                <input value="<%= user.email %>" type="email" name="email">
               </div>
             </div>
 
@@ -530,7 +530,7 @@
 
     </div>
 
-    <!-- EDIT MODAL -->
+   
     <!-- Edit Profile Modal -->
     <div class="modal-overlay" id="editModal">
       <div class="modal">
@@ -577,7 +577,7 @@
 
           <div class="field">
             <label>Phone</label>
-            <input type="text" name="phone" value="<%= user.phone %>">
+            <input type="text" name="phone" value="<%= user.phone %>" required>
           </div>
 
           <!-- Actions -->

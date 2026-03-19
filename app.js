@@ -9,9 +9,10 @@ const adminRouter = require("./routes/adminRouter");
 const session = require("express-session");
 const morgan = require("morgan");
 const passport = require("./config/passport");
-
+const nocache = require("nocache");
 db();
 
+app.use(nocache());
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

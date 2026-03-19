@@ -33,6 +33,10 @@ const userSchema = new Schema(
       type: String,
       default: "",
     },
+    phone:{
+      type:String,
+      default:""
+    }
   },
   { timestamps: true }
 );

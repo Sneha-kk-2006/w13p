@@ -7,7 +7,7 @@ const hashPassword = require("../../utils/hashPassword");
 
 require("dotenv").config();
 
-/* ================= HOME ================= */
+
 
 const loadHomepage = async (req, res) => {
   try {
@@ -24,7 +24,7 @@ const loadHomepage = async (req, res) => {
   }
 };
 
-/* ================= ERROR PAGE ================= */
+
 
 const errorPage = async (req, res) => {
   try {
@@ -34,7 +34,7 @@ const errorPage = async (req, res) => {
   }
 };
 
-/* ================= SIGNUP PAGE ================= */
+
 
 const loadsignup = (req, res) => {
   try {
@@ -45,7 +45,7 @@ const loadsignup = (req, res) => {
   }
 };
 
-/* ================= LOGIN PAGE ================= */
+
 
 const loadlogin = (req, res) => {
   try {
@@ -56,7 +56,7 @@ const loadlogin = (req, res) => {
   }
 };
 
-/* ================= SIGNUP ================= */
+
 
 const signup = async (req, res) => {
   try {
@@ -71,7 +71,7 @@ const signup = async (req, res) => {
     if (existingUser) {
       return res.json({ success: false, message: "User already exists" });
     }
-    const gmailPattern = /^[a-zA-Z0-9]+[a-zA-Z0-9._%+-]*@gmail\.com$/;
+    const gmailPattern = /^[a-zA-Z][a-zA-Z0-9._%+-]{2,}@gmail\.com$/;
 
     if (!gmailPattern.test(email)) {
       return res.json({
@@ -104,7 +104,6 @@ const signup = async (req, res) => {
   }
 };
 
-/* ================= VERIFY OTP ================= */
 
 const verifyOtp = async (req, res) => {
   console.log("Verify OTP Request Body:", req.body);
@@ -165,7 +164,6 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-/* ================= RESEND OTP ================= */
 
 const resendOtp = async (req, res) => {
   try {
@@ -190,7 +188,7 @@ const resendOtp = async (req, res) => {
   }
 };
 
-/* ================= LOGIN ================= */
+
 
 const login = async (req, res) => {
   try {
@@ -222,7 +220,7 @@ const login = async (req, res) => {
   }
 };
 
-/* ================= FORGOT PASSWORD ================= */
+
 
 const loadforgot = (req, res) => {
   try {
@@ -242,9 +240,7 @@ const forgotPassword = async (req, res) => {
     if (!emailPattern.test(email)) {
       return res.json({ success: false, message: "Invalid email format" });
     }
-    if (!email || !password) {
-      return res.json({ success: false, message: "All fields required" });
-    }
+  
     
     const findUser = await userService.findUserByEmail(email);
     console.log(findUser);
@@ -275,7 +271,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-/* ================= LOAD VERIFY PAGE ================= */
+
 
 const loadVerify = (req, res) => {
   try {

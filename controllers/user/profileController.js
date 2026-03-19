@@ -9,7 +9,7 @@ const loadprofile = async (req, res) => {
   try {
     const userId = req.session.user;
     const userData = await User.findById(userId);
-
+    console.log(userData);
     res.render("user/profile", { user: userData });
   } catch (error) {
     console.error("error occurred", error);
@@ -25,10 +25,9 @@ const updateProfile = async (req, res) => {
       return res.redirect("/login");
     }
 
-
     const user = await User.findById(userId);
     const { name, email, phone } = req.body;
-
+    console.log(req.body.phone)
     // EMAIL CHANGE → OTP FLOW
     if (email !== user.email) {
       const otp = Math.floor(100000 + Math.random() * 900000);
@@ -48,11 +47,11 @@ const updateProfile = async (req, res) => {
     }
 
     let updateData = {
-      name,
-      email,
-      phone,
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
     };
-
+   console.log(updateData)
     // REMOVE PROFILE IMAGE
     if (req.body.removeProfileImage === "true" && user.profileImage) {
       const oldPath = path.join(
