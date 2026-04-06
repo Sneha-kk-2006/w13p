@@ -153,6 +153,7 @@ height:100%;
 background:rgba(0,0,0,0.5);
 justify-content:center;
 align-items:center;
+  overflow-y: auto;
 }
 
 .modal-content{
@@ -160,6 +161,8 @@ background:#fff;
 padding:25px;
 border-radius:10px;
 width:400px;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .modal-content h3{
@@ -203,8 +206,11 @@ text-align:right;
 
 <div class="address-header">
 <h2>My Addresses</h2>
+
 <button class="btn btn-add" onclick="openAddModal()">+ Add Address</button>
 </div>
+
+
 
 <!-- ADDRESS LIST -->
 
@@ -229,20 +235,9 @@ text-align:right;
 <a href="/setDefaultAddress?id=<%= address._id %>" class="btn btn-default">Set Default</a>
 <% } %>
 
-<button
+<button 
 class="btn btn-edit"
-onclick="editAddress(
-'<%= address._id %>',
-'<%= address.type %>',
-'<%= address.fullName %>',
-'<%= address.phone %>',
-'<%= address.addressline1 %>',
-'<%= address.addressline2 %>',
-'<%= address.city %>',
-'<%= address.state %>',
-'<%= address.country %>',
-'<%= address.pincode %>'
-)">
+onclick='editAddress(<%- JSON.stringify(address) %>)'>
 Edit
 </button>
 
@@ -301,6 +296,7 @@ Delete
 <span class="error" id="stateError"></span>
 
 <input type="text" name="country" id="country" placeholder="Country">
+<span class="error" id="countryError"></span>
 
 <input type="text" name="pincode" id="pincode" placeholder="Pincode">
 <span class="error" id="pincodeError"></span>
@@ -315,6 +311,7 @@ Delete
 </div>
 
 </div>
+
 <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -331,26 +328,28 @@ document.getElementById("addressModal").style.display="flex"
 
 }
 
-function editAddress(id,type,fullName,phone,addressline1,addressline2,city,state,country,pincode){
+
+function editAddress(address){
+
+console.log(address) 
 
 document.getElementById("modalTitle").innerText="Edit Address"
 document.getElementById("addressForm").action="/editAddress"
 
-document.getElementById("addressId").value=id
-document.getElementById("type").value=type
-document.getElementById("fullName").value=fullName
-document.getElementById("phone").value=phone
-document.getElementById("addressline1").value=addressline1
-document.getElementById("addressline2").value=addressline2
-document.getElementById("city").value=city
-document.getElementById("state").value=state
-document.getElementById("country").value=country
-document.getElementById("pincode").value=pincode
+document.getElementById("addressId").value = address._id
+document.getElementById("type").value = address.type
+document.getElementById("fullName").value = address.fullName
+document.getElementById("phone").value = address.phone
+document.getElementById("addressline1").value = address.addressline1
+document.getElementById("addressline2").value = address.addressline2
+document.getElementById("city").value = address.city
+document.getElementById("state").value = address.state
+document.getElementById("country").value = address.country
+document.getElementById("pincode").value = address.pincode
 
 clearErrors()
 
 document.getElementById("addressModal").style.display="flex"
-
 }
 
 function closeModal(){
@@ -366,10 +365,12 @@ document.getElementById("addressForm").addEventListener("submit",function(e){
 let valid=true
 
 const name=document.getElementById("fullName").value.trim()
+const type=document.getElementById("type").value.trim()
 const phone=document.getElementById("phone").value.trim()
 const address=document.getElementById("addressline1").value.trim()
 const city=document.getElementById("city").value.trim()
 const state=document.getElementById("state").value.trim()
+const country=document.getElementById("country").value.trim()
 const pincode=document.getElementById("pincode").value.trim()
 
 const phonePattern=/^[0-9]{10}$/
@@ -404,6 +405,10 @@ valid=false
 
 if(state===""){
 document.getElementById("stateError").innerText="Enter state"
+valid=false
+}
+if(country===""){
+document.getElementById("countryError").innerText="Enter country"
 valid=false
 }
 

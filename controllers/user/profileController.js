@@ -1,133 +1,76 @@
-const User = require("../../models/userSchema");
-const fs = require("fs");
-const path = require("path");
-const { sendOtp } = require("../../utils/sendEmail");
-const authController = require("./auth.controller");
-const bcrypt = require("bcrypt");
+const userRepository = require("../../repositories/user");
+const profileService = require("../../services/user/profileService");
+const { changeUserPassword } = require("../../services/user/profileService");
 
+// ================= Load Profile Page =================
 const loadprofile = async (req, res) => {
   try {
     const userId = req.session.user;
-    const userData = await User.findById(userId);
-    console.log(userData);
+    if (!userId) return res.redirect("/login");
+
+    const userData = await userRepository.findById(userId);
+    if (!userData) return res.redirect("/login");
+
     res.render("user/profile", { user: userData });
   } catch (error) {
-    console.error("error occurred", error);
+    console.error("Error loading profile:", error);
     res.redirect("/errorPage");
   }
 };
 
+// ================= Update Profile =================
 const updateProfile = async (req, res) => {
   try {
-    const userId = req.session.user;
+    const result = await profileService.updateProfileService(req);
 
-    if (!userId) {
-      return res.redirect("/login");
+    if (!result.success) {
+      // JSON response for frontend AJAX handling
+      return res.status(400).json({ success: false, message: result.message });
     }
 
-    const user = await User.findById(userId);
-    const { name, email, phone } = req.body;
-    console.log(req.body.phone)
-    // EMAIL CHANGE → OTP FLOW
-    if (email !== user.email) {
-      const otp = Math.floor(100000 + Math.random() * 900000);
-
-      req.session.auth = {
-        otp,
-        email,
-        type: "emailUpdate",
-      };
-
-      await sendOtp(user.email, otp);
-      await sendOtp(email, otp);
-
-      console.log(`OTP sent to ${user.email} and ${email}: ${otp}`);
-
-      return res.redirect(303, "/verify-otp");
-    }
-
-    let updateData = {
-      name: req.body.name,
-      email: req.body.email,
-      phone: req.body.phone,
-    };
-   console.log(updateData)
-    // REMOVE PROFILE IMAGE
-    if (req.body.removeProfileImage === "true" && user.profileImage) {
-      const oldPath = path.join(
-        __dirname,
-        "../../public",
-        user.profileImage.replace(/^\/+/, ""),
-      );
-      if (fs.existsSync(oldPath)) {
-        fs.unlinkSync(oldPath);
-      }
-
-      updateData.profileImage = null;
-    }
-
-    // UPLOAD NEW IMAGE
-    if (req.file) {
-      if (user.profileImage) {
-        const oldPath = path.join(__dirname, "../../public", user.profileImage);
-
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
-      }
-
-      updateData.profileImage = "/uploads/" + req.file.filename;
-    }
-
-    await User.findByIdAndUpdate(userId, updateData);
-    res.redirect("/profile");
-  } catch (err) {
-    console.error(err);
-    res.redirect("/profile");
+    // Redirect for successful update
+    return res.redirect(result.redirect);
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return res.redirect("/profile");
   }
 };
 
+// ================= Load Change Password Page =================
 const loadChangePassword = async (req, res) => {
   try {
-    res.render("user/changePassword");
+    res.render("user/changePassword", { success: false, error: null });
   } catch (error) {
     console.error("Error loading change password page:", error);
     res.redirect("/profile");
   }
 };
 
+// ================= Change Password =================
 const changePassword = async (req, res) => {
   try {
     const userId = req.session.user;
+    if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
+
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
-    if (newPassword !== confirmPassword) {
-      return res.render("user/changePassword", {
-        message: "New passwords do not match",
-      });
-    }
+    const result = await changeUserPassword(userId, currentPassword, newPassword, confirmPassword);
 
-    const user = await User.findById(userId);
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!result.success) return res.status(400).json(result);
 
-    if (!isMatch) {
-      return res.render("user/changePassword", {
-        message: "Current password is incorrect",
-      });
-    }
+    // Destroy session after password change
+    req.session.destroy((err) => {
+      if (err) console.error("Session destroy error:", err);
+    });
 
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-
-    await user.save();
-    console.log("Password changed successfully");
-    res.redirect("user/profile");
+    return res.json({ success: true, message: result.message });
   } catch (error) {
-    console.error("Error changing password:", error);
-    res.redirect("/profile");
+    console.error("Change password error:", error);
+    return res.status(500).json({ success: false, message: "Something went wrong" });
   }
 };
 
+// ================= Logout =================
 const logout = async (req, res) => {
   try {
     req.session.destroy((err) => {

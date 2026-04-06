@@ -125,12 +125,13 @@ border:2px solid #00c46b;
   <% if (user) { %>
 
     <a href="/profile" class="profile-box">
+<img 
+  src="<%= user.profileImage ? user.profileImage : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>" 
+  onerror="this.src='https://ui-avatars.com/api/?name=<%= encodeURIComponent(user.name) %>'"
+  class="nav-profile-img"
+  alt="Profile"
+/>
 
-      <img 
-        src="<%= user.profileImage ? user.profileImage : '/images/default-user.png' %>" 
-        class="nav-profile-img"
-        alt="Profile"
-      >
 
       <span class="nav-username">
         <%= user.name %>

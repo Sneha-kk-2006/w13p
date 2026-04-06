@@ -172,7 +172,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
-        // --- 1. Timer Logic ---
+       
         let timeLeft = 59;
         const timerElement = document.getElementById('timer');
 
@@ -188,7 +188,6 @@
             }
         }, 1000);
 
-        // --- 2. OTP Auto-Focus Logic ---
         const inputs = document.querySelectorAll('.otp-input');
         
         inputs.forEach((input, index) => {
@@ -207,6 +206,18 @@
             });
         });
 
+     document.querySelector(".otp-container").addEventListener("paste", (e) => {
+    e.preventDefault();
+
+    let data = e.clipboardData.getData("text");
+
+    let inputs = document.querySelectorAll(".otp-input");
+
+    for (let i = 0; i < inputs.length; i++) {
+        inputs[i].value = data[i] || "";
+    }
+});
+
 
 async function verifyOtp() {
   const inputs = document.querySelectorAll(".otp-input");
@@ -217,6 +228,15 @@ async function verifyOtp() {
   });
 
   console.log("OTP:", otp);
+   
+
+
+
+
+
+
+
+
 
   try {
     const response = await fetch('/verify-otp', {

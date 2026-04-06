@@ -299,14 +299,15 @@
         showToast(data.message, 'error')
     }
 });
-        const nameid = document.getElementById("name")
-        const emailid = document.getElementById("email")
-        const passid = document.getElementById("pass")
-        const confirmpassid = document.getElementById("confirm-pass")
-        const error1 = document.getElementById("error1")
-        const error2 = document.getElementById("error2")
-        const error3 = document.getElementById("error3")
-        const error4 = document.getElementById("error4")
+       const nameid = document.getElementById("name");
+const emailid = document.getElementById("email");
+const passid = document.getElementById("pass");
+const confirmpassid = document.getElementById("confirm-pass");
+
+const error1 = document.getElementById("error1");
+const error2 = document.getElementById("error2");
+const error3 = document.getElementById("error3");
+const error4 = document.getElementById("error4");
         const signform = document.getElementById("signform")
 
 function nameValidn() {
@@ -324,7 +325,20 @@ function nameValidn() {
         error1.style.display = "block";
         error1.innerHTML = "Name should contain only letters";
         return false;
+    }else if(emailid.value.trim() === " "){
+        error1.style.display = "block";
+        error1.innerHTML = "Please enter your name";
+        return false;
+    }else if(passid.value.trim() === " "){
+        error1.style.display = "block";
+        error1.innerHTML = "Please enter your name";
+        return false;
+    }else if(confirmpassid.value.trim() === " "){
+        error1.style.display = "block"; 
+    
     }
+
+
 
     error1.style.display = "none";
     error1.innerHTML = "";
@@ -339,8 +353,8 @@ function emailValidn() {
 
   const emailVal = emailInput.value.trim();
   
-  // Standard RFC 5322 based regex
-  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
   // 1. Empty check
   if (emailVal === "") {
@@ -416,13 +430,138 @@ function passwordValidn() {
 
 
 function validateForm() {
-    if (!nameValidn() || !emailValidn() || !passwordValidn()) {
-        return false;
-    }
-    return true;
+    const isNameValid = nameValidn();
+    const isEmailValid = emailValidn();
+    const isPasswordValid = passwordValidn();
+
+    return isNameValid && isEmailValid && isPasswordValid;
 }
+
+
+
+
+
+
+
+
+
+
+   
+// if(name===""){
+// document.getElementById("nameError").innerText="Enter full name"
+// valid=false
+// }
+
+
+// if(email===""){
+// document.getElementById("emailError").innerText="Enter your email"
+// valid=false
+// }
+
+
+// if(password===""){
+// document.getElementById("passwordError").innerText="Enter a password"
+// valid=false
+// }
+
+
+// if(confirmpassid===""){
+// document.getElementById("confirmpassError").innerText="Confirm your password"
+// valid=false
+// }
+
+
 
     </script>
 </body>
 
 </html>
+
+
+
+
+
+<!-- 
+//const name=document.getElementById("fullName").value.trim()
+const phone=document.getElementById("phone").value.trim()
+const address=document.getElementById("addressline1").value.trim()
+const city=document.getElementById("city").value.trim()
+const state=document.getElementById("state").value.trim()
+const pincode=document.getElementById("pincode").value.trim()
+
+const phonePattern=/^[0-9]{10}$/
+const pincodePattern=/^[0-9]{6}$/
+
+clearErrors()
+
+if(name===""){
+document.getElementById("nameError").innerText="Enter full name"
+valid=false
+}
+
+if(type===""){
+document.getElementById("typeError").innerText="Enter address type"
+valid=false
+}
+
+if(!phonePattern.test(phone)){
+document.getElementById("phoneError").innerText="Enter valid 10 digit phone"
+valid=false
+}
+
+if(address===""){
+document.getElementById("addressError").innerText="Enter address"
+valid=false
+}
+
+if(city===""){
+document.getElementById("cityError").innerText="Enter city"
+valid=false
+}
+
+if(state===""){
+document.getElementById("stateError").innerText="Enter state"
+valid=false
+}
+
+if(!pincodePattern.test(pincode)){
+document.getElementById("pincodeError").innerText="Enter valid 6 digit pincode"
+valid=false
+}
+
+if(!valid){
+e.preventDefault()
+}
+
+})
+function deleteAddress(id){
+
+Swal.fire({
+title: "Are you sure?",
+text: "This address will be permanently deleted!",
+icon: "warning",
+showCancelButton: true,
+confirmButtonColor: "#e74c3c",
+cancelButtonColor: "#6c757d",
+confirmButtonText: "Yes, delete it"
+}).then((result) => {
+
+if(result.isConfirmed){
+
+Toastify({
+text: "Address deleted successfully",
+duration: 2000,
+gravity: "top",
+position: "right",
+backgroundColor: "#e74c3c",
+}).showToast();
+
+setTimeout(()=>{
+window.location.href="/deleteAddress?id="+id
+},1500)
+
+}
+
+})
+
+} -->

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { isAuth, userAuth, isUser } = require("../middlewares/auth");
 const passport = require('passport');
-const userController = require("../controllers/user/auth.controller");
+const userController = require("../controllers/user/authController");
 const profileController = require('../controllers/user/profileController');
 const upload = require('../middlewares/multer');
 const addressController = require('../controllers/user/addressController');
@@ -42,4 +42,4 @@ router.post('/changePassword', userAuth, profileController.changePassword);
 
 router.post('/logout', profileController.logout);
 
-module.exports = router;
+module.exports = router;

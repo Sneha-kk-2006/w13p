@@ -1,5 +1,6 @@
 const User = require("../../models/userSchema");
 const mongoose = require("mongoose");
+
 const bcrypt = require("bcrypt");
 
 const loadlogin = async (req, res) => {
@@ -57,18 +58,25 @@ const loaduser = async (req, res) => {
 
     let query = {
       isAdmin: false,
-      name: { $regex: search, $options: "i" },
+      $or:[
+       {name: { $regex: search, $options: "i" }},
+       {email: { $regex: search, $options: "i" }},
+      ]
+      
+      
     };
 
-    const totalUsers = await User.countDocuments(query);
-    const users = await User.find(query)
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
+    const [users , totalPages] = await Promise.all([
+      User.find(query)
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit),
+      User.countDocuments(query),
+    ]);
 
     res.render("admin/usermanagement", {
       users,
-      totalPages: Math.ceil(totalUsers / limit),
+      totalPages: Math.ceil(totalPages / limit),
       currentPage: page,
       search,
     });
@@ -77,6 +85,8 @@ const loaduser = async (req, res) => {
     res.render("admin/error");
   }
 };
+
+
 
 const blockUser = async (req, res) => {
   try {
@@ -90,6 +100,8 @@ const blockUser = async (req, res) => {
     console.log(error);
   }
 };
+
+
 
 const unblockUser = async (req, res) => {
   try {

@@ -1,43 +1,52 @@
 const Address = require('../../models/addressSchema');
-
+const User=require('../../models/userSchema')
+const addressService=require('../../services/user/addressService')
+const addressRepository = require("../../repositories/user");
 // load address page
 const loadAddress = async (req, res) => {
   try {
-    const userId = req.session.user;
-    const addresses = await Address.find({ userId });
-    console.log(addresses);
-    res.render("user/address", { addresses });
+    const result = await addressService.getUserAddresses(req.session.user);
+
+    if (!result.success) {
+      return res.redirect(result.redirect);
+    }
+       const user = await User.findById(req.session.user);
+    return res.render("user/address", {
+      addresses: result.addresses,
+      user:user
+    });
+
   } catch (err) {
     console.log(err);
-    res.redirect('/errorPage');
+    return res.redirect("/errorPage");
   }
 };
 
 // add address
 const addAddress = async (req, res) => {
   try {
-    const userId = req.session.user;
-    const { fullName, phone, type, addressline1, addressline2, country, city, state, pincode } = req.body;
-    console.log(req.body);
-    const newAddress = new Address({
-      userId,
-      fullName,
-      phone,
-      type,
-      addressline1,
-      addressline2,
-      city,
-      country,
-      state,
-      pincode
-    });
-    await newAddress.save();
-    res.redirect('/address',{message:"Address added successfully"});
+    const result = await addressService.addAddressService(
+      req.body,
+      req.session.user
+    );
+    if (!result.success) {
+      if (result.redirect) {
+        return res.redirect(result.redirect);
+      }
+
+      return res.redirect("/address");
+    }
+
+    return res.redirect(result.redirect);
+
   } catch (error) {
     console.log("error", error);
-    res.redirect('/address');
+    return res.redirect("/address");
   }
 };
+
+
+
 
 const deleteAddress = async (req, res) => {
   try {
@@ -50,30 +59,55 @@ const deleteAddress = async (req, res) => {
   }
 };
 
+
+
 const loadEditAddress = async (req, res) => {
   try {
     const addressId = req.query.id;
-    const address = await Address.findById(addressId);
-    res.render('user/edit-address', { address });
+    const userId = req.session.user;
+
+    const result = await addressService.getEditAddress(
+      addressId,
+      userId
+    );
+
+    if (!result.success) {
+      return res.redirect(result.redirect);
+    }
+
+    res.render("user/edit-address", {
+      address: result.address
+    });
+
   } catch (error) {
     console.log(error);
-    res.redirect('/address');
+    res.redirect("/address");
   }
 };
 
+
+
 const editAddress = async (req, res) => {
   try {
-    const addressId = req.body.id;
-    const { fullName, phone, type, addressline1, addressline2, country, city, state, pincode } = req.body;
-    console.log("addressId", addressId);
-    console.log("body", req.body);
-    await Address.findByIdAndUpdate(addressId, {
-      fullName, phone, type, addressline1, addressline2, country, city, state, pincode
-    });
-    res.redirect('/address');
+    const userId = req.session.user;
+
+    const result = await addressService.updateAddressService(
+      req.body,
+      userId
+    );
+
+    if (!result.success) {
+      if (result.redirect) {
+        return res.redirect(result.redirect);
+      }
+      return res.redirect("/address");
+    }
+
+    res.redirect(result.redirect);
+
   } catch (error) {
     console.log(error);
-    res.redirect('/address');
+    res.redirect("/address");
   }
 };
 

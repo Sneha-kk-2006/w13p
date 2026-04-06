@@ -1,42 +1,24 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
-
 const userSchema = new Schema(
   {
-    name: {
+    name: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String },
+    googleId: { type: String, unique: true, sparse: true },
+
+    isBlocked: { type: Boolean, default: false },
+
+    role: {
       type: String,
-      required: true,
+      enum: ["user", "admin"],
+      default: "user"
     },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-    },
-    password: {
-      type: String,
-      required: false,
-    },
-    googleId: {
-      type: String,
-      unique: true,
-      sparse: true,
-    },
-    isBlocked: {
-      type: Boolean,
-      default: false,
-    },
-    isAdmin: {
-      type: Boolean,
-      default: false,
-    },
-    profileImage: {
-      type: String,
-      default: "",
-    },
-    phone:{
-      type:String,
-      default:""
-    }
+
+    profileImage: { type: String, default: "" },
+    loginAttempts: { type: Number, default: 0 },
+    phone: { type: String, default: "" }
+
   },
   { timestamps: true }
 );
