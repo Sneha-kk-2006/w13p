@@ -5,7 +5,11 @@ const passport = require('passport');
 const userController = require("../controllers/user/authController");
 const profileController = require('../controllers/user/profileController');
 const upload = require('../middlewares/multer');
+const categoryController=require('../controllers/user/categoryController')
 const addressController = require('../controllers/user/addressController');
+// const googleController = require("../../controllers/user/authController");
+
+
 
 router.get('/', isUser, userController.loadHomepage);
 router.get('/errorPage', userController.errorPage);
@@ -16,11 +20,16 @@ router.post("/verify-otp", isUser, userController.verifyOtp);
 router.post("/resend-otp", isUser, userController.resendOtp);
 router.get('/login', isAuth, userController.loadlogin);
 router.post('/login', isAuth, userController.login);
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/signup' }), (req, res) => {
-  req.session.user = req.user._id;
-  res.redirect('/');
-});
+router.get(
+  '/google',
+  passport.authenticate('google', { scope: ['profile', 'email'] })
+);
+
+router.get(
+  '/google/callback',
+  passport.authenticate('google', { failureRedirect: '/signup' }),
+  userController.googleCallback 
+);
 router.get('/forgotPassword', isAuth, userController.loadforgot);
 router.post('/forgotPassword', isAuth, userController.forgotPassword);
 router.get('/resetPassword', isAuth, userController.loadreset);
@@ -41,5 +50,14 @@ router.get('/changePassword', userAuth, profileController.loadChangePassword);
 router.post('/changePassword', userAuth, profileController.changePassword);
 
 router.post('/logout', profileController.logout);
+
+
+
+
+
+
+
+
+router.get('/category',categoryController.loadcat)
 
 module.exports = router;

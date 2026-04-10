@@ -101,8 +101,6 @@ const login = async (req, res) => {
     if (!result.success) {
       return res.status(400).json({ success: false, message: result.message });
     }
-
-    // store role in session for middleware
     req.session.user = {
       _id: result.userId,
       role: result.userData.isAdmin ? "admin" : "user",
@@ -116,7 +114,8 @@ const login = async (req, res) => {
   }
 };
 
-// ================== Forgot Password ==================
+
+
 const loadforgot = (req, res) => {
   try {
     if (req.session.user) return res.redirect("/");
@@ -141,7 +140,7 @@ const forgotPassword = async (req, res) => {
   }
 };
 
-// ================== Load Verify Page ==================
+
 const loadVerify = (req, res) => {
   try {
     if (!req.session.auth) {
@@ -154,7 +153,7 @@ const loadVerify = (req, res) => {
   }
 };
 
-// ================== Reset Password ==================
+
 const loadreset = async (req, res) => {
   try {
     res.render("user/resetPassword");
@@ -179,7 +178,10 @@ const resetPassword = async (req, res) => {
   }
 };
 
-// ================== Products ==================
+
+
+
+
 const loadproducts = async (req, res) => {
   try {
     res.render("user/products");
@@ -187,6 +189,47 @@ const loadproducts = async (req, res) => {
     console.error("Load products error:", error);
   }
 };
+
+const googleAuth = (req, res, next) => {
+  next(); // passport will handle redirect
+};
+
+const googleCallback = (req, res) => {
+  try {
+    if (!req.user) {
+      return res.redirect("/signup");
+    }
+
+    const role = req.user.isAdmin ? "admin" : "user";
+
+    req.session.user = {
+      _id: req.user._id,
+      role: role,
+    };
+
+    console.log("SESSION SET:", req.session.user);
+
+    req.session.save((err) => {
+      if (err) {
+        console.error("Session Save Error:", err);
+        return res.redirect("/errorPage");
+      }
+
+      console.log("SESSION SAVED");
+      return res.redirect("/");
+    });
+
+  } catch (error) {
+    console.error("Google Callback Error:", error);
+    return res.redirect("/errorPage");
+  }
+};
+
+
+
+
+
+
 
 module.exports = {
   loadHomepage,
@@ -203,4 +246,6 @@ module.exports = {
   loadreset,
   resetPassword,
   loadproducts,
+    googleAuth,
+  googleCallback,
 };

@@ -10,6 +10,7 @@ const session = require("express-session");
 const morgan = require("morgan");
 const passport = require("./config/passport");
 const nocache = require("nocache");
+const categoryRoutes=require('./routes/adminRouter')
 db();
 
 app.use(nocache());
@@ -46,6 +47,7 @@ app.use(passport.session());
 app.use("/", userRouter);
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
+// app.use("/admin/category", categoryRoutes);
 
 app.listen(3034, () => {
   console.log("http://localhost:3034");

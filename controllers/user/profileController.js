@@ -2,7 +2,7 @@ const userRepository = require("../../repositories/user");
 const profileService = require("../../services/user/profileService");
 const { changeUserPassword } = require("../../services/user/profileService");
 
-// ================= Load Profile Page =================
+
 const loadprofile = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -18,17 +18,17 @@ const loadprofile = async (req, res) => {
   }
 };
 
-// ================= Update Profile =================
+
 const updateProfile = async (req, res) => {
   try {
     const result = await profileService.updateProfileService(req);
 
     if (!result.success) {
-      // JSON response for frontend AJAX handling
+    
       return res.status(400).json({ success: false, message: result.message });
     }
 
-    // Redirect for successful update
+    
     return res.redirect(result.redirect);
   } catch (error) {
     console.error("Error updating profile:", error);
@@ -36,7 +36,7 @@ const updateProfile = async (req, res) => {
   }
 };
 
-// ================= Load Change Password Page =================
+
 const loadChangePassword = async (req, res) => {
   try {
     res.render("user/changePassword", { success: false, error: null });
@@ -46,7 +46,6 @@ const loadChangePassword = async (req, res) => {
   }
 };
 
-// ================= Change Password =================
 const changePassword = async (req, res) => {
   try {
     const userId = req.session.user;
@@ -58,7 +57,7 @@ const changePassword = async (req, res) => {
 
     if (!result.success) return res.status(400).json(result);
 
-    // Destroy session after password change
+
     req.session.destroy((err) => {
       if (err) console.error("Session destroy error:", err);
     });
@@ -70,7 +69,6 @@ const changePassword = async (req, res) => {
   }
 };
 
-// ================= Logout =================
 const logout = async (req, res) => {
   try {
     req.session.destroy((err) => {

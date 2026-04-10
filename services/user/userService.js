@@ -7,7 +7,7 @@ const sendVerificationEmail = require("../../utils/sendEmail").sendVerificationE
 
 const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-// ================= SIGNUP =================
+
 const signupWithOtp = async (data, session) => {
   const { name, email, password, confirmpassword, role } = data;
 
@@ -41,7 +41,7 @@ const signupWithOtp = async (data, session) => {
     name,
     password,
     type: "signup",
-    role: role || "user", // default role is user
+    role: role || "user", 
     expiredAt: Date.now() + 5 * 60 * 1000
   };
 
@@ -50,7 +50,6 @@ const signupWithOtp = async (data, session) => {
   return { success: true, message: SUCCESS.OTP_SENT };
 };
 
-// ================= LOGIN =================
 const loginUser = async (data, session) => {
   const { email, password } = data;
 
@@ -69,7 +68,6 @@ const loginUser = async (data, session) => {
     return { success: false, message: ERRORS.INVALID_CREDENTIALS };
   }
 
-  // attach user info in session for role-based auth
   session.user = {
     _id: user._id,
     role: user.isAdmin ? "admin" : "user",
@@ -83,7 +81,7 @@ const loginUser = async (data, session) => {
   };
 };
 
-// ================= OTP VERIFICATION =================
+
 const verifyOtpService = async (otp, session, userId) => {
   if (!session.auth) return { success: false, message: ERRORS.SESSION_EXPIRED };
   if (Date.now() > session.auth.expiredAt) return { success: false, message: ERRORS.OTP_EXPIRED };
@@ -118,7 +116,7 @@ const verifyOtpService = async (otp, session, userId) => {
   return { success: false, message: ERRORS.INVALID_REQUEST };
 };
 
-// ================= FORGOT PASSWORD =================
+
 const forgotPasswordService = async (email, session) => {
   if (!emailPattern.test(email)) return { success: false, message: ERRORS.INVALID_EMAIL };
 
@@ -135,7 +133,7 @@ const forgotPasswordService = async (email, session) => {
   return { success: true, message: SUCCESS.OTP_SENT };
 };
 
-// ================= RESET PASSWORD =================
+
 const resetPasswordService = async (data, session) => {
   const { password, confirmPassword } = data;
 
@@ -155,7 +153,7 @@ const resetPasswordService = async (data, session) => {
   return { success: true, message: SUCCESS.PASSWORD_RESET };
 };
 
-// ================= RESEND OTP =================
+
 const resendOtpService = async (session) => {
   if (!session.auth) return { success: false, message: ERRORS.SESSION_EXPIRED };
 

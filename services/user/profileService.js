@@ -57,7 +57,6 @@ const updateProfileService = async (req) => {
     return { success: true, redirect: "/verify-otp", message: SUCCESS.OTP_SENT };
   }
 
-  // ================== Handle Profile Image ==================
   const updateData = { name, email, phone };
 
   if (req.body.removeProfileImage === "true" && user.profileImage) {
@@ -66,14 +65,31 @@ const updateProfileService = async (req) => {
     updateData.profileImage = null;
   }
 
-  if (req.file) {
-    if (user.profileImage) {
-      const oldPath = path.join(__dirname, "../../public", user.profileImage.replace(/^\/+/, ""));
-      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-    }
-    updateData.profileImage = "/uploads/" + req.file.filename;
+if (req.file) {
+  const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
+  const filePath = path.join(__dirname, "../../public/uploads", req.file.filename);
+
+
+  if (!ALLOWED_IMAGE_TYPES.includes(req.file.mimetype)) {
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    return { success: false, message: "Only image files are allowed (jpeg, jpg, png, webp)" };
   }
 
+  if (req.file.size > MAX_FILE_SIZE) {
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    return { success: false, message: "Image size must be under 2MB" };
+  }
+
+
+  if (user.profileImage) {
+    const oldPath = path.join(__dirname, "../../public", user.profileImage.replace(/^\/+/, ""));
+    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+  }
+
+  updateData.profileImage = "/uploads/" + req.file.filename;
+}
   await userRepository.updateUser(userId, updateData);
 
   return { success: true, redirect: "/profile", message: SUCCESS.PROFILE_UPDATED };
