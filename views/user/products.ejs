@@ -182,13 +182,83 @@
       <p style="color: var(--text-gray); font-size: 14px;">Handpicked trends for your wardrobe</p>
     </div>
 
-    <div class="product-grid" id="main-grid">
+
+      <!-- Replace this in your EJS -->
+<div class="product-grid" id="main-grid">
+
+  <% if (products.length === 0) { %>
+    <div style="grid-column: 1/-1; text-align: center; padding: 60px; color: var(--text-gray);">
+      <i class="fas fa-box-open" style="font-size: 48px; margin-bottom: 15px; display:block;"></i>
+      <p>No products available right now. Check back soon!</p>
+    </div>
+  <% } %>
+
+  <% products.forEach(product => { %>
+    <div class="product-card">
+
+      <!-- Discount badge -->
+      <% if (product.discount > 0) { %>
+        <span class="badge">-<%= product.discount %>%</span>
+      <% } %>
+
+      <!-- Wishlist icon -->
+      <div class="wishlist-icon">
+        <i class="far fa-heart"></i>
       </div>
+
+      <!-- Product image -->
+      <a href="/product/<%= product._id %>">
+        <img 
+          src="<%= product.images && product.images[0] ? product.images[0] : '/images/placeholder.jpg' %>" 
+          alt="<%= product.name %>" 
+          class="product-img"
+        >
+      </a>
+
+      <div class="product-info">
+
+        <!-- Name -->
+        <h3><%= product.name %></h3>
+
+        <!-- Category -->
+        <p style="font-size:12px; color: var(--text-gray); margin-bottom:4px;">
+          <%= product.category ? product.category.name : '' %>
+        </p>
+
+        <!-- Price -->
+        <div class="price-row">
+          <% if (product.discount > 0) { %>
+            <span class="new-price">
+              ₹<%= Math.round(product.price - (product.price * product.discount / 100)).toLocaleString('en-IN') %>
+            </span>
+            <span class="old-price">₹<%= product.price.toLocaleString('en-IN') %></span>
+          <% } else { %>
+            <span class="new-price">₹<%= product.price.toLocaleString('en-IN') %></span>
+          <% } %>
+        </div>
+
+        <!-- Stock / Add to cart -->
+        <% if (product.stock === 0) { %>
+          <button class="add-cart-btn" disabled style="background:#ccc; cursor:not-allowed;">
+            <!-- <i class="fas fa-ban"></i>  -->
+            Add to Cart
+          </button>
+        <% } else { %>
+          <button class="add-cart-btn" onclick="addToCart('<%= product._id %>')">
+            <i class="fas fa-cart-plus"></i> Add to Cart
+          </button>
+        <% } %>
+
+      </div>
+    </div>
+  <% }) %>
+
+</div>
   </div>
 
   <%- include('../partials/user/footer') %>
   
-  <script>
+  <!-- <script>
     const productData = [
       { name: "Floral Summer Dress", old: "₹1,299", new: "₹899", tag: "-30%", img: "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?auto=format&fit=crop&w=500&q=80" },
       { name: "Classic Denim Jacket", old: "₹2,499", new: "₹1,899", tag: "New", img: "https://images.unsplash.com/photo-1551537482-f2075a1d41f2?auto=format&fit=crop&w=500&q=80" },
@@ -223,6 +293,29 @@
         </div>
       `;
     });
-  </script>
+  </script> -->
+
+<script>
+async function addToCart(productId) {
+  try {
+    const res = await fetch('/cart/add', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId, quantity: 1 })
+    });
+    const data = await res.json();
+    if (data.success) {
+      // replace alert with a toast if you have one
+      alert('Added to cart!');
+    } else {
+      alert(data.msg || 'Could not add to cart');
+         console.log('Cart error:', data); 
+    }
+  } catch (err) {
+    alert('Something went wrong');
+  }
+}
+</script>
+
 </body>
 </html>

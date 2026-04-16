@@ -1,6 +1,7 @@
 const user = require("../../models/userSchema");
 const authService = require("../../services/user/userService");
 const ERROR = require('../../enums/messages');
+const Product = require('../../models/productSchema'); // adjust path to match yours
 
 require("dotenv").config();
 
@@ -180,15 +181,29 @@ const resetPassword = async (req, res) => {
 
 
 
-
-
 const loadproducts = async (req, res) => {
   try {
-    res.render("user/products");
+    // Check raw data directly from DB
+    const raw = await Product.collection.findOne({});
+    console.log('RAW DB document:', JSON.stringify(raw, null, 2));
+
+    const products = await Product.find({ 
+      isBlocked: false, 
+      isListed: true 
+    }).populate('category');
+
+    console.log('Total found:', products.length);
+    console.log('First product:', JSON.stringify(products[0], null, 2));
+
+    res.render("user/products", { products });
   } catch (error) {
     console.error("Load products error:", error);
+    res.redirect('/');
   }
 };
+
+
+
 
 const googleAuth = (req, res, next) => {
   next(); // passport will handle redirect

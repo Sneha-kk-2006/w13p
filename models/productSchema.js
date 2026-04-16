@@ -13,9 +13,10 @@ const productSchema = new mongoose.Schema(
       required: true
     },
 
+
     price: {
       type: Number,
-      required: true
+  
     },
 
     discount: {
@@ -23,28 +24,19 @@ const productSchema = new mongoose.Schema(
       default: 0
     },
 
-    category: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-      required: true
-    },
-
-    images: [
-      {
-        type: String,
-        required: true
-      }
-    ],
+  category: { type: mongoose.Schema.Types.ObjectId, ref: 'category' },
+images: [String],
 
     stock: {
+
       type: Number,
       default: 0
     },
 
-    isDeleted: {
-      type: Boolean,
-      default: false
-    },
+   
+isActive:  { type: Boolean, default: true  },
+isDeleted: { type: Boolean, default: false },
+ isListed:  { type: Boolean, default: true },
 
     createdAt: {
       type: Date,
@@ -52,6 +44,6 @@ const productSchema = new mongoose.Schema(
     }
   },
   { timestamps: true }
-);
+)
 
 module.exports = mongoose.model("Product", productSchema);

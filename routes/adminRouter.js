@@ -2,7 +2,12 @@ const express = require('express');
 const router = express.Router();
 const adminController = require('../controllers/admin/adminController');
 const categoryController=require('../controllers/admin/categoryController')
+const productController=require('../controllers/admin/productController')
 const { userAuth, adminAuth } = require("../middlewares/auth");
+const uploads=require('../config/multer')
+
+
+
 
 router.get('/login', adminController.loadlogin);
 router.post('/login', adminController.login);
@@ -21,6 +26,25 @@ router.post('/addCategory',categoryController.addCategory)
 router.post('/category/edit/:id',categoryController.editCategory)
 router.patch('/category/delete/:id',categoryController.deleteCategory)
 
+
+
+
+
+router.get('/product',productController.loadProduct)
+// router.post('/addProduct',productController.addProduct)
+router.post(
+  "/addProduct",
+  uploads.array("images", 3),   // ✅ MUST BE HERE
+  productController.addProduct
+);
+
+
+
+
+router.post('/product/edit/:id', uploads.array('images', 10), productController.editProduct);
+router.patch('/product/delete/:id', productController.deleteProduct);
+// router.post('/addProduct', productController.addProduct)
+router.patch('/product/toggle/:id',productController.toggleProductStatus)
 
 
 module.exports = router;

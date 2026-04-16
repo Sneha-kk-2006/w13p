@@ -4,8 +4,28 @@ const category=require('../../models/categorySchema')
 
 const loadp=async(req,res)=>{
     try{
-           const categories = await category.find({ isDeleted: false });
-   res.render('admin/categoryManagement',{categories})
+       const search=req.query.search?.trim()||'';
+       const page=parseInt(req.query.page)||1;
+       const limit=5;
+       const skip=(page-1)*limit;
+
+
+       const filter={
+        isDeleted:false
+       }
+
+       if(search){
+        filter.name={$regex:search,$options:"i"};
+
+       }
+
+       const total=await category.countDocuments(filter);
+       const categories=await category.find(filter).sort({createdAt:-1}).skip(skip).limit(limit);
+       const totalPage=Math.ceil(total/limit)
+     
+
+        //    const categories = await category.find({ isDeleted: false });
+   res.render('admin/categoryManagement',{categories,search,currentPage:page,totalPage,total,limit})
     }catch(error){
 console.log(error)
     }
@@ -80,12 +100,15 @@ const deleteCategory=async(req,res)=>{
     await category.findByIdAndUpdate(id,{
         isDeleted:true
     });
-    res.json({success:true,message:"category deleted"});
+    res.json({sucess:true,message:"category deleted"});
 
     }catch(error){
        res.json({message:"error deleting category"}) 
     }
 }
+
+
+
 
 
 

@@ -8,6 +8,9 @@ const upload = require('../middlewares/multer');
 const categoryController=require('../controllers/user/categoryController')
 const addressController = require('../controllers/user/addressController');
 // const googleController = require("../../controllers/user/authController");
+const productController=require('../controllers/user/productController')
+const cartController=require('../controllers/user/cartController')
+
 
 
 
@@ -34,7 +37,7 @@ router.get('/forgotPassword', isAuth, userController.loadforgot);
 router.post('/forgotPassword', isAuth, userController.forgotPassword);
 router.get('/resetPassword', isAuth, userController.loadreset);
 router.post('/resetPassword', isAuth, userController.resetPassword);
-router.get('/products', userController.loadproducts);
+// router.get('/products', userController.loadproducts);
 
 router.get('/profile', userAuth, profileController.loadprofile);
 router.post('/editProfile', userAuth, upload.single("profileImage"), profileController.updateProfile);
@@ -49,6 +52,9 @@ router.get('/setDefaultAddress', userAuth, addressController.setDefaultAddress);
 router.get('/changePassword', userAuth, profileController.loadChangePassword);
 router.post('/changePassword', userAuth, profileController.changePassword);
 
+
+router.get('/products',productController.getProducts)
+
 router.post('/logout', profileController.logout);
 
 
@@ -56,8 +62,23 @@ router.post('/logout', profileController.logout);
 
 
 
+router.get('/cart',cartController.getcart)
+router.post('/cart/add',cartController.addToCart)
+router.post('/cart/updateQty',cartController.updateCartQty)
+
+
+
 
 
 router.get('/category',categoryController.loadcat)
+router.get('/product/:id',productController.loadProductDetails)
+
+
+
+
+
+
+
+
 
 module.exports = router;

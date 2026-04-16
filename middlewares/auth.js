@@ -23,7 +23,7 @@ const userAuth = (req, res, next) => {
 const adminAuth = async (req, res, next) => {
   console.log("SESSION IN MIDDLEWARE:", req.session);
   try {
-    if (req.session.admin.toString()) {
+    if (req.session.admin) {
      
 const userData = await User.findById(req.session.admin);
       if (userData && userData.role==="admin") {

@@ -11,6 +11,7 @@ const morgan = require("morgan");
 const passport = require("./config/passport");
 const nocache = require("nocache");
 const categoryRoutes=require('./routes/adminRouter')
+
 db();
 
 app.use(nocache());
@@ -36,6 +37,7 @@ app.use((req, res, next) => {
   res.locals.user = req.session.user || null;
   next();
 });
+// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Set EJS
 app.set("view engine", "ejs");
