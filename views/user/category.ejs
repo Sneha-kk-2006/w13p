@@ -6,6 +6,7 @@
     <title>SNOVA - Products</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body { background-color: hsl(0, 12%, 92%); color: black }
         .sidebar { background-color: #000007; }
@@ -201,8 +202,14 @@
                             <% } %>
 
                             <!-- Wishlist Button -->
-                            <button class="absolute top-2 right-2 bg-white/20 p-2 rounded-full backdrop-blur-sm hover:bg-white/40 transition">
-                                <i class="fa-regular fa-heart text-white text-xs"></i>
+                            <% const inWishlist = wishlistProductIds.includes(product._id.toString()); %>
+                            <button 
+                                id="wish-<%= product._id %>"
+                                onclick="toggleWishlist('<%= product._id %>', this)"
+                                class="absolute top-2 right-2 bg-white/20 p-2 rounded-full backdrop-blur-sm hover:bg-white/40 transition"
+                                title="<%= inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' %>"
+                            >
+                                <i class="<%= inWishlist ? 'fa-solid' : 'fa-regular' %> fa-heart text-sm <%= inWishlist ? 'text-red-500' : 'text-white' %>"></i>
                             </button>
                         </div>
 
@@ -330,6 +337,61 @@
             params.set('page', '1');
 
             window.location.href = `/category?${params.toString()}`;
+        }
+
+        // Add to Wishlist (toggle)
+        async function toggleWishlist(productId, btn) {
+            <% if (!isLoggedIn) { %>
+                window.location.href = '/login';
+                return;
+            <% } %>
+
+            const icon = btn.querySelector('i');
+            const isWishlisted = icon.classList.contains('fa-solid');
+            const url = isWishlisted ? '/wishlist/remove' : '/wishlist/add';
+
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId })
+                });
+                const data = await res.json();
+
+                if (data.success) {
+                    // Toggle icon appearance
+                    if (isWishlisted) {
+                        icon.classList.replace('fa-solid', 'fa-regular');
+                        icon.classList.remove('text-red-500');
+                        icon.classList.add('text-white');
+                        btn.title = 'Add to Wishlist';
+                    } else {
+                        icon.classList.replace('fa-regular', 'fa-solid');
+                        icon.classList.add('text-red-500');
+                        icon.classList.remove('text-white');
+                        btn.title = 'Remove from Wishlist';
+                    }
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: data.msg,
+                        showConfirmButton: false,
+                        timer: 1500
+                    });
+                } else {
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'info',
+                        title: data.msg,
+                        showConfirmButton: false,
+                        timer: 1800
+                    });
+                }
+            } catch (err) {
+                Swal.fire({ icon: 'error', title: 'Server error' });
+            }
         }
 
         // Add to Cart

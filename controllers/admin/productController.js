@@ -6,35 +6,37 @@ const loadProduct = async (req, res) => {
     try {
         const search = req.query.search || '';
         const currentPage = parseInt(req.query.page) || 1;
-        const limit = 10; // products per page
+        const limit = 5;
 
-        const totalProducts = await product.countDocuments({
+        let filter = {
+            isDeleted: false,
             name: { $regex: search, $options: 'i' }
-        });
-        let filter={
-            isDeleted:false,
-             name: { $regex: search, $options: 'i' }
-        }
+        };
+
+        const totalProducts = await product.countDocuments(filter);
 
         const totalPages = Math.ceil(totalProducts / limit);
 
         const products = await product.find(filter)
-        .populate('category')
-        .skip((currentPage - 1) * limit)
-        .limit(limit);
+            .populate('category')
+            .skip((currentPage - 1) * limit)
+            .limit(limit);
+
         const categories = await category.find();
+
         res.render('admin/product', {
             products,
             search,
             currentPage,
             totalPages,
             limit,
-            total:totalProducts,
+            total: totalProducts,
             categories,
-              editProduct: null 
+            editProduct: null
         });
-    // add temporarily in loadProduct
-console.log('images:', products[0]?.images);
+
+        console.log('images:', products[0]?.images);
+
     } catch (error) {
         console.error(error);
         res.redirect('/pageError');
@@ -46,7 +48,7 @@ console.log('images:', products[0]?.images);
 const addProduct = async (req, res) => {
     try {
 
-        const { name, description ,image,price,stock,category} = req.body;
+        const { name, description ,image,price,stock,category, size, color} = req.body;
 
         const images = req.files?.map(file =>'/uploads/products/'+ file.filename) || [];
         const stockVal=parseInt(stock);
@@ -67,6 +69,8 @@ const addProduct = async (req, res) => {
             price,
             stock:stockVal,
             category,
+            size: size || "",
+            color: color || "",
             isActive: true,
             isDeleted: false
         });
@@ -87,30 +91,34 @@ const addProduct = async (req, res) => {
 
 
 
-const editProduct=async(req,res)=>{
-    try{
-    const {name,description,price,stock,category}=req.body;
-    let updateData={
-        name,description,price,stock,category
-    };
+const editProduct = async (req, res) => {
+    try {
+        const { name, description, price, stock, category, size, color } = req.body;
+        const stockVal = parseInt(stock);
 
-    const stockVal=parseInt(stock);
-    if(!isNaN(stockVal)||stockVal<0){
-        return res.status(400).json({success:false,message:"invalid stock value"})
-    }
+        if (isNaN(stockVal) || stockVal < 0) {
+            return res.status(400).json({ success: false, message: "Invalid stock value" });
+        }
 
-     let update = { name, description, price, stock: stockVal, category };
-      console.log(update)
+        let updateData = {
+            name,
+            description,
+            price,
+            stock: stockVal,
+            category,
+            size: size || "",
+            color: color || ""
+        };
 
-    if(req.files&& req.files.length>0){
-        const images=req.files.map(file=>file.filename);
-        updateData.image = req.files.map(file=>'/uploads/products/'+file.filename);
-    }
-    await product.findByIdAndUpdate(req.params.id,updateData)
-     res.json({ success: true, message: 'Product updated successfully' });
-    res.redirect('/admin/product')
-    }catch(error){
-        console.log("error",error)
+        if (req.files && req.files.length > 0) {
+            updateData.images = req.files.map(file => '/uploads/products/' + file.filename);
+        }
+
+        await product.findByIdAndUpdate(req.params.id, updateData);
+        return res.json({ success: true, message: 'Product updated successfully' });
+    } catch (error) {
+        console.log("error", error);
+        res.status(500).json({ success: false, message: "Server error" });
     }
 }
 
@@ -149,4 +157,91 @@ const toggleProductStatus = async (req, res) => {
 
 
 
-module.exports={loadProduct, addProduct,editProduct,deleteProduct,toggleProductStatus}
+const addVariant = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { size, color, stock, price } = req.body;
+        const images = req.files?.map(file => '/uploads/products/' + file.filename) || [];
+
+        const prod = await product.findById(id);
+        if (!prod) return res.status(404).json({ success: false, message: 'Product not found' });
+
+        const sizes = Array.isArray(size) ? size : [size];
+        
+        sizes.forEach(s => {
+            if (s) {
+             
+                const existingVariant = prod.variants.find(v => v.size === s && v.color === color);
+                
+                if (existingVariant) {
+                 
+                    existingVariant.stock += (parseInt(stock) || 0);
+                    if (price) existingVariant.price = parseFloat(price);
+                    if (images.length > 0) existingVariant.images = images;
+                } else {
+                    // Add new
+                    prod.variants.push({
+                        size: s,
+                        color,
+                        stock: parseInt(stock) || 0,
+                        price: parseFloat(price) || 0,
+                        images
+                    });
+                }
+            }
+        });
+
+        await prod.save();
+        res.json({ success: true, message: 'Variant(s) updated/added successfully' });
+    } catch (error) {
+        console.error('addVariant error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const editVariant = async (req, res) => {
+    try {
+        const { productId, variantId } = req.params;
+        const { size, color, stock, price } = req.body;
+        
+        const prod = await product.findById(productId);
+        if (!prod) return res.status(404).json({ success: false, message: 'Product not found' });
+
+        const variant = prod.variants.id(variantId);
+        if (!variant) return res.status(404).json({ success: false, message: 'Variant not found' });
+
+        variant.size = size;
+        variant.color = color;
+        variant.stock = parseInt(stock) || 0;
+        variant.price = parseFloat(price) || 0;
+
+        if (req.files && req.files.length > 0) {
+            variant.images = req.files.map(file => '/uploads/products/' + file.filename);
+        }
+
+        await prod.save();
+        res.json({ success: true, message: 'Variant updated successfully' });
+    } catch (error) {
+        console.error('editVariant error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const deleteVariant = async (req, res) => {
+    try {
+        const { productId, variantId } = req.params;
+        const prod = await product.findById(productId);
+        if (!prod) return res.status(404).json({ success: false, message: 'Product not found' });
+
+        prod.variants.pull({ _id: variantId });
+        await prod.save();
+
+        res.json({ success: true, message: 'Variant deleted' });
+    } catch (error) {
+        console.error('deleteVariant error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+}
+
+module.exports = { loadProduct, addProduct, editProduct, deleteProduct, toggleProductStatus, addVariant, editVariant, deleteVariant };
+

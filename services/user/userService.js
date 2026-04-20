@@ -70,7 +70,7 @@ const loginUser = async (data, session) => {
 
   session.user = {
     _id: user._id,
-    role: user.isAdmin ? "admin" : "user",
+    role: user.role,
   };
 
   return {
@@ -95,7 +95,7 @@ const verifyOtpService = async (otp, session, userId) => {
       name,
       email,
       password: passwordHash,
-      isAdmin: role === "admin" ? true : false,
+      role: role || "user",
     });
 
     delete session.auth;

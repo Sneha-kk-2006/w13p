@@ -1,6 +1,7 @@
 const userRepository = require("../../repositories/user");
 const product=require('../../models/productSchema')
 const category=require('../../models/categorySchema')
+const Wishlist = require('../../models/wishlistSchema')
 
 const mongoose=require('mongoose')
 const loadcat = async (req, res) => {
@@ -15,7 +16,7 @@ const loadcat = async (req, res) => {
         const skip        = (currentPage - 1) * limit;
 
         // Product query
-        let query = { isDeleted: false, isActive: true };
+        let query = { isDeleted: { $ne: true }, isActive: { $ne: false } };
         console.log(query)
         if (search)    query.name     = { $regex: search, $options: 'i' };
 if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
@@ -37,17 +38,23 @@ if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
         const total    = await product.countDocuments(query);
         const products = await product.find(query)
             .populate('category')
-            
             .sort(sortOption)
             .skip(skip)
             .limit(limit);
-         
 
-console.log(products)
-
-        const categories = await category.find({ isDeleted: false });
+        const categories = await category.find({ isDeleted: { $ne: true } });
 
         const totalPages = Math.ceil(total / limit);
+
+        // Get user's wishlist product IDs for heart icon state
+        let wishlistProductIds = [];
+        const userId = req.session.user?._id;
+        if (userId) {
+            const wishlist = await Wishlist.findOne({ userId });
+            if (wishlist) {
+                wishlistProductIds = wishlist.products.map(p => p.productId.toString());
+            }
+        }
 
         res.render('user/category', {
             products,
@@ -59,21 +66,12 @@ console.log(products)
             maxPrice,
             currentPage,
             totalPages,
-            limit
+            limit,
+            wishlistProductIds,
+            isLoggedIn: !!userId
         });
 
 
-        // Test 1: no filters at all
-// const all = await product.find({});
-// console.log('All products:', all.length);
-
-// // Test 2: only isDeleted
-// const notDeleted = await product.find({ isDeleted: false });
-// console.log('Not deleted:', notDeleted.length);
-
-// // Test 3: only isActive
-// const active = await product.find({ isActive: true });
-// console.log('Active:', active.length);
 
     } catch (error) {
         console.log(error);
@@ -81,4 +79,4 @@ console.log(products)
     }
 };
 
-module.exports = { loadcat };
+module.exports = { loadcat };

@@ -5,12 +5,12 @@ const passport = require('passport');
 const userController = require("../controllers/user/authController");
 const profileController = require('../controllers/user/profileController');
 const upload = require('../middlewares/multer');
-const categoryController=require('../controllers/user/categoryController')
+const categoryController = require('../controllers/user/categoryController')
 const addressController = require('../controllers/user/addressController');
 // const googleController = require("../../controllers/user/authController");
-const productController=require('../controllers/user/productController')
-const cartController=require('../controllers/user/cartController')
-
+const productController = require('../controllers/user/productController')
+const cartController = require('../controllers/user/cartController')
+const wishlistController=require('../controllers/user/wishlistController')
 
 
 
@@ -31,7 +31,7 @@ router.get(
 router.get(
   '/google/callback',
   passport.authenticate('google', { failureRedirect: '/signup' }),
-  userController.googleCallback 
+  userController.googleCallback
 );
 router.get('/forgotPassword', isAuth, userController.loadforgot);
 router.post('/forgotPassword', isAuth, userController.forgotPassword);
@@ -53,7 +53,7 @@ router.get('/changePassword', userAuth, profileController.loadChangePassword);
 router.post('/changePassword', userAuth, profileController.changePassword);
 
 
-router.get('/products',productController.getProducts)
+router.get('/products', productController.getProducts)
 
 router.post('/logout', profileController.logout);
 
@@ -62,16 +62,22 @@ router.post('/logout', profileController.logout);
 
 
 
-router.get('/cart',cartController.getcart)
-router.post('/cart/add',cartController.addToCart)
-router.post('/cart/updateQty',cartController.updateCartQty)
+router.get('/cart', cartController.getcart)
+router.post('/cart/add', cartController.addToCart)
+router.post('/cart/updateQty', cartController.updateCartQty)
+router.post('/cart/remove', cartController.remove)
+router.post('/cart/clearCart', cartController.clearCart)
+
+
+router.get('/wishlist',wishlistController.getWishlist)
+router.post('/wishlist/add', wishlistController.addToWishlist)
+router.post('/wishlist/remove', wishlistController.removeFromWishlist)
 
 
 
 
-
-router.get('/category',categoryController.loadcat)
-router.get('/product/:id',productController.loadProductDetails)
+router.get('/category', categoryController.loadcat)
+router.get('/product/:id', productController.loadProductDetails)
 
 
 

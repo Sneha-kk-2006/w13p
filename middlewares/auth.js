@@ -6,6 +6,7 @@ const userAuth = (req, res, next) => {
     User.findById(req.session.user)
       .then((data) => {
         if (data && !data.isBlocked) {
+           res.locals.user = data;
           next();
         } else {
           res.redirect("/login");
@@ -47,6 +48,10 @@ const isUser = async (req, res, next) => {
         req.session.destroy();
         return res.redirect("/login");
       }
+
+      res.locals.user = user; // ✅ passes user to navbar on public pages
+    } else {
+      res.locals.user = null; // ✅ shows Login button when not logged in
     }
 
     next();
@@ -65,83 +70,3 @@ const isAuth = (req, res, next) => {
 
 module.exports = { userAuth, isAuth, adminAuth, isUser };
 
-// const User = require("../models/userSchema");
-// const { ERRORS } = require("../enums/messages");
-
-
-// const userAuth = async (req, res, next) => {
-//   try {
-//     if (!req.session.user) {
-//       return res.redirect("/login");
-//     }
-
-//     const user = await User.findById(req.session.user._id);
-
-//     if (!user || user.isBlocked) {
-//       req.session.destroy();
-//       return res.redirect("/login");
-//     }
-
-//     req.user = user; // attach user object for later use
-//     next();
-//   } catch (error) {
-//     console.log("Error in userAuth middleware:", error);
-//     res.status(500).send("Internal server error");
-//   }
-// };
-
-
-// const adminAuth = async (req, res, next) => {
-//   try {
-//     if (!req.session.admin) {
-//       return res.redirect("/admin/login");
-//     }
-
-//     const user = await User.findById(req.session.admin);
-//     console.log(user);
-//     if (!user || user.isAdmin === false) {
-//       return res.redirect("/admin/login");
-//     }
-
-//     if (user.isBlocked) {
-//       req.session.destroy();
-//       return res.redirect("/login");
-//     }
-
-//     req.user = user;
-//     next();
-//   } catch (error) {
-//     console.log("Error in adminAuth middleware:", error);
-//     res.status(500).send("Internal server error");
-//   }
-// };
-
-
-// const isUser = async (req, res, next) => {
-//   try {
-//     if (req.session.user) {
-//       const user = await User.findById(req.session.user._id);
-
-//       if (user && user.isBlocked) {
-//         req.session.destroy();
-//         return res.redirect("/login");
-//       }
-//     }
-
-//     next();
-//   } catch (error) {
-//     console.log("Error in isUser middleware:", error);
-//     res.redirect("/login");
-//   }
-// };
-
-
-
-// const isAuth = (req, res, next) => {
-//   if (req.session.user) {
-//     return res.redirect("/");
-//   }
-//   next();
-// };
-
-// module.exports = { userAuth, adminAuth, isUser, isAuth };

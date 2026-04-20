@@ -104,7 +104,7 @@ const login = async (req, res) => {
     }
     req.session.user = {
       _id: result.userId,
-      role: result.userData.isAdmin ? "admin" : "user",
+      role: result.userData.role,
     };
     res.locals.user = result.userData;
 
@@ -187,9 +187,9 @@ const loadproducts = async (req, res) => {
     const raw = await Product.collection.findOne({});
     console.log('RAW DB document:', JSON.stringify(raw, null, 2));
 
-    const products = await Product.find({ 
-      isBlocked: false, 
-      isListed: true 
+    const products = await Product.find({
+      isBlocked: false,
+      isListed: true
     }).populate('category');
 
     console.log('Total found:', products.length);
@@ -215,7 +215,7 @@ const googleCallback = (req, res) => {
       return res.redirect("/signup");
     }
 
-    const role = req.user.isAdmin ? "admin" : "user";
+    const role = req.user.role === "admin" ? "admin" : "user";
 
     req.session.user = {
       _id: req.user._id,
@@ -261,6 +261,6 @@ module.exports = {
   loadreset,
   resetPassword,
   loadproducts,
-    googleAuth,
+  googleAuth,
   googleCallback,
 };

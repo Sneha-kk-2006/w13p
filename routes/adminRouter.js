@@ -34,7 +34,7 @@ router.get('/product',productController.loadProduct)
 // router.post('/addProduct',productController.addProduct)
 router.post(
   "/addProduct",
-  uploads.array("images", 3),   // ✅ MUST BE HERE
+  uploads.array("images", 10),
   productController.addProduct
 );
 
@@ -45,6 +45,9 @@ router.post('/product/edit/:id', uploads.array('images', 10), productController.
 router.patch('/product/delete/:id', productController.deleteProduct);
 // router.post('/addProduct', productController.addProduct)
 router.patch('/product/toggle/:id',productController.toggleProductStatus)
+router.post('/product/addVariant/:id', uploads.array('images', 10), productController.addVariant);
+router.post('/product/editVariant/:productId/:variantId', uploads.array('images', 10), productController.editVariant);
+router.delete('/product/deleteVariant/:productId/:variantId', productController.deleteVariant);
 
 
 module.exports = router;

@@ -10,7 +10,10 @@ const session = require("express-session");
 const morgan = require("morgan");
 const passport = require("./config/passport");
 const nocache = require("nocache");
-const categoryRoutes=require('./routes/adminRouter')
+const categoryRoutes = require('./routes/adminRouter')
+const attachCartCount = require('./middlewares/cartCount')
+const attachWishlistCount = require('./middlewares/wishlistCount')
+
 
 db();
 
@@ -33,11 +36,28 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  res.locals.user = req.session.user || null;
+const User = require('./models/userSchema');
+
+app.use(async (req, res, next) => {
+  try {
+    if (req.session.user?._id) {
+      const fullUser = await User.findById(req.session.user._id).lean();
+      res.locals.user = fullUser || null;
+    } else {
+      res.locals.user = null;
+    }
+  } catch (e) {
+    res.locals.user = null;
+  }
   next();
 });
-// app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+
+
+app.use(attachCartCount)
+app.use(attachWishlistCount)
+
 
 // Set EJS
 app.set("view engine", "ejs");
@@ -49,7 +69,8 @@ app.use(passport.session());
 app.use("/", userRouter);
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
-// app.use("/admin/category", categoryRoutes);
+
+
 
 app.listen(3034, () => {
   console.log("http://localhost:3034");

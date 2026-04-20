@@ -10,6 +10,8 @@ const loadprofile = async (req, res) => {
 
     const userData = await userRepository.findById(userId);
     if (!userData) return res.redirect("/login");
+     
+    
 
     res.render("user/profile", { user: userData });
   } catch (error) {
@@ -27,7 +29,8 @@ const updateProfile = async (req, res) => {
     
       return res.status(400).json({ success: false, message: result.message });
     }
-
+     const updatedUser = await userRepository.findById(req.session.user);
+    req.session.user = updatedUser; 
     
     return res.redirect(result.redirect);
   } catch (error) {

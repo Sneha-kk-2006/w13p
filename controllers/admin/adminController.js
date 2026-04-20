@@ -6,7 +6,7 @@ const bcrypt = require("bcrypt");
 const loadlogin = async (req, res) => {
   if (req.session.admin) {
     const admin = await User.findById(req.session.admin);
-    if (admin && admin.isAdmin) {
+    if (admin && admin.role === "admin") {
       return res.redirect("/admin/dashboard");
     }
   }
@@ -73,7 +73,7 @@ const loaduser = async (req, res) => {
     let limit = 5;
 
     let query = {
-      isAdmin: false,
+      role: "user",
       $or:[
        {name: { $regex: search, $options: "i" }},
        {email: { $regex: search, $options: "i" }},

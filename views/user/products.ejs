@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SNOVA | Modern Fashion Store</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   
   <style>
     :root {
@@ -135,8 +136,10 @@
       background: white; width: 35px; height: 35px;
       border-radius: 50%; display: flex; align-items: center; justify-content: center;
       cursor: pointer; color: #ccc; transition: 0.3s;
+      border: none;
     }
     .wishlist-icon:hover { color: var(--danger-red); }
+    .wishlist-icon.wishlisted { color: var(--danger-red); }
 
     .badge {
       position: absolute; top: 15px; left: 15px;
@@ -202,9 +205,15 @@
       <% } %>
 
       <!-- Wishlist icon -->
-      <div class="wishlist-icon">
-        <i class="far fa-heart"></i>
-      </div>
+      <% const inWishlist = wishlistProductIds.includes(product._id.toString()); %>
+      <button
+        class="wishlist-icon <%= inWishlist ? 'wishlisted' : '' %>"
+        id="wish-<%= product._id %>"
+        onclick="toggleWishlist('<%= product._id %>', this)"
+        title="<%= inWishlist ? 'Remove from Wishlist' : 'Add to Wishlist' %>"
+      >
+        <i class="<%= inWishlist ? 'fas' : 'far' %> fa-heart"></i>
+      </button>
 
       <!-- Product image -->
       <a href="/product/<%= product._id %>">
@@ -305,14 +314,49 @@ async function addToCart(productId) {
     });
     const data = await res.json();
     if (data.success) {
-      // replace alert with a toast if you have one
-      alert('Added to cart!');
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: 'Added to cart!', showConfirmButton: false, timer: 1500 });
     } else {
-      alert(data.msg || 'Could not add to cart');
-         console.log('Cart error:', data); 
+      Swal.fire({ toast: true, position: 'top-end', icon: 'error', title: data.msg || 'Could not add to cart', showConfirmButton: false, timer: 1800 });
     }
   } catch (err) {
-    alert('Something went wrong');
+    Swal.fire({ icon: 'error', title: 'Something went wrong' });
+  }
+}
+
+async function toggleWishlist(productId, btn) {
+  <% if (!isLoggedIn) { %>
+    window.location.href = '/login';
+    return;
+  <% } %>
+
+  const icon = btn.querySelector('i');
+  const isWishlisted = icon.classList.contains('fas');
+  const url = isWishlisted ? '/wishlist/remove' : '/wishlist/add';
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ productId })
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      if (isWishlisted) {
+        icon.classList.replace('fas', 'far');
+        btn.classList.remove('wishlisted');
+        btn.title = 'Add to Wishlist';
+      } else {
+        icon.classList.replace('far', 'fas');
+        btn.classList.add('wishlisted');
+        btn.title = 'Remove from Wishlist';
+      }
+      Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: data.msg, showConfirmButton: false, timer: 1500 });
+    } else {
+      Swal.fire({ toast: true, position: 'top-end', icon: 'info', title: data.msg, showConfirmButton: false, timer: 1800 });
+    }
+  } catch (err) {
+    Swal.fire({ icon: 'error', title: 'Server error' });
   }
 }
 </script>

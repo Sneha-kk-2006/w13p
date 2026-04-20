@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | My Wishlist</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        :root {
+            --primary-green: #10b981;
+            --dark-bg: #111111;
+            --light-pink: #fdf2f2;
+            --danger-red: #ff3b3b;
+            --text-gray: #666;
+            --border-color: #eee;
+        }
+
+        body {
+            background-color: var(--light-pink);
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 5%;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--dark-bg);
+            margin-bottom: 10px;
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .wishlist-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease;
+            position: relative;
+        }
+
+        .wishlist-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .remove-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: white;
+            color: var(--danger-red);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: 0.3s;
+        }
+
+        .remove-btn:hover {
+            background: var(--danger-red);
+            color: white;
+        }
+
+        .product-img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px;
+            text-align: center;
+        }
+
+        .product-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark-bg);
+            display: block;
+            text-decoration: none;
+        }
+
+        .product-price {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary-green);
+            margin-bottom: 20px;
+        }
+
+        .btn-add-cart {
+            width: 100%;
+            padding: 12px;
+            background: var(--dark-bg);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-add-cart:hover {
+            background: var(--primary-green);
+        }
+
+        .empty-state {
+            background: white;
+            padding: 60px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .empty-state i {
+            font-size: 64px;
+            color: #ddd;
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            font-size: 18px;
+            color: var(--text-gray);
+            margin-bottom: 30px;
+        }
+
+        .btn-shop-now {
+            padding: 15px 40px;
+            background: var(--primary-green);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        @media (max-width: 600px) {
+            .wishlist-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <%- include('../partials/user/header') %>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>My Wishlist</h1>
+            <p>You have <span id="wishlist-total"><%= wishlist.length %></span> items in your wishlist</p>
+        </div>
+
+        <% if (wishlist.length > 0) { %>
+            <div class="wishlist-grid" id="wishlist-container">
+                <% wishlist.forEach(item => { %>
+                    <% if (item.productId) { %>
+                        <div class="wishlist-card" id="card-<%= item.productId._id %>">
+                            <button class="remove-btn" onclick="removeFromWishlist('<%= item.productId._id %>')">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                            <a href="/product/<%= item.productId._id %>">
+                                <img src="<%= item.productId.images[0] %>" alt="<%= item.productId.name %>" class="product-img">
+                            </a>
+                            <div class="product-info">
+                                <a href="/product/<%= item.productId._id %>" class="product-name"><%= item.productId.name %></a>
+                                <div class="product-price">₹<%= item.productId.price.toLocaleString('en-IN') %></div>
+                                <button class="btn-add-cart" onclick="addToCart('<%= item.productId._id %>')">
+                                    <i class="fas fa-shopping-cart"></i> ADD TO CART
+                                </button>
+                            </div>
+                        </div>
+                    <% } %>
+                <% }); %>
+            </div>
+        <% } else { %>
+            <div class="empty-state">
+                <i class="far fa-heart"></i>
+                <p>Your wishlist is currently empty.</p>
+                <a href="/products" class="btn-shop-now">CONTINUE SHOPPING</a>
+            </div>
+        <% } %>
+    </div>
+
+    <%- include('../partials/user/footer') %>
+
+    <script>
+        async function addToCart(productId) {
+            try {
+                const response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: 'Product added to cart',
+                        showConfirmButton: false,
+                        timer: 1500
+                    }).then(() => {
+                        window.location.reload(); // To update cart count and remove from wishlist card if it was removed in backend
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: data.msg
+                    });
+                }
+            } catch (error) {
+                console.error('Error adding to cart:', error);
+            }
+        }
+
+        async function removeFromWishlist(productId) {
+            try {
+                const result = await Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to remove this item from wishlist?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#10b981',
+                    cancelButtonColor: '#ff3b3b',
+                    confirmButtonText: 'Yes, remove it!'
+                });
+
+                if (result.isConfirmed) {
+                    const response = await fetch('/wishlist/remove', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ productId })
+                    });
+                    const data = await response.json();
+
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Removed!',
+                            text: 'Product removed from wishlist',
+                            showConfirmButton: false,
+                            timer: 1500
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    } else {
+                        Swal.fire('Error!', data.msg, 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Error removing from wishlist:', error);
+            }
+        }
+    </script>
+</body>
+</html>

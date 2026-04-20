@@ -175,18 +175,27 @@
        
         let timeLeft = 59;
         const timerElement = document.getElementById('timer');
+        let countdown;
 
-        const countdown = setInterval(() => {
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                timerElement.innerText = "00:00";
-                timerElement.style.color = "red";
-            } else {
-                timeLeft--;
-                let seconds = timeLeft < 10 ? '0' + timeLeft : timeLeft;
-                timerElement.innerText = `00:${seconds}`;
-            }
-        }, 1000);
+        function startTimer() {
+            if (countdown) clearInterval(countdown);
+            timeLeft = 59;
+            timerElement.style.color = "black";
+            
+            countdown = setInterval(() => {
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    timerElement.innerText = "00:00";
+                    timerElement.style.color = "red";
+                } else {
+                    timeLeft--;
+                    let seconds = timeLeft < 10 ? '0' + timeLeft : timeLeft;
+                    timerElement.innerText = `00:${seconds}`;
+                }
+            }, 1000);
+        }
+
+        startTimer();
 
         const inputs = document.querySelectorAll('.otp-input');
         
@@ -283,22 +292,7 @@ async function verifyOtp() {
 
 
 async function resendOTP() {
-  // reset timer
-  timeLeft = 59;
-  timerElement.style.color = "black";
-  timerElement.innerText = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
-
-  const countdown = setInterval(() => {
-    timeLeft--;
-    if (timeLeft < 0) {
-      clearInterval(countdown);
-      timerElement.innerText = "00:00";
-      timerElement.style.color = "red";
-    } else {
-      let seconds = timeLeft < 10 ? '0' + timeLeft : timeLeft;
-      timerElement.innerText = `00:${seconds}`;
-    }
-  }, 1000);
+  startTimer();
 
   try {
     const response = await fetch('/resend-otp', { method: 'POST' });
