@@ -29,7 +29,7 @@
                 return res.json({ success: false, msg: 'Please login to add items to cart' });
             }
             const userId = req.session.user._id;
-            const { productId } = req.body;
+            const { productId, variantId } = req.body;
 
             const { ok, msg, product } = await validateProduct(productId);
             if (!ok) return res.json({ success: false, msg });
@@ -38,7 +38,8 @@
             if (!cart) cart = new Cart({ userId, items: [] }); 
 
             const existingIndex = cart.items.findIndex(
-                item => item.productId.toString() === productId.toString()
+                item => item.productId.toString() === productId.toString() && 
+                        (!variantId || item.variantId?.toString() === variantId.toString())
             );
 
             if (existingIndex > -1) {
@@ -46,14 +47,22 @@
                 const newQty = currentQty + 1;
 
                 if (newQty > MAX_QTY)       return res.json({ success: false, msg: `Max ${MAX_QTY} per item` });
-                if (newQty > product.stock) return res.json({ success: false, msg: `Only ${product.stock} in stock` });
+                
+                // Check stock (either variant stock or base stock)
+                let availableStock = product.stock;
+                if (variantId) {
+                    const variant = product.variants.id(variantId);
+                    if (variant) availableStock = variant.stock;
+                }
+
+                if (newQty > availableStock) return res.json({ success: false, msg: `Only ${availableStock} in stock` });
 
                 cart.items[existingIndex].quantity = newQty;
             } else {
                 cart.items.push({
                     productId: product.id,
-                    quantity: 1,
-                    price: product.price
+                    variantId: variantId || null,
+                    quantity: 1
                 });
             }
 
@@ -106,37 +115,45 @@
         // filter out inactive products
         cartData.items = cartData.items.filter(item =>
             item.productId &&
-            item.productId.isActive &&
-            (item.productId.category?.isActive !== false)
-    );
+            item.productId.isActive !== false &&
+            item.productId.isDeleted !== true &&
+            (!item.productId.category || (item.productId.category.isActive !== false && item.productId.category.isDeleted !== true))
+        );
         
 
-
         const subtotal = cartData.items.reduce((sum, item) =>
-            sum + item.quantity * item.productId.price, 0
+            sum + (item.quantity * (item.productId.price || 0)), 0
         );
 
-        const discount = cartData.items.reduce((sum, item) =>
-            sum + ((item.productId.regularPrice - item.productId.price) * item.quantity), 0
-        );
+        const discount = cartData.items.reduce((sum, item) => {
+            const price = item.productId.price || 0;
+            const discountPct = item.productId.discount || 0;
+            return sum + (price * (discountPct / 100) * item.quantity);
+        }, 0);
 
-        const total = subtotal;
+        const total = subtotal - discount;
 
 
         res.render('user/cart', {
-            items: cartData.items.map(item => ({
-                _id:          item._id,
-                productId:    item.productId._id,
-                productName:  item.productId.name,
-                productImage: item.productId.images?.[0] || '',
-                color:        item.productId.color || 'N/A',
-                size:         item.productId.size || 'N/A',
-                unitPrice:    item.productId.price,
-                oldPrice:     item.productId.regularPrice || item.productId.price,
-                quantity:     item.quantity,
-                totalPrice:   item.quantity * item.productId.price,
-                stock:        item.productId.stock
-            })),
+            items: cartData.items.map(item => {
+                const originalPrice = item.productId.price || 0;
+                const discountPct = item.productId.discount || 0;
+                const salePrice = Math.round(originalPrice * (1 - discountPct / 100));
+                
+                return {
+                    _id:          item._id,
+                    productId:    item.productId._id,
+                    productName:  item.productId.name,
+                    productImage: item.productId.images?.[0] || '',
+                    color:        item.productId.color || 'N/A',
+                    size:         item.productId.size || 'N/A',
+                    unitPrice:    salePrice, // Show the actual price they pay
+                    oldPrice:     originalPrice,
+                    quantity:     item.quantity,
+                    totalPrice:   item.quantity * salePrice,
+                    stock:        item.productId.stock
+                };
+            }),
             subtotal,
             discount,
             total,
@@ -176,7 +193,30 @@
 
             await cart.save();
 
-            return res.json({ success: true });
+            // Re-calculate totals
+            const updatedCart = await Cart.findOne({ userId }).populate("items.productId");
+            
+            const subtotal = updatedCart.items.reduce((sum, itm) => 
+                sum + (itm.quantity * (itm.productId?.price || 0)), 0
+            );
+
+            const discount = updatedCart.items.reduce((sum, itm) => {
+                const prc = itm.productId?.price || 0;
+                const dsc = itm.productId?.discount || 0;
+                return sum + (prc * (dsc / 100) * itm.quantity);
+            }, 0);
+
+            const total = subtotal - discount;
+            const salePrice = Math.round((product.price || 0) * (1 - (product.discount || 0) / 100));
+            const itemTotal = item.quantity * salePrice;
+
+            return res.json({ 
+                success: true, 
+                subtotal, 
+                total, 
+                itemTotal,
+                quantity: item.quantity 
+            });
 
         } catch (err) {
             console.log(err);

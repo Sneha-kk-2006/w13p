@@ -1,779 +1,291 @@
 <!DOCTYPE html>
-
 <html lang="en">
-
 <head>
-
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>SNOVA | My Profile</title>
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-  <style>
-    :root {
-      --primary: #10b981;
-      --sidebar: #0f172a;
-      --sidebar-hover: #1e293b;
-      --card-bg: #ffffff;
-      --border: #e5e7eb;
-      --danger: #ef4444;
-      --warning: #f59e0b;
-      --text-gray: #6b7280;
-    }
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Segoe UI, sans-serif;
-    }
-
-    body {
-      background: #f1f5f9;
-    }
-
-    /* HEADER */
-
-    .header {
-      height: 70px;
-      background: #020617;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 40px;
-      color: white;
-    }
-
-    .logo {
-      font-size: 22px;
-      font-weight: bold;
-      color: #10b981;
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    .header-avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      overflow: hidden;
-    }
-
-    .header-avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    /* DASHBOARD */
-
-    .dashboard {
-      display: flex;
-      height: calc(100vh - 70px);
-    }
-
-    /* SIDEBAR */
-
-    .sidebar {
-      width: 250px;
-      background: var(--sidebar);
-      color: white;
-      padding: 25px 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .sidebar h3 {
-      font-size: 14px;
-      color: #94a3b8;
-      margin: 10px 10px 5px;
-    }
-
-    .side-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      color: white;
-      font-size: 14px;
-      transition: 0.2s;
-    }
-
-    .side-link:hover {
-      background: var(--sidebar-hover);
-    }
-
-    .side-link.active {
-      background: #10b981;
-    }
-
-    /* CONTENT */
-
-    .content {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      padding: 30px 20px;
-      align-items: flex-start;
-    }
-
-    .profile-card {
-      background: var(--card-bg);
-      width: 900px;
-      border-radius: 14px;
-      padding: 35px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-    }
-
-    /* PROFILE HEADER */
-
-    .profile-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
-    }
-
-    /* PROFILE IMAGE */
-
-    .avatar-wrapper {
-      position: relative;
-    }
-
-    .avatar {
-      width: 110px;
-      height: 110px;
-      border-radius: 50%;
-      overflow: hidden;
-      border: 3px solid var(--border);
-    }
-
-    .avatar img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .edit-avatar {
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      background: var(--primary);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      cursor: pointer;
-      border: 2px solid white;
-    }
-
-    .joined {
-      font-size: 12px;
-      color: var(--text-gray);
-      text-align: center;
-      margin-top: 6px;
-    }
-
-    /* ACTION BUTTONS */
-
-    .actions {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 6px;
-      padding: 9px 14px;
-      cursor: pointer;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: white;
-    }
-
-    .btn-edit {
-      background: var(--warning);
-    }
-
-    .btn-logout {
-      background: var(--danger);
-    }
-
-    /* INFO */
-
-    .field {
-      margin-bottom: 18px;
-    }
-
-    .field label {
-      font-size: 13px;
-      color: var(--text-gray);
-      margin-bottom: 4px;
-      display: block;
-    }
-
-    .input-box {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px;
-      background: #f9fafb;
-    }
-
-    .input-box input {
-      border: none;
-      background: transparent;
-      width: 100%;
-      font-weight: 600;
-    }
-
-    /* CHANGE PASSWORD */
-
-    .password-section {
-      margin-top: 25px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border);
-    }
-
-    .change-pass-btn {
-      background: #6366f1;
-      color: white;
-      border: none;
-      padding: 5px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    /* MODAL */
-
-    /* overlay */
-
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      display: none;
-      /* ✅ hidden by default */
-      align-items: center;
-      justify-content: center;
-      z-index: 999;
-    }
-
-    /* modal box */
-
-    .modal {
-      background: white;
-      width: 400px;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-      animation: modalPop 0.3s ease;
-    }
-
-    /* animation */
-
-    @keyframes modalPop {
-      from {
-        transform: scale(0.8);
-        opacity: 0;
-      }
-
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    /* header */
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .modal-header h3 {
-      margin: 0;
-    }
-
-    .close-btn {
-      font-size: 22px;
-      cursor: pointer;
-      color: #555;
-    }
-
-    /* avatar section */
-
-    .image-edit {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-    .modal-avatar img {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #00c46b;
-    }
-
-    /* image buttons */
-
-    .image-buttons {
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-    }
-
-    .img-btn {
-      background: #00c46b;
-      color: white;
-      padding: 6px 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 13px;
-      border: none;
-      transition: 0.2s;
-    }
-
-    .img-btn:hover {
-      background: #00a95c;
-    }
-
-    .img-btn.remove {
-      background: #ff4d4d;
-    }
-
-    .img-btn.remove:hover {
-      background: #d93a3a;
-    }
-
-    /* fields */
-
-    .field {
-      margin-bottom: 15px;
-    }
-
-    .field label {
-      font-size: 13px;
-      display: block;
-      margin-bottom: 5px;
-      color: #555;
-    }
-
-    .field input {
-      width: 100%;
-      padding: 8px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-    }
-
-    /* Tablet */
-    @media (max-width: 768px) {
-      .sidebar {
-        display: none;
-      }
-
-      /* .profile-card { padding: 22px 18px; } */
-
-      .profile-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-      }
-
-      .actions {
-        flex-direction: row;
-      }
-    }
-
-    /* Mobile */
-    @media (max-width: 480px) {
-      .content {
-        padding: 16px 12px;
-      }
-
-      .profile-card {
-        padding: 18px 14px;
-      }
-
-      .avatar {
-        width: 80px;
-        height: 80px;
-      }
-
-      .actions {
-        flex-direction: column;
-        width: 100%;
-      }
-
-      .btn {
-        justify-content: center;
-      }
-    }
-
-    /* actions */
-
-    .modal-actions {
-      display: flex;
-      justify-content: flex-end;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .btn-save {
-      background: #00c46b;
-      color: white;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .btn-save:hover {
-      background: #00a95c;
-    }
-
-    .btn-cancel {
-      background: #eee;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-
-    .logout-btn {
-      background: #ff4d4d;
-      color: white;
-      border: none;
-      padding: 8px 18px;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .logout-btn:hover {
-      background: #e60000;
-    }
-
-    .profile-card {
-      width: 100%;
-      /* Fill the screen on mobile */
-      max-width: 900px;
-      /* But don't grow larger than 900px on desktop */
-    }
-  </style>
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | My Profile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        :root {
+            --primary-black: #000;
+            --off-white: #fff;
+            --text-gray: #666;
+            --border-light: #eee;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--off-white);
+            color: var(--primary-black);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-profile-content {
+            flex: 1;
+            padding: 60px 5%;
+        }
+
+        .profile-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 50px;
+        }
+
+        .profile-section {
+            max-width: 600px;
+        }
+
+        .avatar-box {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .avatar-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #000;
+        }
+
+        .btn-minimal {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            text-decoration: underline;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 35px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #999;
+        }
+
+        .info-val {
+            font-size: 0.9rem;
+            border-bottom: 1px solid #000;
+            padding-bottom: 8px;
+            display: block;
+            width: 100%;
+        }
+
+        .section-header {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+            margin-top: 60px;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.95);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            width: 90%;
+            max-width: 450px;
+            padding: 40px;
+        }
+
+        .modal-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
+
+        .modal-form input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #000;
+            padding: 12px 0;
+            font-size: 0.85rem;
+            outline: none;
+            background: transparent;
+            margin-bottom: 25px;
+        }
+
+        .btn-black {
+            width: 100%;
+            background: #000;
+            color: #fff;
+            padding: 18px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container { flex-direction: column; }
+            .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #eee; padding: 30px; }
+        }
+    </style>
 </head>
-
 <body>
-  <%- include('../partials/user/header') %>
 
+    <%- include('../partials/user/header') %>
 
-    <div class="dashboard">
+    <div class="dashboard-container">
+        <% var activePage = 'profile'; %>
+        <%- include('../partials/user/sidebar', { activePage: 'profile' }) %>
 
+        <main class="main-profile-content">
+            <h1 class="profile-title">PERSONAL DETAILS</h1>
 
-      <%- include('../partials/user/sidebar') %>
-
-        <main class="content">
-
-          <div class="profile-card">
-
-            <div class="profile-header">
-
-              <div>
-                <h2>My Profile</h2>
-                <p style="color:#6b7280;font-size:14px">Manage your personal details</p>
-              </div>
-
-              <div>
-
-                <div class="avatar-wrapper">
-
-                  <div class="avatar">
-                    <img id="profileImage"
-                      src="<%= user.profileImage ? user.profileImage + '?t=' + Date.now() : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>"
-                      alt="Profile Image">
-                  </div>
-
-                  <div class="edit-avatar" onclick="openModal('editModal')">
-                    <span class="material-symbols-outlined">edit</span>
-                  </div>
-
-                </div>
-                <div class="joined">
-                  joined <%= new Date(user.createdAt).toLocaleDateString('en-IN', { day:'numeric',month: 'short' , year: 'numeric'
-                    })%>
+            <div class="profile-section">
+                <div class="avatar-box">
+                    <img id="profileImage" src="<%= user.profileImage ? user.profileImage : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>" class="avatar-img">
+                    <div>
+                        <button class="btn-minimal" onclick="openModal('editModal')">Upload Image</button>
+                        <p style="font-size: 0.6rem; color: #999; margin-top: 8px;">Joined <%= new Date(user.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) %></p>
+                    </div>
                 </div>
 
-              </div>
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <span class="info-val"><%= user.name %></span>
+                </div>
 
-              <div class="actions">
+                <div class="form-group">
+                    <label>E-mail</label>
+                    <span class="info-val"><%= user.email %></span>
+                </div>
 
-                <button class="btn btn-edit" onclick="openModal('editModal')">
-                  <span class="material-symbols-outlined">edit</span>Edit
-                </button>
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <span class="info-val"><%= user.phone || 'NOT PROVIDED' %></span>
+                </div>
 
-                <button class="btn btn-logout" onclick="openModal('logoutModal')">
-                  <span class="material-symbols-outlined">logout</span>Logout
-                </button>
+                <button class="btn-minimal" onclick="openModal('editModal')">Edit Details</button>
 
-              </div>
+                <div class="section-header">SECURITY</div>
+                <% if(!user.googleId) { %>
+                    <a href="/changePassword" class="btn-minimal" style="display:inline-block;">Update Password</a>
+                <% } else { %>
+                    <p style="font-size: 0.7rem; color: #999;">Managed via Google Authentication</p>
+                <% } %>
 
+                <form action="/logout" method="POST" style="margin-top: 40px;">
+                    <button type="submit" class="btn-minimal" style="color: #d32f2f;">Sign Out</button>
+                </form>
             </div>
-
-            <div class="field">
-              <label>Full Name</label>
-              <div class="input-box">
-                <input value="<%= user.name %>" type="text" name="name">
-              </div>
-            </div>
-
-            <div class="field">
-              <label>Email</label>
-              <div class="input-box">
-                <input value="<%= user.email %>" type="email" name="email">
-              </div>
-            </div>
-
-            <div class="field">
-              <label>Phone</label>
-              <div class="input-box">
-                <input value="<%= user.phone %>" type="tel" name="phone">
-              </div>
-            </div>
-
-            <div class="password-section">
-
-              <h3>Security</h3>
-              <%if(!user.googleId){%>
-
-                <a href="/changePassword" class="change-pass-btn">
-                  Change Password
-                </a>
-                <%} else { %>
-                  <p style="color: var(--text-gray); margin-top: 6px;">
-                    You are logged in with Google. No password set.
-                  </p>
-                  <%} %>
-
-            </div>
-
-          </div>
-
         </main>
-
     </div>
 
-
-    <!-- Edit Profile Modal -->
+    <!-- Edit Modal -->
     <div class="modal-overlay" id="editModal">
-      <div class="modal">
+        <div class="modal-box">
+            <h3 class="flex justify-between items-center">Edit Profile <span onclick="closeModal('editModal')" class="cursor-pointer text-xl font-sans">&times;</span></h3>
+            
+            <form id="editProfileForm" action="/editProfile" method="POST" enctype="multipart/form-data" class="modal-form">
+                <div class="mb-8 text-center">
+                    <img id="modalImage" src="<%= user.profileImage ? user.profileImage : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>" class="avatar-img mx-auto mb-4">
+                    <input id="profileFile" name="profileImage" type="file" accept="image/*" hidden onchange="previewImage(event)">
+                    <label for="profileFile" class="btn-minimal cursor-pointer">Change Image</label>
+                    <button type="button" class="btn-minimal ml-5" style="color: #999;" onclick="removeImage()">Remove</button>
+                </div>
+                <input type="hidden" name="removeProfileImage" id="removeProfileImage" value="false">
 
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h3>Edit Profile</h3>
-          <span class="close-btn" onclick="closeModal('editModal')">&times;</span>
+                <div class="mb-5">
+                    <label style="font-size:0.6rem; color:#999; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;">Name</label>
+                    <input type="text" name="name" id="name" value="<%= user.name %>" required>
+                    <p id="nameError" class="text-[9px] text-red-500 uppercase"></p>
+                </div>
+
+                <div class="mb-5">
+                    <label style="font-size:0.6rem; color:#999; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;">Email</label>
+                    <input type="email" name="email" value="<%= user.email %>" required>
+                </div>
+
+                <div class="mb-5">
+                    <label style="font-size:0.6rem; color:#999; text-transform:uppercase; letter-spacing:1px; display:block; margin-bottom:5px;">Mobile</label>
+                    <input type="text" id="phone" name="phone" value="<%= user.phone %>" pattern="\d{10}">
+                    <p id="numberError" class="text-[9px] text-red-500 uppercase"></p>
+                </div>
+
+                <button onclick="SubmitEditProfile()" type="button" class="btn-black">Apply Changes</button>
+            </form>
         </div>
-
-        <!-- Form -->
-        <form id="editProfileForm" action="/editProfile" method="POST" enctype="multipart/form-data">
-
-          <!-- Image Edit Section -->
-          <div class="image-edit">
-            <div class="modal-avatar">
-              <img id="modalImage"
-                src="<%= user.profileImage ? user.profileImage + '?t=' + Date.now() : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name) %>"
-                alt="Profile Image">
-            </div>
-
-            <div class="image-buttons">
-              <!-- Upload Button -->
-              <label class="img-btn" for="profileFile">Upload</label>
-              <input id="profileFile" name="profileImage" type="file" accept="image/*" hidden
-                onchange="previewImage(event)">
-
-              <!-- Remove Button -->
-              <button type="button" class="img-btn remove" onclick="removeImage()">Remove</button>
-            </div>
-          </div>
-          <input type="hidden" name="removeProfileImage" id="removeProfileImage" value="false">
-
-          <!-- Other Fields -->
-          <div class="field">
-            <label>Name</label>
-            <input type="text" name="name" id="name" value="<%= user.name %>" required>
-            <p id="nameError"></p>
-          </div>
-
-          <div class="field">
-            <label>Email</label>
-            <input type="email" name="email" value="<%= user.email %>" required>
-          </div>
-
-          <div class="field">
-            <label>Phone</label>
-            <input type="text" id="phone" name="phone" value="<%= user.phone %>" pattern="\d{10}" required>
-            <p id="numberError"></p>
-          </div>
-
-          <!-- Actions -->
-          <div class="modal-actions">
-            <button onclick="SubmitEditProfile()" type="button" class="btn-save">Save Changes</button>
-            <button type="button" class="btn-cancel" onclick="closeModal('editModal')">Cancel</button>
-          </div>
-
-        </form>
-
-      </div>
     </div>
-    <!-- LOGOUT MODAL -->
 
-    <div class="modal-overlay" id="logoutModal">
+    <%- include('../partials/user/footer') %>
 
-      <div class="modal" style="text-align:center">
-
-        <span class="material-symbols-outlined" style="font-size:40px;color:#ef4444">logout</span>
-
-        <h3>Logout</h3>
-
-        <p style="color:#6b7280;margin-top:6px">
-          Are you sure you want to logout?
-        </p>
-
-        <div class="modal-actions" style="justify-content:center">
-
-          <form action="/logout" method="POST">
-            <button type="submit" class="logout-btn">Logout</button>
-          </form>
-
-          <button class="btn-cancel" onclick="closeModal('logoutModal')">Cancel</button>
-
-        </div>
-
-      </div>
-
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
+        function openModal(id) { document.getElementById(id).style.display = "flex"; }
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
 
-      const defaultAvatar = "https://ui-avatars.com/api/?name=<%= encodeURIComponent(user.name) %>";
-
-      function openModal(id) {
-        document.getElementById(id).style.display = "flex";
-      }
-
-      function closeModal(id) {
-        document.getElementById(id).style.display = "none";
-      }
-
-
-      function previewImage(event) {
-        const file = event.target.files[0];
-
-        if (!file) return;
-
-       
-        if (!file.type.startsWith("image/")) {
-          Toastify({
-            text: "Please upload only image files (JPG, PNG, etc)",
-            duration: 3000,
-            gravity: "top",
-            position: "right",
-            backgroundColor: "#ff4d4d",
-            stopOnFocus: true,
-          }).showToast();
-          event.target.value = ""; 
+        function previewImage(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) { document.getElementById("modalImage").src = e.target.result; };
+            reader.readAsDataURL(file);
         }
 
-        // Preview image
-        const reader = new FileReader();
-        reader.onload = function (e) {
-          document.getElementById("modalImage").src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-
-      function removeImage() {
-
-        const modalImg = document.getElementById("modalImage");
-
-
-        modalImg.src = "https://ui-avatars.com/api/?name=<%= encodeURIComponent(user.name) %>";
-
-        const fileInput = document.getElementById("profileFile");
-        if (fileInput) fileInput.value = "";
-
-
-        document.getElementById("removeProfileImage").value = "true";
-
-      }
-
-      function saveProfile() {
-        const profileImg = document.getElementById("profileImage");
-        const modalImg = document.getElementById("modalImage");
-        if (profileImg && modalImg) {
-          profileImg.src = modalImg.src;
+        function removeImage() {
+            document.getElementById("modalImage").src = "https://ui-avatars.com/api/?name=<%= encodeURIComponent(user.name) %>";
+            document.getElementById("profileFile").value = "";
+            document.getElementById("removeProfileImage").value = "true";
         }
-        closeModal("editModal");
-      }
 
-      function SubmitEditProfile() {
-        console.log("submit profile")
-        const phoneInput = document.getElementById("phone");
-        const phoneValue = phoneInput.value.trim();
-        const nameInput = document.getElementById("name");
-        const nameValue = nameInput.value.trim();
-
-        if (phoneValue.length !== 10) {
-
-          document.getElementById("numberError").textContent = "Please enter a valid 10-digit phone number.";
-          document.getElementById("numberError").style.color = "red";
-          return;
-        } else {
-          document.getElementById("numberError").textContent = ""; 
+        function SubmitEditProfile() {
+            const phone = document.getElementById("phone").value.trim();
+            const name = document.getElementById("name").value.trim();
+            
+            if (phone && phone.length !== 10) {
+                document.getElementById("numberError").textContent = "Must be 10 digits";
+                return;
+            }
+            if (name.length < 2) {
+                document.getElementById("nameError").textContent = "Name too short";
+                return;
+            }
+            document.getElementById("editProfileForm").submit();
         }
-        console.log("phone valid, submitting form")
-
-
-        const nameRegex = /^[A-Za-z ]{2,30}$/;
-        if (!nameRegex.test(nameValue)) {
-          document.getElementById("nameError").textContent = "please enter a valid name "
-          document.getElementById("nameError").style.color = "red";
-          return;
-        } else {
-          document.getElementById("nameError").textContent = "";
-        }
-        document.getElementById("editProfileForm").submit();
-
-
-      }
     </script>
-
 </body>
-
 </html>

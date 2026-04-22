@@ -172,7 +172,7 @@ const resetPassword = async (req, res) => {
       return res.render("user/resetPassword", { message: result.message });
     }
 
-    return res.redirect(result.redirect);
+    return res.redirect(result.redirectUrl || "/login");
   } catch (error) {
     console.error("Reset Password Error:", error);
     return res.redirect("/errorPage");

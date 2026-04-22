@@ -1,47 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Login | SNOVA</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | Central Administration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-black: #000;
+            --off-white: #fff;
+            --text-gray: #666;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--off-white);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Split Screen */
+        .login-visual {
+            flex: 1.2;
+            background-color: #f7f7f7;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%) contrast(110%);
+            transition: 1s;
+        }
+
+        .login-visual:hover img {
+            filter: grayscale(0%) contrast(100%);
+        }
+
+        .visual-overlay {
+            position: absolute;
+            bottom: 60px;
+            left: 60px;
+            color: #fff;
+            z-index: 10;
+        }
+
+        .visual-overlay h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 4rem;
+            text-transform: uppercase;
+            line-height: 0.9;
+            margin-bottom: 20px;
+            letter-spacing: -3px;
+            font-weight: 700;
+        }
+
+        .login-form-side {
+            flex: 0.8;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 8%;
+            background: #fff;
+            border-left: 0.5px solid #eee;
+        }
+
+        .form-header {
+            margin-bottom: 60px;
+        }
+
+        .brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            letter-spacing: -1px;
+            font-weight: 700;
+            margin-bottom: 50px;
+            color: #000;
+        }
+
+        .form-title {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            font-weight: 700;
+            color: #999;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 45px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2.5px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            color: #000;
+        }
+
+        .form-group input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #000;
+            padding: 15px 0;
+            font-size: 0.85rem;
+            outline: none;
+            background: transparent;
+            letter-spacing: 1px;
+            transition: 0.3s;
+        }
+
+        .form-group input:focus {
+            padding-left: 10px;
+            border-bottom-width: 2px;
+        }
+
+        .btn-black {
+            background: #000;
+            color: #fff;
+            width: 100%;
+            padding: 22px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            font-weight: 700;
+            transition: 0.4s;
+            margin-top: 20px;
+        }
+
+        .btn-black:hover {
+            letter-spacing: 7px;
+            background: #333;
+        }
+
+        .error-box {
+            background: #fff;
+            color: #000;
+            padding: 15px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            text-align: center;
+            border: 1px solid #000;
+        }
+
+        .footer-note {
+            margin-top: 50px;
+            font-size: 0.55rem;
+            color: #ccc;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            line-height: 2;
+        }
+
+        @media (max-width: 1200px) {
+            .login-visual { display: none; }
+            .login-form-side { flex: 1; padding: 0 15%; }
+        }
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+<body>
 
-  <div class="bg-white p-8 rounded shadow-md w-full max-w-sm">
-    <h1 class="text-2xl font-bold mb-6 text-center">Admin Login</h1>
+    <div class="login-visual">
+        <img src="https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=2074&auto=format&fit=crop" alt="Fashion Editorial">
+        <div class="visual-overlay">
+            <h2>CENTRAL<br>CONTROL</h2>
+            <p style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 5px; opacity: 1; border-top: 1px solid rgba(255,255,255,0.4); display: inline-block; padding-top: 15px;">EST. 2024 / SNOVA ADMIN</p>
+        </div>
+    </div>
 
-    <!-- Error message -->
-    <% if (typeof message !== 'undefined') { %>
-      <div class="bg-red-100 text-red-700 p-2 mb-4 rounded">
-        <%= message %>
-      </div>
-    <% } %>
+    <div class="login-form-side">
+        <div class="form-header">
+            <div class="brand-name">SNOVA.</div>
+            <span class="form-title">Internal Access Portal</span>
+        </div>
 
-    <form action="/admin/login" method="POST" class="space-y-4">
+        <% if (typeof message !== 'undefined') { %>
+            <div class="error-box">
+                <%= message %>
+            </div>
+        <% } %>
 
-      <div>
-        <label for="email" class="block text-gray-700 mb-1">Email</label>
-        <input type="email" name="email" id="email" placeholder="admin@example.com" required
-          class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
+        <form action="/admin/login" method="POST">
+            <div class="form-group">
+                <label>Admin Key</label>
+                <input type="email" name="email" placeholder="STAFF@SNOVA.COM" required>
+            </div>
 
-      <div>
-        <label for="password" class="block text-gray-700 mb-1">Password</label>
-        <input type="password" name="password" id="password" placeholder="Enter password" required
-          class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500">
-      </div>
+            <div class="form-group" style="position: relative;">
+                <label>Passcode</label>
+                <input type="password" name="password" id="adminPassword" placeholder="••••••••" required>
+                <span id="togglePassword" style="position: absolute; right: 0; bottom: 15px; font-size: 0.55rem; letter-spacing: 2px; font-weight: 700; cursor: pointer; color: #999; text-transform: uppercase; padding: 5px; user-select: none;">Show</span>
+            </div>
 
-      <button type="submit"
-        class="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition">
-        Login
-      </button>
-    </form>
+            <button type="submit" class="btn-black">Identify & Enter</button>
+        </form>
 
-    <p class="text-center mt-4 text-gray-500 text-sm">
-      Forgot your password? <a href="#" class="text-blue-600 hover:underline">Reset</a>
-    </p>
-  </div>
+        <div class="footer-note">
+            PRIVATE TERMINAL / AUTHORIZED STAFF ONLY<br>
+            IP LOGGING ACTIVE / SYSTEM SECURED
+        </div>
+    </div>
 
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordField = document.getElementById('adminPassword');
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            this.textContent = type === 'password' ? 'Show' : 'Hide';
+        });
+    </script>
 </body>
 </html>

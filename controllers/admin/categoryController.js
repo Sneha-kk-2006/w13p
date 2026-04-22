@@ -43,12 +43,12 @@ const addCategory = async (req, res) => {
 
     
     const exists = await category.findOne({
-      name: name.trim(),
+      name: { $regex: new RegExp(`^${name.trim()}$`, "i") },
       isDeleted: false
     });
 
     if (exists) {
-      return res.status(400).json({ message: "Category already exists" });
+      return res.status(400).json({ success: false, message: "Category already exists" });
     }
 
     await category.create({
@@ -78,9 +78,13 @@ const editCategory=async(req,res)=>{
         const {name,isActive}=req.body;
         if(!name||!name.trim())
             return res.status(400).send("name required")
-           const exist=await category.findOne({name:name.trim(),_id:{$ne:id},isDeleted:false});
-           if(exist)
-            return res.status(400).send("category name is already exists");
+           const exist = await category.findOne({
+               name: { $regex: new RegExp(`^${name.trim()}$`, "i") },
+               _id: { $ne: id },
+               isDeleted: false
+           });
+           if (exist)
+               return res.status(400).send("category name already exists");
         await category.findByIdAndUpdate(id,{
             name:name.trim(),
             status:isActive?"Active":"Inactive"
@@ -107,9 +111,25 @@ const deleteCategory=async(req,res)=>{
     }
 }
 
+const toggleCategoryStatus = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const cat = await category.findById(id);
+        if (!cat) return res.status(404).json({ message: "Category not found" });
+
+        const newStatus = cat.status === 'Active' ? 'Inactive' : 'Active';
+        await category.findByIdAndUpdate(id, { status: newStatus });
+
+        res.json({ success: true, message: `Category is now ${newStatus}`, status: newStatus });
+    } catch (error) {
+        console.error("Toggle category error:", error);
+        res.status(500).json({ message: "Server error" });
+    }
+}
 
 
 
 
 
-module.exports={loadp,addCategory,editCategory,deleteCategory}
+
+module.exports={loadp,addCategory,editCategory,deleteCategory,toggleCategoryStatus}

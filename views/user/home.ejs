@@ -5,104 +5,328 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SNOVA | Official Store</title>
-<link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-black: #000000;
+      --off-white: #ffffff;
+      --text-gray: #666;
+      --accent-gray: #f2f2f2;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--off-white);
+      color: var(--primary-black);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Minimalist Zara-style Hero */
+    .zara-hero {
+      position: relative;
+      height: 100vh;
+      width: 100%;
+      overflow: hidden;
+    }
+
+    .hero-slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      transition: opacity 0.8s ease;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      bottom: 10%;
+      left: 5%;
+      z-index: 10;
+    }
+
+    .hero-overlay h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4rem;
+      font-weight: 400;
+      line-height: 0.9;
+      margin-bottom: 20px;
+      letter-spacing: -2px;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      padding: 10px 0;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--primary-black);
+      text-decoration: none;
+      border-bottom: 1px solid var(--primary-black);
+      transition: 0.3s;
+    }
+
+    .hero-cta:hover {
+      padding-right: 20px;
+    }
+
+    /* Editorial Grid */
+    .editorial-container {
+      padding: 40px 2%;
+    }
+
+    .editorial-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .editorial-item {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 2/3;
+    }
+
+    .editorial-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .editorial-item:hover img {
+      transform: scale(1.05);
+    }
+
+    .item-label {
+      position: absolute;
+      bottom: 20px;
+      left: 20px;
+      color: white;
+    }
+
+    .item-label h3 {
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 1.5px;
+      font-weight: 500;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    /* Section Headers */
+    .section-title {
+      padding: 80px 5% 40px;
+      text-align: center;
+    }
+
+    .section-title h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.5rem;
+      font-weight: 400;
+      margin-bottom: 10px;
+    }
+
+    .section-title p {
+      font-size: 0.8rem;
+      color: var(--text-gray);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    /* Minimal Product Card */
+    .z-product-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      padding: 0 2% 80px;
+      gap: 10px;
+    }
+
+    .z-card {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .z-img-box {
+      aspect-ratio: 3/4;
+      background: #f8f8f8;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .z-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .z-info {
+      font-size: 0.75rem;
+      line-height: 1.5;
+    }
+
+    .z-name {
+      font-weight: 400;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .z-price {
+      font-weight: 600;
+    }
+
+    /* Footer adjustments */
+    .newsletter-section {
+      background: var(--accent-gray);
+      padding: 100px 5%;
+      text-align: center;
+    }
+
+    .newsletter-section h4 {
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      margin-bottom: 30px;
+    }
+
+    .newsletter-form {
+      display: flex;
+      max-width: 500px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--primary-black);
+    }
+
+    .newsletter-form input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 15px 0;
+      outline: none;
+      font-size: 0.8rem;
+    }
+
+    .newsletter-form button {
+      background: transparent;
+      border: none;
+      text-transform: uppercase;
+      font-size: 0.6rem;
+      font-weight: 600;
+      letter-spacing: 2px;
+      cursor: pointer;
+    }
+
+    @media (max-width: 1024px) {
+      .hero-overlay h1 { font-size: 3rem; }
+      .z-product-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .editorial-grid { grid-template-columns: 1fr; }
+      .hero-overlay h1 { font-size: 2.5rem; }
+    }
+  </style>
 </head>
 <body>
 
   <%- include('../partials/user/header') %>
 
-  <main class="hero-container">
-    <section class="hero">
-      <div class="hero-text">
-        <h1>Discover the Latest<br>fashion from SNOVA</h1>
-        <div style="display:flex; gap:15px; align-items: center;">
-          <button class="btn-green">Shop Now</button>
-          <span style="cursor:pointer; font-weight: 500;">View all ➔</span>
-        </div>
-      </div>
-     
-    </section>
+  <!-- Full Screen Hero Slide -->
+  <main class="zara-hero">
+    <div class="hero-slide" style="background-image: url('/images/editorial/hero_editorial_1.png')"></div>
+    <div class="hero-overlay">
+      <h1>NEW<br>CATEGORIES</h1>
+      <a href="/products" class="hero-cta">View Everything</a>
+    </div>
   </main>
 
-  <section class="section-wrapper">
-    <div class="section-header">
-      <h2>Shop by category</h2>
-      <a href="" style="color:var(--primary-green); font-weight: 600; text-decoration: none;">View all categories ➔</a>
-    </div>
-    <div class="cat-grid">
-      <div class="cat-card">Ethinic wears</div>
-      <div class="cat-card">Western wears</div>
-      <div class="cat-card">Mens wears</div>
-      <div class="cat-card">Kids wears</div>
-    </div>
-  </section>
-
-  <section class="section-wrapper">
-    <div class="section-header">
-      <h2>Trending Fashions</h2>
-      <button style="background:#eee; padding:8px 18px; border-radius:5px; border:none; font-weight: bold; cursor: pointer;">View All</button>
-    </div>
-    <div class="product-grid">
-      <div class="product-card">
-        <span class="badge">-25%</span>
-        <div class="wishlist-icon" onclick="toggleWishlist(this)">❤</div>
-        <img class="product-img" src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&w=600&q=80" alt="Western Saree">
-        <div class="product-info">
-          <p style="font-weight: 500;">Western Sarees</p>
-          <div class="price-row">
-            <span style="font-weight:bold; font-size: 18px;">₹1,999.00</span>
-            <span style="text-decoration:line-through; color:var(--text-gray); font-size:14px">₹2,999.00</span>
-          </div>
+  <!-- Editorial Category Grid -->
+  <section class="editorial-container">
+    <div class="editorial-grid">
+      <div class="editorial-item">
+        <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=80" alt="Woman Fashion">
+        <div class="item-label">
+          <a href="/category?category=WOMAN" style="color:white; text-decoration:none;"><h3>Woman</h3></a>
         </div>
-        <button class="cart-btn">🛒</button>
       </div>
-
-      <div class="product-card">
-        <span class="badge">-15%</span>
-        <div class="wishlist-icon" onclick="toggleWishlist(this)">❤</div>
-        <img class="product-img" src="https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=600&q=80" alt="T-Shirt">
-        <div class="product-info">
-          <p style="font-weight: 500;">Premium T-shirts</p>
-          <div class="price-row">
-            <span style="font-weight:bold; font-size: 18px;">₹899.00</span>
-            <span style="text-decoration:line-through; color:var(--text-gray); font-size:14px">₹999.00</span>
-          </div>
+      <div class="editorial-item">
+        <img src="/images/editorial/hero_editorial_2.png" alt="Man Fashion">
+        <div class="item-label">
+          <a href="/category?category=MAN" style="color:white; text-decoration:none;"><h3>Man</h3></a>
         </div>
-        <button class="cart-btn">🛒</button>
-      </div>
-
-      <div class="product-card">
-        <span class="badge">-30%</span>
-        <div class="wishlist-icon" onclick="toggleWishlist(this)">❤</div>
-        <img class="product-img" src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?auto=format&fit=crop&w=600&q=80" alt="Gown">
-        <div class="product-info">
-          <p style="font-weight: 500;">Gown Dress</p>
-          <div class="price-row">
-            <span style="font-weight:bold; font-size: 18px;">₹4,999.00</span>
-            <span style="text-decoration:line-through; color:var(--text-gray); font-size:14px">₹5,999.00</span>
-          </div>
-        </div>
-        <button class="cart-btn">🛒</button>
-      </div>
-
-      <div class="product-card">
-        <span class="badge">-10%</span>
-        <div class="wishlist-icon" onclick="toggleWishlist(this)">❤</div>
-        <img class="product-img" src="https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=600&q=80" alt="Jacket">
-        <div class="product-info">
-          <p style="font-weight: 500;">Stylish Jackets</p>
-          <div class="price-row">
-            <span style="font-weight:bold; font-size: 18px;">₹899.00</span>
-            <span style="text-decoration:line-through; color:var(--text-gray); font-size:14px">₹999.00</span>
-          </div>
-        </div>
-        <button class="cart-btn">🛒</button>
       </div>
     </div>
   </section>
 
-<%- include('../partials/user/footer') %>
+  <!-- Trending Products Section -->
+  <section class="section-title">
+    <p>Handpicked for you</p>
+    <h2>TRENDING NOW</h2>
+  </section>
 
-  
+  <section class="z-product-grid">
+    <!-- Simplified Zara-style card -->
+    <a href="/products" class="z-card">
+      <div class="z-img-box">
+        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80" alt="">
+      </div>
+      <div class="z-info">
+        <div class="z-name">Oversized Poplin Shirt</div>
+        <div class="z-price">₹2,990.00</div>
+      </div>
+    </a>
+
+    <a href="/products" class="z-card">
+      <div class="z-img-box">
+        <img src="https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=500&q=80" alt="">
+      </div>
+      <div class="z-info">
+        <div class="z-name">Ribbed Knit Top</div>
+        <div class="z-price">₹1,590.00</div>
+      </div>
+    </a>
+
+    <a href="/products" class="z-card">
+      <div class="z-img-box">
+        <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=500&q=80" alt="">
+      </div>
+      <div class="z-info">
+        <div class="z-name">Linen Blend Trousers</div>
+        <div class="z-price">₹4,990.00</div>
+      </div>
+    </a>
+
+    <a href="/products" class="z-card">
+      <div class="z-img-box">
+        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=500&q=80" alt="">
+      </div>
+      <div class="z-info">
+        <div class="z-name">Floral Midi Dress</div>
+        <div class="z-price">₹3,290.00</div>
+      </div>
+    </a>
+  </section>
+
+  <!-- Newsletter Section -->
+  <section class="newsletter-section">
+    <h4>JOIN OUR NEWSLETTER</h4>
+    <form class="newsletter-form">
+      <input type="email" placeholder="ENTER YOUR EMAIL ADDRESS">
+      <button type="submit">Subscribe</button>
+    </form>
+  </section>
+
+  <%- include('../partials/user/footer') %>
+
 </body>
 </html>

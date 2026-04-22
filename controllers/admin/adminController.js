@@ -136,6 +136,16 @@ const loaderror = async (req, res) => {
   res.render("admin/error");
 };
 
+const logout = async (req, res) => {
+  try {
+    req.session.admin = null;
+    res.redirect("/admin/login");
+  } catch (error) {
+    console.log(error);
+    res.redirect("/admin/error");
+  }
+};
+
 module.exports = {
   loadlogin,
   login,
@@ -145,4 +155,5 @@ module.exports = {
   loaderror,
   blockUser,
   unblockUser,
+  logout,
 };

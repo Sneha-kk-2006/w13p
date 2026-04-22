@@ -1,178 +1,195 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
 <style>
+    :root {
+        --admin-bg: #fff;
+        --sidebar-border: #eee;
+        --accent-black: #000;
+        --muted-text: #999;
+    }
 
-:root{
---sidebar-bg:#e2dcd5;
---main-bg:#f3f4f6;
---snova-orange:#c86d4d;
---border-color:#e5e7eb;
---text-muted:#6b7280;
-}
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Inter', sans-serif;
+    }
 
-/* SIDEBAR */
+    body {
+        background-color: #fbfbfb;
+        display: flex;
+        min-height: 100vh;
+    }
 
-.sidebar{
-width:240px;
-background:var(--sidebar-bg);
-display:flex;
-flex-direction:column;
-justify-content:space-between;
-border-right:1px solid var(--border-color);
-padding:20px 0;
-}
+    /* SIDEBAR */
+    .sidebar {
+        width: 280px;
+        background: var(--admin-bg);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-right: 0.5px solid var(--sidebar-border);
+        padding: 40px 0;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
 
-/* LOGO */
+    .logo-box {
+        padding: 0 40px 50px;
+    }
 
-.logo-container{
-padding:0 20px 25px;
-}
+    .admin-logo {
+        font-family: 'Playfair Display', serif;
+        font-size: 1.2rem;
+        letter-spacing: 4px;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #000;
+        text-decoration: none;
+    }
 
-.logo{
-background:var(--snova-orange);
-color:white;
-padding:8px 15px;
-border-radius:8px;
-font-weight:bold;
-font-size:20px;
-display:inline-flex;
-align-items:center;
-gap:8px;
-}
+    .nav-group {
+        display: flex;
+        flex-direction: column;
+        padding: 0 20px;
+    }
 
-/* NAV */
+    .nav-heading {
+        font-size: 0.6rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--muted-text);
+        margin: 20px 20px 15px;
+        font-weight: 700;
+    }
 
-.nav-section{
-display:flex;
-flex-direction:column;
-gap:5px;
-padding:0 10px;
-}
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px 20px;
+        text-decoration: none;
+        color: #000;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+        transition: 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        border-radius: 4px;
+    }
 
-.section-title{
-font-size:12px;
-color:var(--text-muted);
-margin:10px 10px;
-text-transform:uppercase;
-}
+    .nav-item i, .nav-item .material-symbols-outlined {
+        font-size: 18px;
+        width: 20px;
+    }
 
-.nav-item{
-display:flex;
-align-items:center;
-gap:10px;
-padding:10px 15px;
-border-radius:8px;
-text-decoration:none;
-color:#333;
-font-size:14px;
-transition:0.2s;
-}
+    .nav-item:hover {
+        background: #f5f5f5;
+        padding-left: 25px;
+    }
 
-.nav-item:hover{
-background:#d6cfc8;
-}
+    .nav-item.active {
+        background: #000;
+        color: #fff;
+    }
 
-/* .nav-item.active{
-background:white;
-font-weight:600;
-} */
+    /* FOOTER PROFILE */
+    .admin-profile {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 20px 30px;
+        border-top: 0.5px solid var(--sidebar-border);
+        margin-top: 40px;
+    }
 
-/* USER PROFILE */
+    .admin-avatar {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #eee;
+    }
 
-.user-profile{
-display:flex;
-align-items:center;
-gap:10px;
-padding:15px 20px;
-border-top:1px solid var(--border-color);
-}
+    .admin-info h4 {
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin: 0;
+        font-weight: 700;
+    }
 
-.user-profile img{
-width:40px;
-height:40px;
-border-radius:50%;
-}
+    .admin-info p {
+        font-size: 0.6rem;
+        color: var(--muted-text);
+        margin: 0;
+        text-transform: lowercase;
+    }
 
-.user-info h4{
-font-size:14px;
-margin:0;
-}
+    .sign-out-btn {
+        margin-left: auto;
+        color: #999;
+        font-size: 14px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
 
-.user-info p{
-font-size:12px;
-color:var(--text-muted);
-margin:0;
-}
+    .sign-out-btn:hover { color: #000; }
 
 </style>
+
 <aside class="sidebar">
+    <div>
+        <div class="logo-box">
+            <a href="/admin/dashboard" class="admin-logo">SNOVA</a>
+            <div style="font-size: 0.5rem; letter-spacing: 2px; color: #999; margin-top: 4px;">ADMINISTRATION</div>
+        </div>
 
-<div>
+        <nav class="nav-group">
+            <h3 class="nav-heading">Management</h3>
 
-<div class="logo-container">
-<div class="logo">
-<span class="material-symbols-outlined">storefront</span>
-SNOVA
-</div>
-</div>
+            <a href="/admin/dashboard" class="nav-item <%= (typeof activePage !== 'undefined' && activePage === 'dashboard') ? 'active' : '' %>">
+                <i class="fa-solid fa-chart-line"></i> Dashboard
+            </a>
 
-<nav class="nav-section">
+            <a href="/admin/orders" class="nav-item <%= (typeof activePage !== 'undefined' && activePage === 'orders') ? 'active' : '' %>">
+                <i class="fa-solid fa-bag-shopping"></i> Orders
+            </a>
 
-<h3 class="section-title">Management</h3>
+            <a href="/admin/product" class="nav-item <%= (typeof activePage !== 'undefined' && activePage === 'products') ? 'active' : '' %>">
+                <i class="fa-solid fa-shirt"></i> Products
+            </a>
 
-<a href="/admin/dashboard" class="nav-item active">
-<span class="material-symbols-outlined">grid_view</span>
-Dashboard
-</a>
+            <a href="/admin/category" class="nav-item <%= (typeof activePage !== 'undefined' && activePage === 'categories') ? 'active' : '' %>">
+                <i class="fa-solid fa-layer-group"></i> Categories
+            </a>
 
-<a href="/admin/orders" class="nav-item">
-<span class="material-symbols-outlined">shopping_bag</span>
-Orders
-</a>
+            <a href="/admin/coupons" class="nav-item <%= (typeof activePage !== 'undefined' && activePage === 'coupons') ? 'active' : '' %>">
+                <i class="fa-solid fa-ticket"></i> Coupons
+            </a>
 
-<a href="/admin/product" class="nav-item">
-<span class="material-symbols-outlined">inventory_2</span>
-Products
-</a>
+            <a href="/admin/usermanagement" class="nav-item <%= (typeof activePage !== 'undefined' && activePage === 'customers') ? 'active' : '' %>">
+                <i class="fa-solid fa-users"></i> Customers
+            </a>
 
-<a href="/admin/category" class="nav-item">
-<span class="material-symbols-outlined">category</span>
-Categories
-</a>
+            <a href="/admin/banner" class="nav-item <%= (typeof activePage !== 'undefined' && activePage === 'banner') ? 'active' : '' %>">
+                <i class="fa-solid fa-image"></i> Banners
+            </a>
+        </nav>
+    </div>
 
-<a href="/admin/coupons" class="nav-item">
-<span class="material-symbols-outlined">confirmation_number</span>
-Coupons
-</a>
-
-<a href="/admin/offers" class="nav-item">
-<span class="material-symbols-outlined">local_offer</span>
-Offers
-</a>
-
-<a href="/admin/usermanagement" class="nav-item">
-<span class="material-symbols-outlined">group</span>
-Customers
-</a>
-
-<a href="/admin/banner" class="nav-item">
-<span class="material-symbols-outlined">ad_units</span>
-Banner
-</a>
-
-</nav>
-
-</div>
-
-<div class="user-profile">
-
-<img src="https://ui-avatars.com/api/?name=Sneha+KK&background=c86d4d&color=fff">
-
-<div class="user-info">
-<h4>Sneha KK</h4>
-<p>sneha@gmail.com</p>
-</div>
-
-</div>
-
+    <div class="admin-profile">
+        <img src="https://ui-avatars.com/api/?name=Admin&background=000&color=fff" class="admin-avatar">
+        <div class="admin-info">
+            <h4>Admin Snova</h4>
+            <p>admin@snova.com</p>
+        </div>
+        <a href="/admin/logout" class="sign-out-btn" title="Sign Out">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </a>
+    </div>
 </aside>

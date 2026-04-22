@@ -14,14 +14,29 @@ const loadcat = async (req, res) => {
         const currentPage = parseInt(req.query.page) || 1;
         const limit       = 8;
         const skip        = (currentPage - 1) * limit;
+        // Get active category IDs first
+        const activeCategories = await category.find({ 
+            isDeleted: false, 
+            status: 'Active' 
+        });
+        const activeCategoryIds = activeCategories.map(cat => cat._id.toString());
 
         // Product query
-        let query = { isDeleted: { $ne: true }, isActive: { $ne: false } };
-        console.log(query)
-        if (search)    query.name     = { $regex: search, $options: 'i' };
-if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
-    query.category = new mongoose.Types.ObjectId(categoryId);
-}
+        let query = { 
+            isDeleted: { $ne: true }, 
+            isActive: { $ne: false },
+            category: { $in: activeCategoryIds }
+        };
+
+        if (search) query.name = { $regex: search, $options: 'i' };
+        
+        if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
+            // Check if specified category is active
+            if (!activeCategoryIds.includes(categoryId.toString())) {
+                return res.redirect('/category'); // or wherever you want to redirect
+            }
+            query.category = new mongoose.Types.ObjectId(categoryId);
+        }
         if (minPrice || maxPrice) {
             query.price = {};
             if (minPrice) query.price.$gte = parseInt(minPrice);
@@ -42,7 +57,7 @@ if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
             .skip(skip)
             .limit(limit);
 
-        const categories = await category.find({ isDeleted: { $ne: true } });
+        const categories = await category.find({ isDeleted: false, status: 'Active' });
 
         const totalPages = Math.ceil(total / limit);
 
@@ -79,4 +94,4 @@ if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
     }
 };
 
-module.exports = { loadcat };
+module.exports = { loadcat };

@@ -9,311 +9,70 @@
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
 
     <style>
         :root {
-            --primary-orange: #d35b31;
-            --sidebar-bg: #f5f1ed;
-            --active-green: #2ecc71;
-            --inactive-red: #e74c3c;
-            --border-light: #e0e0e0;
-            --text-dark: #334155;
+            --primary-black: #000;
+            --off-white: #fff;
+            --text-gray: #666;
+            --border-light: #eee;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: #fbfbfb; display: flex; min-height: 100vh; }
+        
+        .admin-main { flex: 1; padding: 60px 40px; }
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
+        .page-title { font-family: 'Playfair Display', serif; font-size: 2.2rem; text-transform: uppercase; letter-spacing: -1px; }
 
-        body {
-            background: #f8f9fa;
-            display: flex;
-            min-height: 100vh;
-            color: var(--text-dark);
-        }
+        .btn-minimal { background: transparent; border: 1px solid #000; padding: 12px 25px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; cursor: pointer; transition: 0.3s; }
+        .btn-minimal:hover { background: #000; color: #fff; }
 
-        .main-content {
-            flex: 1;
-            padding: 40px;
-            min-width: 0;
-        }
+        .data-card { background: #fff; border: 0.5px solid #eee; padding: 0; overflow: hidden; }
+        
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { text-align: left; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: #999; padding: 20px; border-bottom: 0.5px solid #eee; }
+        .data-table td { padding: 20px; font-size: 0.75rem; border-bottom: 0.5px solid #eee; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .data-card {
-            background: white;
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-            padding: 25px;
-            overflow-x: auto;
-        }
+        .p-img { width: 50px; aspect-ratio: 1/1; object-fit: cover; background: #f8f8f8; cursor: pointer; }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            min-width: 700px;
-        }
+        /* Status Toggle */
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; inset: 0; background-color: #eee; transition: .4s; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 2px; bottom: 2px; background-color: #fff; transition: .4s; border: 0.5px solid #ddd; }
+        input:checked + .slider { background-color: #000; }
+        input:checked + .slider:before { transform: translateX(16px); }
 
-        th {
-            text-align: left;
-            padding: 15px;
-            border-bottom: 2px solid #f0f0f0;
-            color: #666;
-            font-size: 14px;
-        }
-
-        td {
-            padding: 15px;
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 14px;
-            vertical-align: middle;
-        }
-
-        .img-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        .img-delete-btn {
-            position: absolute;
-            top: -8px;
-            right: -8px;
-            background: #e74c3c;
-            color: white;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            cursor: pointer;
-            border: 2px solid white;
-            z-index: 10;
-        }
-
-        /* Toggle */
-        .switch {
-            position: relative;
-            display: inline-block;
-            width: 44px;
-            height: 22px;
-        }
-
-        .switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #ccc;
-            transition: .4s;
-            border-radius: 34px;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 3px;
-            bottom: 3px;
-            background: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-
-        input:checked+.slider {
-            background: var(--active-green);
-        }
-
-        input:checked+.slider:before {
-            transform: translateX(22px);
-        }
+        /* Zara Style Notifications */
+        .zara-toast { background: #000 !important; color: #fff !important; border-radius: 0 !important; font-family: 'Inter', sans-serif !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 2px !important; padding: 15px 40px !important; width: 100% !important; max-width: 600px !important; margin-top: 20px !important; box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; }
 
         /* Modals */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.45);
-            backdrop-filter: blur(3px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            padding: 20px;
-        }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 2000; display: none; align-items: center; justify-content: center; }
+        .modal-box { width: 90%; max-width: 700px; padding: 60px; max-height: 95vh; overflow-y: auto; background: #fff; position: relative; display: flex; flex-direction: column; }
+        .modal-box h2 { font-family: 'Playfair Display', serif; font-size: 2rem; text-transform: uppercase; margin-bottom: 40px; }
 
-        .modal {
-            background: white;
-            width: 100%;
-            max-width: 700px;
-            border-radius: 14px;
-            padding: 30px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
+        .modal-footer { position: sticky; bottom: -60px; background: rgba(255,255,255,0.9); padding: 20px 0; border-top: 1px solid #eee; display: flex; justify-content: flex-end; gap: 15px; margin-top: auto; width: 100%; z-index: 10; }
 
-        .form-group {
-            margin-bottom: 18px;
-        }
+        .form-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: #999; margin-bottom: 10px; display: block; }
+        .form-input { width: 100%; border: none; border-bottom: 1px solid #000; padding: 12px 0; font-size: 0.85rem; outline: none; background: transparent; margin-bottom: 25px; }
 
-        .form-group label {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 7px;
-            color: #555;
-        }
+        .preview-wrap { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+        .preview-wrap img { width: 100px; aspect-ratio: 3/4; object-fit: cover; border: 0.5px solid #eee; }
 
-        .form-input {
-            width: 100%;
-            padding: 11px 14px;
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            outline: none;
-            font-size: 14px;
-            background: #f9f9f9;
-        }
+        .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 40px; padding-bottom: 40px; }
+        .page-link { font-size: 0.7rem; text-transform: uppercase; padding: 5px 10px; text-decoration: none; color: #999; font-weight: 600; }
+        .page-link.active { color: #000; text-decoration: underline; }
 
-        .form-input:focus {
-            border-color: var(--primary-orange);
-            background: white;
-        }
-
-        textarea.form-input {
-            height: 90px;
-            resize: vertical;
-        }
-
-        .btn-orange {
-            background: var(--primary-orange);
-            color: white;
-            border: none;
-            padding: 11px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-dark {
-            background: #334155;
-            color: white;
-            border: none;
-            padding: 11px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .btn-grey {
-            background: #e5e7eb;
-            color: #333;
-            border: none;
-            padding: 11px 24px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        /* Image previews */
-        .preview-wrap {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .preview-wrap img {
-            width: 120px;
-            height: 120px;
-            object-fit: cover;
-            border-radius: 8px;
-            border: 2px solid var(--border-light);
-            transition: all 0.3s ease;
-        }
-
-        .preview-wrap img:hover {
-            transform: scale(1.05);
-            border-color: var(--primary-orange);
-        }
-
-        /* Crop modal */
-        #cropModal,
-        #cropModalEdit,
-        #cropModalVariant,
-        #cropModalVariantEdit {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(5px);
-            z-index: 5000;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-            overflow-y: auto;
-            padding: 40px 0;
-        }
-
-        #cropModal.show,
-        #cropModalEdit.show,
-        #cropModalVariant.show,
-        #cropModalVariantEdit.show {
-            display: flex;
-        }
-
-        .crop-box {
-            background: white;
-            padding: 30px;
-            border-radius: 18px;
-            max-width: 800px;
-            width: 95%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            animation: modalFadeUp 0.3s ease-out;
-        }
-
-        @keyframes modalFadeUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .crop-box img {
-            max-width: 100%;
-            max-height: 60vh;
-            display: block;
-            border-radius: 8px;
-        }
-
-        /* Pagination */
-        .page-link {
-            padding: 8px 13px;
-            border-radius: 8px;
-            text-decoration: none;
-            color: var(--text-dark);
-            border: 1px solid var(--border-light);
-            font-size: 14px;
-        }
-
-        .page-link.active {
-            background: var(--primary-orange);
-            color: white;
-            border-color: var(--primary-orange);
-        }
+        .crop-box { background: #fff; padding: 30px; width: 95%; max-width: 500px; border: 1px solid #000; z-index: 3000; display: flex; flex-direction: column; align-items: center; }
+        .crop-box h3 { font-family: 'Playfair Display', serif; font-size: 1.2rem; text-transform: uppercase; margin-bottom: 20px; align-self: flex-start; }
+        .crop-box .img-container { width: 100%; height: 350px; background: #f9f9f9; margin-bottom: 20px; overflow: hidden; }
+        .crop-box img { max-width: 100%; display: block; }
+        .crop-btn-group { display: flex; gap: 15px; width: 100%; justify-content: flex-end; padding-top: 15px; border-top: 0.5px solid #eee; }
+        
+        .action-link { display: block; margin-bottom: 5px; text-align: left; }
     </style>
 </head>
 
@@ -321,264 +80,192 @@
 
     <%- include('../partials/admin/header') %>
 
-        <main class="main-content">
+    <main class="admin-main">
+        <header class="page-header" style="border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom:30px;">
+            <h1 class="page-title" style="margin:0;">Snova Inventory</h1>
+            <button class="btn-minimal" onclick="openModal('addProductModal')">+ Create New Article</button>
+        </header>
 
-            <!-- Header -->
-            <div
-                style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; flex-wrap:wrap; gap:15px;">
-                <h1 style="font-size:24px; font-weight:600;">Product Management</h1>
-                <button class="btn-dark" style="display:flex; align-items:center; gap:8px;"
-                    onclick="openModal('addProductModal')">
-                    <span class="material-symbols-outlined">add</span> Add Product
-                </button>
-            </div>
-
-            <!-- Search -->
-            <div
-                style="background:white; padding:15px; border-radius:12px; border:1px solid var(--border-light); margin-bottom:20px;">
-                <form method="GET" action="/admin/product" style="display:flex; gap:10px; flex-wrap:wrap;">
-                    <input type="text" name="search" value="<%= search %>" placeholder="Search products..."
-                        style="flex:1; min-width:180px; padding:10px 15px; border:1px solid var(--border-light); border-radius:8px; outline:none;" />
-                    <button type="submit"
-                        style="background:var(--primary-orange); color:white; border:none; padding:10px 20px; border-radius:8px; cursor:pointer; font-weight:600;">
-                        Search
-                    </button>
-                    <% if (search) { %>
-                        <a href="/admin/product"
-                            style="display:flex; align-items:center; color:#888; text-decoration:underline; font-size:13px;">
-                            ✕ Clear
-                        </a>
-                        <% } %>
-                </form>
-            </div>
-
-            <!-- Table -->
-            <div class="data-card">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Si.No</th>
-                            <th>Image</th>
-                            <th>Product Name</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Stock</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <% if (products.length===0) { %>
-                            <tr>
-                                <td colspan="8" style="text-align:center; color:#888; padding:30px;">
-                                    No products found <% if(search){ %> for "<%= search %>"<% } %>
-                                </td>
-                            </tr>
-                            <% } else { %>
-                                <% products.forEach((p, i)=> { %>
-                                    <tr>
-                                        <td>
-                                            <%= (currentPage - 1) * limit + i + 1 %>
-                                        </td>
-                                        <td>
-                                            <img src="<%= p.images?.[0] || '/placeholder.png' %>"
-                                                style="width:55px; height:55px; object-fit:cover; border-radius:6px; cursor:pointer;"
-                                                onclick="openAddVariantModal('<%= p._id %>')"
-                                                title="Click to add variant images">
-                                        </td>
-                                        <td style="font-weight:500;">
-                                            <%= p.name %>
-                                        </td>
-                                        <td>
-                                            <%= p.category?.name || '—' %>
-                                        </td>
-                                        <td>₹<%= p.price %>
-                                        </td>
-                                        <td>
-                                            <% if(p.stock===0) { %>
-                                                <span style="color:#e74c3c; font-weight:600;">Out of stock</span>
-                                                <% } else if(p.stock <=5) { %>
-                                                    <span style="color:#f39c12; font-weight:600;">
-                                                        <%= p.stock %> left
-                                                    </span>
-                                                    <% } else { %>
-                                                        <span style="color:#2ecc71;">
-                                                            <%= p.stock %>
-                                                        </span>
-                                                        <% } %>
-                                        </td>
-                                        <td>
-                                            <label class="switch">
-                                                <input type="checkbox" <%=p.isActive ? 'checked' : '' %>
-                                                onchange="toggleStatus('<%= p._id %>', this)">
-                                                    <span class="slider"></span>
-                                            </label>
-                                        </td>
-                                        <td>
-                                            <div style="display:flex; gap:10px; align-items:center;">
-                                                <!-- ✅ variants included in openEditModal data -->
-                                                <button
-                                                    style="background:none; border:none; cursor:pointer; color:var(--primary-orange);"
-                                                    onclick="openEditModalByIndex(<%= i %>)" data-broken-json='
-                                    _id: p._id,
-                                    name: p.name,
-                                    price: p.price,
-                                    stock: p.stock,
-                                    description: p.description,
-                                    category: p.category?._id,
-                                    status: p.status,
-                                    images: p.images,
-                                    size: p.size || "",
-                                    color: p.color || "",
-                                    variants: p.variants || []
-                                }) %>)'>
-                                                    <span class="material-symbols-outlined">edit_note</span>
-                                                </button>
-                                                <button
-                                                    style="background:none; border:none; cursor:pointer; color:var(--inactive-red);"
-                                                    onclick="confirmDelete('<%= p._id %>')">
-                                                    <span class="material-symbols-outlined">delete</span>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <% }) %>
-                                        <% } %>
-                    </tbody>
-                </table>
-
-                <!-- Pagination -->
-                <% if (totalPages> 1) { %>
-                    <div
-                        style="display:flex; gap:8px; margin-top:22px; justify-content:center; align-items:center; flex-wrap:wrap;">
-                        <% if (currentPage> 1) { %>
-                            <a class="page-link" href="/admin/product?page=<%= currentPage-1 %>&search=<%= search %>">←
-                                Prev</a>
-                            <% } %>
-                                <% for(let i=1; i<=totalPages; i++) { %>
-                                    <a class="page-link <%= i===currentPage ? 'active' : '' %>"
-                                        href="/admin/product?page=<%= i %>&search=<%= search %>">
-                                        <%= i %>
-                                    </a>
-                                    <% } %>
-                                        <% if (currentPage < totalPages) { %>
-                                            <a class="page-link"
-                                                href="/admin/product?page=<%= currentPage+1 %>&search=<%= search %>">Next
-                                                →</a>
-                                            <% } %>
-                                                <span style="color:#888; font-size:13px;">Total: <%= total %></span>
-                    </div>
-                    <% } %>
-            </div>
-        </main>
-
-
-        <!-- ===================== ADD PRODUCT MODAL ===================== -->
-        <div class="modal-overlay" id="addProductModal">
-            <div class="modal">
-                <div style="display:flex; justify-content:space-between; margin-bottom:22px; align-items:center;">
-                    <h2 style="font-weight:600;">Add Product</h2>
-                    <span class="material-symbols-outlined" style="cursor:pointer; color:#999;"
-                        onclick="closeModal('addProductModal')">close</span>
-                </div>
-
-                <div class="form-group">
-                    <label>Product Name</label>
-                    <input type="text" id="addName" class="form-input" placeholder="Enter product name">
-                </div>
-                <div class="form-group">
-                    <label>Category</label>
-                    <select id="addCategory" class="form-input">
-                        <option value="">-- Select Category --</option>
-                        <% categories.forEach(cat=> { %>
-                            <option value="<%= cat._id %>">
-                                <%= cat.name %>
-                            </option>
-                            <% }) %>
-                    </select>
-                </div>
-                <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-                    <div>
-                        <label>Base Price (₹)</label>
-                        <input type="number" id="addPrice" class="form-input" placeholder="0" min="0">
-                    </div>
-                    <div>
-                        <label>Base Stock</label>
-                        <input type="number" id="addStock" class="form-input" placeholder="0" min="0">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label>Description</label>
-                    <textarea id="addDescription" class="form-input" placeholder="Product description"></textarea>
-                </div>
-                <div class="form-group" style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
-                    <div>
-                        <label>Base Size (Optional)</label>
-                        <select id="addSize" class="form-input">
-                            <option value="">-- No Size --</option>
-                            <option value="XS">XS</option>
-                            <option value="S">S</option>
-                            <option value="M">M</option>
-                            <option value="L">L</option>
-                            <option value="XL">XL</option>
-                            <option value="XXL">XXL</option>
-                            <option value="One Size">One Size</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label>Base Color (Optional)</label>
-                        <select id="addColor" class="form-input">
-                            <option value="">-- No Color --</option>
-                            <option value="Red">Red</option>
-                            <option value="Blue">Blue</option>
-                            <option value="Green">Green</option>
-                            <option value="Black">Black</option>
-                            <option value="White">White</option>
-                            <option value="Yellow">Yellow</option>
-                            <option value="Pink">Pink</option>
-                            <option value="Gray">Gray</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-group" style="display:flex; justify-content:space-between; align-items:center;">
-                    <label style="margin:0;">Active Status</label>
-                    <label class="switch">
-                        <input type="checkbox" id="addIsActive" checked>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-
-
-
-                <!-- =========================================================== -->
-
-
-                <div class="form-group">
-                    <label>Product Images <span style="color:red; font-size:12px;">(minimum 1 required)</span></label>
-                    <input type="file" id="addImageInput" accept="image/*"
-                        style="width:100%; padding:10px; border:1px dashed #ccc; border-radius:8px; cursor:pointer;">
-                    <small id="addImgCount" style="color:#888; display:block; margin-top:5px;">No image selected</small>
-                    <div class="preview-wrap" id="addPreview"></div>
-                </div>
-
-                <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:10px;">
-                    <button class="btn-grey" onclick="closeModal('addProductModal')">Cancel</button>
-                    <button class="btn-dark" onclick="submitAddProduct()">Save Product</button>
-                </div>
-            </div>
+        <div style="margin-bottom: 40px;">
+            <form method="GET" action="/admin/product" style="display:flex; gap:20px; align-items:center;">
+                <input type="text" name="search" value="<%= search %>" placeholder="Article Name/Ref..." 
+                    style="border:none; border-bottom:1px solid #000; padding:12px 0; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px; outline:none; width:300px; background:transparent;">
+                <button type="submit" class="btn-minimal" style="padding: 10px 20px;">Filter</button>
+                <% if (search) { %>
+                    <a href="/admin/product" style="font-size:0.6rem; text-transform:uppercase; letter-spacing:1px; text-decoration:underline; color:#999;">Reset</a>
+                <% } %>
+            </form>
         </div>
 
+        <div class="data-card">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>Identity</th>
+                        <th>Preview</th>
+                        <th>Nomenclature</th>
+                        <th>Category</th>
+                        <th style="text-align: center;">Valuation</th>
+                        <th style="text-align: center;">Availability</th>
+                        <th style="text-align: center;">Active</th>
+                        <th style="text-align: right;">Operations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (products.length===0) { %>
+                        <tr>
+                            <td colspan="8" style="text-align:center; color:#999; padding:50px;">NO ARTICLES FOUND</td>
+                        </tr>
+                    <% } else { %>
+                        <% products.forEach((p, i)=> { %>
+                            <tr>
+                                <td style="color: #999;">#<%= p._id.toString().slice(-6).toUpperCase() %></td>
+                                <td>
+                                    <% 
+                                    let displayImg = 'https://placehold.co/600x800?text=SNOVA';
+                                    if (p.images && p.images.length > 0) {
+                                        displayImg = p.images[0];
+                                    } else if (p.variants && p.variants.length > 0) {
+                                        const varWithImg = p.variants.find(v => v.images && v.images.length > 0);
+                                        if (varWithImg) displayImg = varWithImg.images[0];
+                                    }
+                                %>
+                                <div style="position:relative; cursor:pointer;" onclick="openAddVariantModal('<%= p._id %>')" title="Click to manage variants">
+                                    <img src="<%= displayImg %>" class="p-img">
+                                    <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.6); color:#fff; font-size:0.5rem; text-align:center; padding:2px;">+ VARIANTS</div>
+                                </div>
+                                </td>
+                                <td style="font-weight: 600;"><%= p.name %></td>
+                                <td><%= p.category?.name || '—' %></td>
+                                <td style="text-align: center;">₹<%= p.price %></td>
+                                <td style="text-align: center;">
+                                    <% if(p.stock===0) { %>
+                                        <span style="color:#e74c3c; font-weight:700;">SOLD OUT</span>
+                                    <% } else if(p.stock <=5) { %>
+                                        <span style="color:#f39c12; font-weight:700;"><%= p.stock %> REMAINING</span>
+                                    <% } else { %>
+                                        <span style="color:#666;"><%= p.stock %> UNITS</span>
+                                    <% } %>
+                                </td>
+                                <td style="text-align: center;">
+                                    <label class="switch" style="transform: scale(0.85);">
+                                        <input type="checkbox" <%=p.isActive ? 'checked' : '' %> onchange="toggleStatus('<%= p._id %>', this)">
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
+                                <td style="text-align: right;">
+                                    <div style="display:flex; flex-direction:column; gap:5px; align-items:flex-end;">
+                                        <button class="action-link" style="background:none; border:none; text-transform:uppercase; font-size:0.6rem; font-weight:800; text-decoration:underline; cursor:pointer;" onclick="openEditModalByIndex(<%= i %>)">Update</button>
+                                        <button class="action-link" style="color:var(--primary-orange, #000); background:none; border:none; text-transform:uppercase; font-size:0.6rem; font-weight:800; text-decoration:underline; cursor:pointer;" onclick="location.href='/admin/product/variants/<%= p._id %>'">View Variants</button>
+                                        <button class="action-link" style="color:#e74c3c; background:none; border:none; text-transform:uppercase; font-size:0.6rem; font-weight:800; text-decoration:underline; cursor:pointer;" onclick="confirmDelete('<%= p._id %>')">Archive</button>
+                                    </div>
+                                </td>
+                            </tr>
+<% /* Expandable row removed */ %>
+                        <% }) %>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
 
-        <!-- ===================== EDIT PRODUCT MODAL ===================== -->
-        <div class="modal-overlay" id="editProductModal">
-            <div class="modal">
-                <div style="display:flex; justify-content:space-between; margin-bottom:22px; align-items:center;">
-                    <h2 style="font-weight:600;">Edit Product</h2>
-                    <span class="material-symbols-outlined" style="cursor:pointer; color:#999;"
-                        onclick="closeModal('editProductModal')">close</span>
+        <% if (totalPages > 1) { %>
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a class="page-link" href="/admin/product?page=<%= currentPage-1 %>&search=<%= search %>">Prev</a>
+                <% } %>
+                <% for(let i=1; i<=totalPages; i++) { %>
+                    <a class="page-link <%= i===currentPage ? 'active' : '' %>" href="/admin/product?page=<%= i %>&search=<%= search %>"><%= i %></a>
+                <% } %>
+                <% if (currentPage < totalPages) { %>
+                    <a class="page-link" href="/admin/product?page=<%= currentPage+1 %>&search=<%= search %>">Next</a>
+                <% } %>
+            </div>
+        <% } %>
+    </main>
+
+    <div class="modal-overlay" id="addProductModal">
+        <div class="modal-box">
+            <h2>Product Specification</h2>
+            
+            <div class="form-group">
+                <label class="form-label">Product Name</label>
+                <input type="text" id="addName" class="form-input" placeholder="Enter article name">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <select id="addCategory" class="form-input">
+                    <option value="">-- SELECT CATEGORY --</option>
+                    <% categories.forEach(cat => { %>
+                        <option value="<%= cat._id %>"><%= cat.name %></option>
+                    <% }) %>
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="form-group">
+                    <label class="form-label">Price (₹)</label>
+                    <input type="number" id="addPrice" class="form-input" placeholder="0">
                 </div>
+                <div class="form-group">
+                    <label class="form-label">Stock Units</label>
+                    <input type="number" id="addStock" class="form-input" placeholder="0">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea id="addDescription" class="form-input" style="height: 100px;"></textarea>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                <div class="form-group">
+                    <label class="form-label">Primary Size</label>
+                    <select id="addSize" class="form-input">
+                        <option value="">N/A</option>
+                        <% ['XS','S','M','L','XL','XXL','One Size'].forEach(s => { %>
+                            <option value="<%= s %>"><%= s %></option>
+                        <% }) %>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Primary Color</label>
+                    <select id="addColor" class="form-input">
+                        <option value="">N/A</option>
+                        <% ['Red','Blue','Green','Black','White','Yellow','Pink','Gray'].forEach(c => { %>
+                            <option value="<%= c %>"><%= c %></option>
+                        <% }) %>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                <span class="form-label" style="margin:0;">Active Status</span>
+                <label class="switch">
+                    <input type="checkbox" id="addIsActive" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Article Imagery <small>(3 images recommended)</small></label>
+                <input type="file" id="addImageInput" accept="image/*" class="form-input" multiple>
+                <small id="addImgCount" style="color:#888; display:block; margin-top:5px;"></small>
+                <div class="preview-wrap" id="addPreview"></div>
+            </div>
+
+
+            <div class="modal-footer">
+                <button class="btn-minimal" style="border:none; color:#999;" onclick="closeModal('addProductModal')">Discard</button>
+                <button class="btn-minimal" onclick="submitAddProduct()">Verify Entry</button>
+            </div>
+        </div>
+    </div>
+
+
+        <div class="modal-overlay" id="editProductModal">
+            <div class="modal-box">
+                <h2>Modify Product</h2>
 
                 <input type="hidden" id="editProductId">
                 <div class="form-group">
@@ -669,16 +356,16 @@
                 <div class="form-group" style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
                     <label style="display:flex; justify-content:space-between; align-items:center;">
                         Variants
-                        <button class="btn-dark" style="padding:5px 10px; font-size:12px;" onclick="openAddVariantModal(document.getElementById('editProductId').value)">+ Add Variant</button>
+                        <button class="btn-minimal" style="padding:5px 10px; font-size:12px;" onclick="openAddVariantModal(document.getElementById('editProductId').value)">+ Add Variant</button>
                     </label>
                     <div id="editVariantsList" style="margin-top:10px;">
                         <!-- Variants will be listed here -->
                     </div>
                 </div>
 
-                <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:10px;">
-                    <button class="btn-grey" onclick="closeModal('editProductModal')">Cancel</button>
-                    <button class="btn-orange" onclick="submitEditProduct()">Update Product</button>
+                <div class="modal-footer">
+                    <button class="btn-minimal" style="border:none; color:#999;" onclick="closeModal('editProductModal')">Cancel</button>
+                    <button class="btn-minimal" onclick="submitEditProduct()">Update Inventory</button>
                 </div>
             </div>
         </div>
@@ -686,15 +373,12 @@
 
         <!-- ===================== DELETE MODAL ===================== -->
         <div class="modal-overlay" id="deleteModal">
-            <div class="modal" style="max-width:380px;">
-                <h3 style="margin-bottom:12px;">Delete Product</h3>
-                <p style="color:#666;">Are you sure you want to delete this product? This action cannot be undone.</p>
-                <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:22px;">
-                    <button class="btn-grey" onclick="closeModal('deleteModal')">Cancel</button>
-                    <button id="confirmDeleteBtn"
-                        style="background:#e74c3c; color:white; border:none; padding:11px 22px; border-radius:8px; cursor:pointer; font-weight:600;">
-                        Delete
-                    </button>
+            <div class="modal-box" style="max-width:400px; text-align:center;">
+                <h2>Archive Article?</h2>
+                <p style="color:#999; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:40px;">This action will remove the article from active inventory and customer views.</p>
+                <div style="display:flex; flex-direction:column; gap:15px;">
+                    <button id="confirmDeleteBtn" class="btn-minimal" style="background:#000; color:#fff;">Confirm Archive</button>
+                    <button class="btn-minimal" style="border:none; color:#999;" onclick="closeModal('deleteModal')">Keep Article</button>
                 </div>
             </div>
         </div>
@@ -703,57 +387,55 @@
         <!-- ===================== CROP MODAL (ADD) ===================== -->
 
 
-        <div id="cropModal">
+        <div class="modal-overlay" id="cropModal">
             <div class="crop-box">
                 <div style="display:flex; justify-content:space-between; margin-bottom:14px; align-items:center;">
                     <h3>Crop Image <span id="cropProgress" style="color:#888; font-size:13px;"></span></h3>
                 </div>
-                <img id="cropImage">
-                <div style="display:flex; gap:10px; margin-top:14px; justify-content:flex-end;">
-                    <button class="btn-grey" id="skipCropBtn">Skip</button>
-                    <button class="btn-dark" id="cropDoneBtn">✅ Crop & Next</button>
+                <div class="img-container">
+                    <img id="cropImage">
+                </div>
+                <div class="crop-btn-group">
+                    <button class="btn-minimal" style="border:none; color:#999;" id="skipCropBtn">Cancel</button>
+                    <button class="btn-minimal" id="cropDoneBtn">Save Crop</button>
                 </div>
             </div>
         </div>
 
         <!-- ===================== CROP MODAL (EDIT) ===================== -->
 
-        <div id="cropModalEdit">
+        <div class="modal-overlay" id="cropModalEdit">
             <div class="crop-box">
                 <div style="display:flex; justify-content:space-between; margin-bottom:14px; align-items:center;">
                     <h3>Crop Image <span id="cropProgressEdit" style="color:#888; font-size:13px;"></span></h3>
                 </div>
-                <img id="cropImageEdit">
-                <div style="display:flex; gap:10px; margin-top:14px; justify-content:flex-end;">
-                    <button class="btn-grey" id="skipCropBtnEdit">Skip</button>
-                    <button class="btn-dark" id="cropDoneBtnEdit">✅ Crop & Next</button>
+                <div class="img-container">
+                    <img id="cropImageEdit">
+                </div>
+                <div class="crop-btn-group">
+                    <button class="btn-minimal" style="border:none; color:#999;" id="skipCropBtnEdit">Cancel</button>
+                    <button class="btn-minimal" id="cropDoneBtnEdit">Save Crop</button>
                 </div>
             </div>
         </div>
 
 
 
-        <!-- ===================== ADD VARIANT MODAL ===================== -->
         <div class="modal-overlay" id="addVariantModal">
-            <div class="modal">
-                <div style="display:flex; justify-content:space-between; margin-bottom:22px; align-items:center;">
-                    <h2 style="font-weight:600;">Add Product Variant</h2>
-                    <span class="material-symbols-outlined" style="cursor:pointer; color:#999;"
-                        onclick="closeModal('addVariantModal')">close</span>
-                </div>
+            <div class="modal-box">
+                <h2>Add Extended Variant</h2>
 
                 <input type="hidden" id="variantProductId">
 
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px;">
                     <div class="form-group">
-                        <label>Size(s) <small>(select multiple if needed)</small></label>
-                        <div id="variantSizesContainer" style="display:grid; grid-template-columns:repeat(4, 1fr); gap:10px; padding:10px; border:1px solid #ddd; border-radius:8px; max-height:150px; overflow-y:auto; background:#fff;">
+                        <label>Size</label>
+                        <select id="variantSize" class="form-input">
+                            <option value="">-- Select Size --</option>
                             <% ['XS','S','M','L','XL','XXL','One Size'].forEach(s => { %>
-                                <label style="display:flex; align-items:center; gap:5px; font-size:12px; cursor:pointer;">
-                                    <input type="checkbox" name="variantSizes" value="<%= s %>"> <%= s %>
-                                </label>
+                                <option value="<%= s %>"><%= s %></option>
                             <% }) %>
-                        </div>
+                        </select>
                     </div>
                     <div class="form-group">
                         <label>Color</label>
@@ -780,46 +462,44 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Variant Images <span style="color:#888; font-size:12px;">(at least 1 recommended)</span></label>
+                    <label>Variant Images <span style="color:#888; font-size:12px;">(3 images recommended)</span></label>
                     <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
                         <input type="file" id="variantImageInput" multiple accept="image/*"
                             style="flex:1; padding:10px; border:1px dashed #ccc; border-radius:8px; cursor:pointer;">
-                        <button class="btn-grey" onclick="clearVariantImages()" style="padding:10px;">Clear</button>
+                        <button class="btn-minimal" style="border:none; color:#999;" onclick="clearVariantImages()" style="padding:10px;">Clear</button>
                     </div>
                     <small id="variantImgCount" style="color:#888; display:block; margin-top:5px;">No images selected</small>
                     <div class="preview-wrap" id="variantPreview"></div>
                 </div>
 
-                <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:10px;">
-                    <button class="btn-grey" onclick="closeModal('addVariantModal')">Cancel</button>
-                    <button class="btn-dark" onclick="submitAddVariant()">Add Variant</button>
+                <div class="modal-footer">
+                    <button class="btn-minimal" style="border:none; color:#999;" onclick="closeModal('addVariantModal')">Cancel</button>
+                    <button class="btn-minimal" onclick="submitAddVariant()">Commit Variant</button>
                 </div>
             </div>
         </div>
 
 
         <!-- ===================== CROP MODAL (VARIANT) ===================== -->
-        <div id="cropModalVariant">
+        <div class="modal-overlay" id="cropModalVariant">
             <div class="crop-box">
                 <div style="display:flex; justify-content:space-between; margin-bottom:14px; align-items:center;">
                     <h3>Crop Variant Image <span id="cropProgressVariant" style="color:#888; font-size:13px;"></span></h3>
                 </div>
-                <img id="cropImageVariant">
-                <div style="display:flex; gap:10px; margin-top:14px; justify-content:flex-end;">
-                    <button class="btn-grey" id="skipCropBtnVariant">Skip</button>
-                    <button class="btn-dark" id="cropDoneBtnVariant">✅ Crop & Next</button>
+                <div class="img-container">
+                    <img id="cropImageVariant">
+                </div>
+                <div class="crop-btn-group">
+                    <button class="btn-minimal" style="border:none; color:#999;" id="skipCropBtnVariant">Cancel</button>
+                    <button class="btn-minimal" id="cropDoneBtnVariant">Save Crop</button>
                 </div>
             </div>
         </div>
 
         <!-- ===================== EDIT VARIANT MODAL ===================== -->
         <div class="modal-overlay" id="editVariantModal">
-            <div class="modal">
-                <div style="display:flex; justify-content:space-between; margin-bottom:22px; align-items:center;">
-                    <h2 style="font-weight:600;">Edit Product Variant</h2>
-                    <span class="material-symbols-outlined" style="cursor:pointer; color:#999;"
-                        onclick="closeModal('editVariantModal')">close</span>
-                </div>
+            <div class="modal-box">
+                <h2>Adjust Variant</h2>
 
                 <input type="hidden" id="editVariantProductId">
                 <input type="hidden" id="editVariantId">
@@ -872,30 +552,32 @@
                     <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
                         <input type="file" id="editVariantImageInput" multiple accept="image/*"
                             style="flex:1; padding:10px; border:1px dashed #ccc; border-radius:8px; cursor:pointer;">
-                        <button class="btn-grey" onclick="clearEditVariantImages()" style="padding:10px;">Clear</button>
+                        <button class="btn-minimal" style="border:none; color:#999;" onclick="clearEditVariantImages()" style="padding:10px;">Clear</button>
                     </div>
                     <small id="editVariantImgCount" style="color:#888; display:block; margin-top:5px;">No images selected</small>
                     <div class="preview-wrap" id="editVariantPreview"></div>
                 </div>
 
-                <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:10px;">
-                    <button class="btn-grey" onclick="closeModal('editVariantModal')">Cancel</button>
-                    <button class="btn-dark" onclick="submitEditVariant()">Update Variant</button>
+                <div class="modal-footer">
+                    <button class="btn-minimal" style="border:none; color:#999;" onclick="closeModal('editVariantModal')">Cancel</button>
+                    <button class="btn-minimal" onclick="submitEditVariant()">Push Updates</button>
                 </div>
             </div>
         </div>
 
         <!-- ===================== CROP MODAL (VARIANT EDIT) ===================== -->
-        <div id="cropModalVariantEdit">
+        <div class="modal-overlay" id="cropModalVariantEdit">
             <div class="crop-box">
                 <div style="display:flex; justify-content:space-between; margin-bottom:14px; align-items:center;">
                     <h3>Crop Variant Image <span id="cropProgressVariantEdit" style="color:#888; font-size:13px;"></span>
                     </h3>
                 </div>
-                <img id="cropImageVariantEdit">
-                <div style="display:flex; gap:10px; margin-top:14px; justify-content:flex-end;">
-                    <button class="btn-grey" id="skipCropBtnVariantEdit">Skip</button>
-                    <button class="btn-dark" id="cropDoneBtnVariantEdit">✅ Crop & Next</button>
+                <div class="img-container">
+                    <img id="cropImageVariantEdit">
+                </div>
+                <div class="crop-btn-group">
+                    <button class="btn-minimal" style="border:none; color:#999;" id="skipCropBtnVariantEdit">Cancel</button>
+                    <button class="btn-minimal" id="cropDoneBtnVariantEdit">Save Crop</button>
                 </div>
             </div>
         </div>
@@ -932,14 +614,31 @@
             // ════════════════════════════════════════════════════════
 
 
+            function toggleVariantsRow(rowId) {
+                const row = document.getElementById(rowId);
+                const isHidden = row.style.display === 'none';
+                
+                // Hide all other open variant rows first for a clean experience
+                document.querySelectorAll('.variant-expand-row').forEach(r => r.style.display = 'none');
+                
+                if (isHidden) {
+                    row.style.display = 'table-row';
+                }
+            }
+
             function openModal(id) { document.getElementById(id).style.display = 'flex'; }
             function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
             function showToast(msg, color) {
-                Toastify({
-                    text: msg, duration: 3000, gravity: 'top', position: 'right',
-                    backgroundColor: color === 'green' ? '#2ecc71' : '#e74c3c'
-                }).showToast();
+                Swal.fire({
+                    text: msg,
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    customClass: { popup: 'zara-toast' },
+                    showClass: { popup: 'animate__animated animate__fadeInDown' }
+                });
             }
 
 
@@ -1032,26 +731,40 @@
             function makeCropperFlow({ inputEl, progressEl, cropImgEl, cropModalEl, cropDoneBtn, skipBtn, previewEl, countEl, onDone, minFiles = 1 }) {
                 let cropper = null, queue = [], blobs = [], idx = 0;
 
-                inputEl.addEventListener('change', function () {
-                    if (this.files.length < minFiles) {
-                        showToast(`Please select at least ${minFiles} image(s)`, 'red');
-                        this.value = '';
-                        return;
-                    }
-                    queue = Array.from(this.files);
-                    blobs = []; idx = 0;
-                    previewEl.innerHTML = '';
-                    openCrop(0);
-                });
-
+                if (inputEl) {
+                    inputEl.addEventListener('change', function () {
+                        if (this.files.length < minFiles) {
+                            showToast(`Please select at least ${minFiles} image(s)`, 'red');
+                            this.value = '';
+                            return;
+                        }
+                        queue = Array.from(this.files);
+                        blobs = []; idx = 0;
+                        previewEl.innerHTML = '';
+                        openCrop(0);
+                    });
+                }
                 function openCrop(i) {
+                    if (!progressEl) return;
                     progressEl.textContent = `(${i + 1} of ${queue.length})`;
                     const reader = new FileReader();
                     reader.onload = e => {
                         cropImgEl.src = e.target.result;
-                        cropModalEl.classList.add('show');
-                        if (cropper) cropper.destroy();
-                        cropper = new Cropper(cropImgEl, { aspectRatio: 1, viewMode: 1 });
+                        openModal(cropModalEl.id);
+                        
+                        cropImgEl.onload = () => {
+                            if (cropper) cropper.destroy();
+                            cropper = new Cropper(cropImgEl, { 
+                                aspectRatio: 3/4, 
+                                viewMode: 1,
+                                guides: true,
+                                center: true,
+                                highlight: true,
+                                cropBoxMovable: true,
+                                cropBoxResizable: true,
+                                toggleDragModeOnDblclick: true
+                            });
+                        };
                     };
                     reader.readAsDataURL(queue[i]);
                 }
@@ -1077,7 +790,7 @@
                     if (idx < queue.length) {
                         openCrop(idx);
                     } else {
-                        cropModalEl.classList.remove('show');
+                        closeModal(cropModalEl.id);
                         if (cropper) { cropper.destroy(); cropper = null; }
                         countEl.textContent = `${blobs.length} images ready ✅`;
                         inputEl.value = ''; // Reset input to allow re-selection
@@ -1122,7 +835,7 @@
                 };
             }
 
-            // Wire up ADD cropper (1 image required)
+            // Wire up ADD cropper
             const addCropper = makeCropperFlow({
                 inputEl: document.getElementById('addImageInput'),
                 progressEl: document.getElementById('cropProgress'),
@@ -1189,13 +902,13 @@
                 const isActive = document.getElementById('addIsActive').checked;
                 const blobs = addCropper.getBlobs();
 
-                // Validate basic fields (allow 0 for price/stock)
-                if (name === "" || category === "" || price === "" || stock === "") {
-                    return showToast('Fill all required fields', 'red');
-                }
-                if (price < 0) return showToast('Price cannot be negative', 'red');
-                if (stock < 0) return showToast('Stock cannot be negative', 'red');
-                if (blobs.length < 1) return showToast('Upload & crop at least 1 image', 'red');
+                // Validate basic fields
+                if (!name) return showToast('Product Name is required', 'red');
+                if (!category) return showToast('Please select a category', 'red');
+                if (price === "" || isNaN(price) || price < 0) return showToast('Valid Price is required', 'red');
+                if (stock === "" || isNaN(stock) || stock < 0) return showToast('Valid Stock is required', 'red');
+                if (!description) return showToast('Description is required', 'red');
+                // blobs check removed
 
                 const fd = new FormData();
                 fd.append('name', name);
@@ -1240,10 +953,24 @@
                 // Show current images
                 const cur = document.getElementById('editCurrentImages');
                 cur.innerHTML = '';
-                (p.images || []).forEach(src => {
+                (p.images || []).forEach((src, idx) => {
+                    const wrap = document.createElement('div');
+                    wrap.style = 'position:relative; display:inline-block; margin-right:10px;';
+                    
                     const img = document.createElement('img');
                     img.src = src;
-                    cur.appendChild(img);
+                    img.style = 'width:80px; height:100px; object-fit:cover; border:0.5px solid #eee;';
+                    
+                    const btn = document.createElement('button');
+                    btn.innerHTML = idx === 0 ? '★ MAIN' : 'SET MAIN';
+                    btn.style = `position:absolute; bottom:0; left:0; right:0; background:${idx === 0 ? '#000' : 'rgba(0,0,0,0.5)'}; color:#fff; border:none; font-size:8px; padding:3px; cursor:pointer;`;
+                    if (idx !== 0) {
+                        btn.onclick = () => setPrimaryImage(p._id, src);
+                    }
+                    
+                    wrap.appendChild(img);
+                    wrap.appendChild(btn);
+                    cur.appendChild(wrap);
                 });
 
                 // Show Variants
@@ -1291,11 +1018,11 @@
                 const isActive = document.getElementById('editIsActive').checked;
                 const blobs = editCropper.getBlobs();
 
-                if (name === "" || category === "" || price === "" || stock === "") {
-                    return showToast('Fill all required fields', 'red');
-                }
-                if (price < 0) return showToast('Price cannot be negative', 'red');
-                if (stock < 0) return showToast('Stock cannot be negative', 'red');
+                if (!name) return showToast('Product Name is required', 'red');
+                if (!category) return showToast('Please select a category', 'red');
+                if (price === "" || isNaN(price) || price < 0) return showToast('Valid Price is required', 'red');
+                if (stock === "" || isNaN(stock) || stock < 0) return showToast('Valid Stock is required', 'red');
+                if (!description) return showToast('Description is required', 'red');
 
                 const fd = new FormData();
                 fd.append('name', name);
@@ -1387,17 +1114,16 @@
 
             async function submitAddVariant() {
                 const id = document.getElementById('variantProductId').value;
-                const sizeCheckboxes = document.querySelectorAll('input[name="variantSizes"]:checked');
-                const sizes = Array.from(sizeCheckboxes).map(cb => cb.value);
+                const size = document.getElementById('variantSize').value;
                 const color = document.getElementById('variantColor').value;
                 const stock = document.getElementById('variantStock').value;
                 const price = document.getElementById('variantPrice').value;
                 const blobs = variantCropper.getBlobs();
 
-                if (sizes.length === 0 || !color || !stock) return showToast('Select at least one size, color, and stock', 'red');
+                if (!size || !color || !stock) return showToast('Please select size, color, and stock', 'red');
 
                 const fd = new FormData();
-                sizes.forEach(s => fd.append('size', s));
+                fd.append('size', size);
                 fd.append('color', color);
                 fd.append('stock', stock);
                 fd.append('price', price || 0);
@@ -1494,6 +1220,33 @@
                         location.reload();
                     } else {
                         showToast(data.message || 'Failed to delete variant', 'red');
+                    }
+                } catch { showToast('Server error', 'red'); }
+            }
+
+            async function setPrimaryImage(productId, src) {
+                try {
+                    const res = await fetch(`/admin/product/setPrimary/${productId}`, {
+                        method: 'PATCH',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ src })
+                    });
+                    const data = await res.json();
+                    if (data.success) {
+                        showToast('Main image updated!', 'green');
+                        // Update UI without full reload - find the product in cache and update it
+                        const pIdx = currentPageProducts.findIndex(p => p._id === productId);
+                        if (pIdx !== -1) {
+                            const p = currentPageProducts[pIdx];
+                            const imgIdx = p.images.indexOf(src);
+                            if (imgIdx !== -1) {
+                                p.images.splice(imgIdx, 1);
+                                p.images.unshift(src);
+                                openEditModalByIndex(pIdx); // Refresh modal
+                            }
+                        }
+                    } else {
+                        showToast('Failed to set main image', 'red');
                     }
                 } catch { showToast('Server error', 'red'); }
             }

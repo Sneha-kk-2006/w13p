@@ -11,6 +11,7 @@ const uploads=require('../config/multer')
 
 router.get('/login', adminController.loadlogin);
 router.post('/login', adminController.login);
+router.get('/logout', adminController.logout);
 router.get('/dashboard', adminAuth, adminController.loadDashboard);
 
 router.get('/salesreport', adminAuth, adminController.loadsales);
@@ -25,6 +26,7 @@ router.get('/category',categoryController.loadp)
 router.post('/addCategory',categoryController.addCategory)
 router.post('/category/edit/:id',categoryController.editCategory)
 router.patch('/category/delete/:id',categoryController.deleteCategory)
+router.patch('/category/toggle/:id', categoryController.toggleCategoryStatus)
 
 
 
@@ -48,6 +50,8 @@ router.patch('/product/toggle/:id',productController.toggleProductStatus)
 router.post('/product/addVariant/:id', uploads.array('images', 10), productController.addVariant);
 router.post('/product/editVariant/:productId/:variantId', uploads.array('images', 10), productController.editVariant);
 router.delete('/product/deleteVariant/:productId/:variantId', productController.deleteVariant);
+router.patch('/product/setPrimary/:id', productController.setPrimaryImage);
+router.get('/product/variants/:id', adminAuth, productController.viewVariants);
 
 
 module.exports = router;

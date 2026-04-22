@@ -1,37 +1,116 @@
-  <footer class="footer">
-    <div class="footer-grid">
-      <div>
-        <div class="logo" style="margin-bottom:20px; color: white;">SNOVA</div>
-        <p>Your trusted destination for stylish and high-quality dresses.</p>
-        <div style="display:flex; gap:15px; margin-top:20px">
-          <span style="background:#333; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer">f</span>
-          <span style="background:#333; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer">ig</span>
-          <span style="background:#333; width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer">tw</span>
-        </div>
-      </div>
-      <div>
-        <h4>Shop by Category</h4>
-        <ul>
-          <li>Casual Dresses</li>
-          <li>Ethnic Wear</li>
-          <li>Western Wear</li>
-          <li>Kids Wear</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Customer Support</h4>
-        <ul>
-          <li>Contact Us</li>
-          <li>Track Order</li>
-        </ul>
-      </div>
-      <div>
-        <h4>Company Info</h4>
-        <ul>
-          <li>About Us</li>
-          <li>Privacy Policy</li>
-        </ul>
+<style>
+  .footer {
+    background: #ffffff !important;
+    color: #000 !important;
+    border-top: 0.5px solid #e0e0e0;
+    padding: 100px 5% 50px !important;
+    margin-top: 0 !important;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 40px;
+    border-bottom: none !important;
+    padding-bottom: 80px !important;
+  }
+
+  .footer h4 {
+    color: #000 !important;
+    font-size: 10px !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 30px !important;
+    font-weight: 600;
+  }
+
+  .footer p, .footer li {
+    font-size: 10px !important;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #666 !important;
+    margin-bottom: 15px !important;
+    list-style: none;
+    line-height: 1.5 !important;
+  }
+
+  .footer-grid .logo {
+    color: #000 !important;
+    font-family: 'Playfair Display', serif;
+    font-size: 20px !important;
+    letter-spacing: 3px;
+    margin-bottom: 25px !important;
+  }
+
+  .copyright {
+    text-align: left !important;
+    font-size: 9px !important;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #999;
+    padding-top: 40px !important;
+    border-top: 0.5px solid #eee;
+  }
+
+  .social-links {
+    display: flex;
+    gap: 20px;
+    margin-top: 30px;
+  }
+
+  .social-links a {
+    color: #000;
+    text-decoration: none;
+    font-size: 14px;
+  }
+
+  @media (max-width: 768px) {
+    .footer-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="logo">SNOVA</div>
+      <p>Redefining modern elegance through curated fashion collections.</p>
+      <div class="social-links">
+        <a href="#"><i class="fa-brands fa-instagram"></i></a>
+        <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="#"><i class="fa-brands fa-twitter"></i></a>
       </div>
     </div>
-    <div class="copyright">© 2026 Snova. All rights reserved.</div>
-  </footer>
+    
+    <div>
+      <h4>Help</h4>
+      <ul>
+        <li>Contact Us</li>
+        <li>Track Order</li>
+        <li>Shipping & Returns</li>
+        <li>FAQ</li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Company</h4>
+      <ul>
+        <li>About Us</li>
+        <li>Store Locator</li>
+        <li>Privacy Policy</li>
+        <li>Terms & Conditions</li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Categories</h4>
+      <ul>
+        <li>Woman</li>
+        <li>Man</li>
+        <li>Kids</li>
+        <li>Accessories</li>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="copyright">© 2026 SNOVA OFFICIAL STORE. ALL RIGHTS RESERVED.</div>
+</footer>

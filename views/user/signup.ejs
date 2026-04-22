@@ -1,142 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNOVA | Sign Up</title>
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-
+    <title>SNOVA | Register</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
         :root {
-            --primary-green: #10b981;
-            --dark-bg: #111111;
-            --light-pink: #fdf2f2;
+            --primary-black: #000000;
+            --off-white: #ffffff;
             --text-gray: #666;
-            --border-color: #ddd;
+            --border-gray: #e5e5e5;
+            --error-red: #d32f2f;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background-color: var(--light-pink);
+            background-color: var(--off-white);
+            color: var(--primary-black);
             min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .auth-container {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: row-reverse;
+        }
+
+        .auth-image-side {
+            flex: 1;
+            background-image: url('/images/editorial/signup_side.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .auth-form-side {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            padding: 60px;
         }
 
-        .signup-card {
-            background: white;
+        .signup-wrapper {
             width: 100%;
-            max-width: 400px;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            max-width: 450px;
         }
 
         .header {
-            text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 50px;
+            text-align: left;
         }
 
         .header h1 {
-            font-size: 24px;
-            color: var(--dark-bg);
-            margin-bottom: 8px;
-            letter-spacing: 1px;
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 400;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
         }
 
         .header p {
+            font-size: 0.75rem;
             color: var(--text-gray);
-            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 30px;
+            position: relative;
         }
 
         .form-group label {
             display: block;
-            font-size: 13px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            color: var(--primary-black);
             font-weight: 600;
-            margin-bottom: 6px;
-            color: var(--dark-bg);
         }
 
         .form-group input {
             width: 100%;
-            padding: 12px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-size: 14px;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 1px solid var(--primary-black);
+            font-size: 0.9rem;
             outline: none;
-            transition: border-color 0.2s;
+            background: transparent;
+            border-radius: 0;
+            transition: border-bottom 0.3s;
         }
 
         .form-group input:focus {
-            border-color: var(--primary-green);
+            border-bottom: 2px solid var(--primary-black);
         }
 
-        /* Password field container */
-        .password-wrapper {
-            position: relative;
-            display: flex;
-            align-items: center;
+        .password-row {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
         }
 
-        .toggle-btn {
-            position: absolute;
-            right: 12px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            color: var(--text-gray);
-            display: flex;
-            align-items: center;
-            user-select: none;
+        .error-message {
+            color: var(--error-red);
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 5px;
+            display: none;
         }
 
-        .toggle-btn:hover {
-            color: var(--primary-green);
-        }
-
-        .btn-create {
+        .btn-register {
             width: 100%;
-            background: var(--dark-bg);
+            background: var(--primary-black);
             color: white;
-            padding: 14px;
+            padding: 18px;
             border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: bold;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 3px;
             cursor: pointer;
-            margin-top: 10px;
-            transition: background 0.3s;
-        }
-
-        .btn-create:hover {
-            background: #222;
-        }
-
-        .footer-links {
-            text-align: center;
             margin-top: 20px;
-            font-size: 14px;
-            color: var(--text-gray);
+            transition: opacity 0.3s;
         }
 
-        .footer-links a {
-            color: var(--primary-green);
-            text-decoration: none;
-            font-weight: 700;
+        .btn-register:hover {
+            opacity: 0.8;
         }
 
         .google-btn {
@@ -144,424 +147,244 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             background: white;
-            border: 1px solid var(--border-color);
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 20px;
+            border: 1px solid var(--primary-black);
+            padding: 15px;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: background 0.3s;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-decoration: none;
+            color: var(--primary-black);
+            margin-top: 20px;
         }
 
-        .google-btn:hover {
-            background: #f9f9f9;
+        .footer-links {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.7rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
         }
 
-        .error-message {
-            color: red;
-            font-size: 13px;
-            display: none;
+        .footer-links a {
+            color: var(--primary-black);
+            text-decoration: underline;
+            font-weight: 600;
         }
+
         .input-box {
-  position: relative;
-}
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
 
-.input-box input {
-  width: 100%;
-  padding-right: 40px;
-}
+        .toggle-btn-small {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-gray);
+            cursor: pointer;
+            font-weight: 600;
+            padding: 5px 0;
+        }
 
-.input-box button {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  border: none;
-  background: none;
-  cursor: pointer;
-}
+        @media (max-width: 900px) {
+            .auth-image-side { display: none; }
+            .auth-form-side { padding: 40px 20px; }
+        }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 </head>
-
 <body>
 
-    <div class="signup-card">
-        <div class="header">
-            <h1>SIGN UP</h1>
-            <p>Enter your Information to get started</p>
+    <div class="auth-container">
+        <div class="auth-image-side"></div>
+        <div class="auth-form-side">
+            <div class="signup-wrapper">
+                <div class="header">
+                    <div style="font-family: 'Playfair Display'; font-size: 1.2rem; letter-spacing: 4px; margin-bottom: 40px; cursor: pointer;" onclick="location.href='/'">SNOVA</div>
+                    <h1>REGISTER</h1>
+                    <p>Create your personal account</p>
+                </div>
+
+                <form id="signform">
+                    <div class="form-group">
+                        <label for="name">PERSONAL DETAILS / FULL NAME</label>
+                        <input type="text" id="name" name="name" placeholder="YOUR NAME">
+                        <div id="error1" class="error-message"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email">E-MAIL ADDRESS</label>
+                        <input type="email" id="email" name="email" placeholder="YOUR E-MAIL">
+                        <div id="error2" class="error-message"></div>
+                    </div>
+
+                    <div class="password-row">
+                        <div class="form-group">
+                            <label for="pass">PASSWORD</label>
+                            <div class="input-box">
+                                <input type="password" id="pass" name="password" placeholder="ENTER A PASSWORD">
+                                <button type="button" class="toggle-btn-small" onclick="togglePass('pass', this)">Show</button>
+                            </div>
+                            <div id="error3" class="error-message"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirm-pass">CONFIRM PASSWORD</label>
+                            <div class="input-box">
+                                <input type="password" name="confirmpassword" id="confirm-pass" placeholder="REPEAT YOUR PASSWORD">
+                                <button type="button" class="toggle-btn-small" onclick="togglePass('confirm-pass', this)">Show</button>
+                            </div>
+                            <div id="error4" class="error-message"></div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-register">Create Account</button>
+                </form>
+
+                <a href="/google" class="google-btn">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="16" alt="Google">
+                    Continue with Google
+                </a>
+
+                <div class="footer-links">
+                    ALREADY HAVE AN ACCOUNT? <a href="login">LOG IN</a>
+                </div>
+            </div>
         </div>
-<form id="signform">
-
-  <div class="form-group">
-    <label for="name">Full Name</label>
-    <input type="text" id="name" name="name" placeholder="enter name">
-    <div id="error1" class="error-message"></div>
-  </div>
-
-  <div class="form-group">
-    <label for="email">Email</label>
-    <input type="email" id="email" name="email" placeholder="email@example.com">
-    <div id="error2" class="error-message"></div>
-  </div>
-
-  <div class="form-group password-field">
-    <label for="pass">Password</label>
-    <div class="input-box">
-      <input type="password" id="pass" name="password" placeholder="Enter password">
-      <button type="button" onclick="togglePass('pass', this)">
-        <span class="material-symbols-outlined">visibility</span>
-      </button>
-    </div>
-    <div id="error3" class="error-message"></div>
-  </div>
-
-  <div class="form-group password-field">
-    <label for="confirm-pass">Confirm Password</label>
-    <div class="input-box">
-      <input type="password" name="confirmpassword" id="confirm-pass">
-      <button type="button" onclick="togglePass('confirm-pass', this)">
-        <span class="material-symbols-outlined">visibility</span>
-      </button>
-    </div>
-    <div id="error4" class="error-message"></div>
-  </div>
-
-  <button type="submit" class="btn-create">Create Account</button>
-
-</form>
-
-        <div class="footer-links">
-            Already have an account? <a href="login">Log in</a>
-        </div>
-
-        <a href="/google" class="google-btn">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="18" alt="Google">
-            Continue with Google
-        </a>
     </div>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script type="module">
+        import { showToast } from "/helpers/msg.helper.js"
+
         window.togglePass = function(id, btn) {
-    const input = document.getElementById(id);
-    const icon = btn.querySelector(".material-symbols-outlined");
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                btn.textContent = "Hide";
+            } else {
+                input.type = "password";
+                btn.textContent = "Show";
+            }
+        }
 
-    if (input.type === "password") {
-        input.type = "text";
-        icon.textContent = "visibility_off";
-    } else {
-        input.type = "password";
-        icon.textContent = "visibility";
-    }
-}
+        document.getElementById("signform").addEventListener("submit", async function (e) {
+            e.preventDefault();
 
-        import { showToast  } from "/helpers/msg.helper.js"
-       
-       document.getElementById("signform").addEventListener("submit", async function (e) {
+            if (!validateForm()) return;
 
-    e.preventDefault();
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("pass").value.trim();
+            const confirmpassword = document.getElementById("confirm-pass").value.trim();
 
-    if (!validateForm()) {
-        return; // stop form submission if validation fails
-    }
+            try {
+                const response = await fetch("/signup", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name, email, password, confirmpassword })
+                });
 
-    const name = document.getElementById("name").value
-    const email = document.getElementById("email").value
-    const password = document.getElementById("pass").value
-    const confirmpassword = document.getElementById("confirm-pass").value
+                const data = await response.json();
+                if (data.success) {
+                    showToast(data.message, 'success');
+                    window.location.href = "/verify-otp";
+                } else {
+                    showToast(data.message, 'error');
+                }
+            } catch (err) {
+                showToast("Server error", 'error');
+            }
+        });
 
-    const response = await fetch("/signup", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name,
-            email,
-            password,
-            confirmpassword
-        })
-    })
+        const nameid = document.getElementById("name");
+        const emailid = document.getElementById("email");
+        const passid = document.getElementById("pass");
+        const confirmpassid = document.getElementById("confirm-pass");
 
-    const data = await response.json()
+        const error1 = document.getElementById("error1");
+        const error2 = document.getElementById("error2");
+        const error3 = document.getElementById("error3");
+        const error4 = document.getElementById("error4");
 
-    if (data.success) {
+        function nameValidn() {
+            const nameVal = nameid.value.trim();
+            const namePattern = /^[A-Za-z ]{2,50}$/;
+            if (nameVal === "") {
+                showErr(error1, "Please enter your name");
+                return false;
+            }
+            if (!namePattern.test(nameVal)) {
+                showErr(error1, "Name should contain only letters");
+                return false;
+            }
+            hideErr(error1);
+            return true;
+        }
 
-        showToast(data.message, 'success');
-        window.location.href = "/verify-otp"
+        function emailValidn() {
+            const emailVal = emailid.value.trim();
+            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            if (emailVal === "") {
+                showErr(error2, "Please enter your email");
+                return false;
+            }
+            if (!emailPattern.test(emailVal)) {
+                showErr(error2, "Enter a valid email address");
+                return false;
+            }
+            hideErr(error2);
+            return true;
+        }
 
-    } else {
-        showToast(data.message, 'error')
-    }
-});
-       const nameid = document.getElementById("name");
-const emailid = document.getElementById("email");
-const passid = document.getElementById("pass");
-const confirmpassid = document.getElementById("confirm-pass");
+        function passwordValidn() {
+            const passVal = passid.value;
+            const confirmVal = confirmpassid.value;
+            if (passVal === "") {
+                showErr(error3, "Please enter a password");
+                return false;
+            }
+            if (passVal.length < 6) {
+                showErr(error3, "At least 6 characters required");
+                return false;
+            }
+            hideErr(error3);
+            if (confirmVal !== passVal) {
+                showErr(error4, "Passwords do not match");
+                return false;
+            }
+            hideErr(error4);
+            return true;
+        }
 
-const error1 = document.getElementById("error1");
-const error2 = document.getElementById("error2");
-const error3 = document.getElementById("error3");
-const error4 = document.getElementById("error4");
-        const signform = document.getElementById("signform")
+        function showErr(element, msg) {
+            element.style.display = "block";
+            element.innerHTML = msg;
+        }
 
-function nameValidn() {
+        function hideErr(element) {
+            element.style.display = "none";
+            element.innerHTML = "";
+        }
 
-    const nameVal = nameid.value.trim();
-    const namePattern = /^[A-Za-z ]{2,50}$/;
-
-    if (nameVal === " ") {
-        error1.style.display = "block";
-        error1.innerHTML = "Please enter your name";
-        return false;
-    }
-
-    if (!namePattern.test(nameVal)) {
-        error1.style.display = "block";
-        error1.innerHTML = "Name should contain only letters";
-        return false;
-    }else if(emailid.value.trim() === " "){
-        error1.style.display = "block";
-        error1.innerHTML = "Please enter your name";
-        return false;
-    }else if(passid.value.trim() === " "){
-        error1.style.display = "block";
-        error1.innerHTML = "Please enter your name";
-        return false;
-    }else if(confirmpassid.value.trim() === " "){
-        error1.style.display = "block"; 
-    
-    }
-
-
-
-    error1.style.display = "none";
-    error1.innerHTML = "";
-    return true;
-}
-
-
-function emailValidn() {
-  // Ensure we select the element properly
-  const emailInput = document.getElementById('emailid') || document.querySelector('[name="email"]');
-  if (!emailInput) return false;
-
-  const emailVal = emailInput.value.trim();
-  
-
-const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-
-  // 1. Empty check
-  if (emailVal === "") {
-    showError("Please enter your email");
-    return false;
-  }
-
-  // 2. Format check (This covers s@gmail.com correctly)
-  if (!emailPattern.test(emailVal)) {
-    showError("Enter a valid email (example: user@gmail.com)");
-    return false;
-  }
-
-  // 3. Logic checks for edge cases
-  if (emailVal.includes("..")) {
-    showError("Email should not contain consecutive dots");
-    return false;
-  }
-
-  if (emailVal.startsWith(".") || emailVal.endsWith(".")) {
-    showError("Email should not start or end with a dot");
-    return false;
-  }
-
-  clearError();
-  return true;
-}
-
-
-// 🔧 Helper functions (clean code)
-function showError(message) {
-  error2.style.display = "block";
-  error2.innerHTML = message;
-}
-
-function clearError() {
-  error2.style.display = "none";
-  error2.innerHTML = "";
-}
-
-
-function passwordValidn() {
-
-    const passVal = passid.value;
-    const confirmPassVal = confirmpassid.value;
-
-    if (passVal === "") {
-        error3.style.display = "block";
-        error3.innerHTML = "Please enter a password";
-        return false;
-    }
-
-    if (passVal.length < 6) {
-        error3.style.display = "block";
-        error3.innerHTML = "Password must be at least 6 characters";
-        return false;
-    }
-
-    error3.style.display = "none";
-    error3.innerHTML = "";
-
-    if (confirmPassVal !== passVal) {
-        error4.style.display = "block";
-        error4.innerHTML = "Passwords do not match";
-        return false;
-    }
-
-    error4.style.display = "none";
-    error4.innerHTML = "";
-
-    return true;
-}
-
-
-function validateForm() {
-    const isNameValid = nameValidn();
-    const isEmailValid = emailValidn();
-    const isPasswordValid = passwordValidn();
-
-    return isNameValid && isEmailValid && isPasswordValid;
-}
-
-
-
-
-
-
-
-
-
-
-   
-// if(name===""){
-// document.getElementById("nameError").innerText="Enter full name"
-// valid=false
-// }
-
-
-// if(email===""){
-// document.getElementById("emailError").innerText="Enter your email"
-// valid=false
-// }
-
-
-// if(password===""){
-// document.getElementById("passwordError").innerText="Enter a password"
-// valid=false
-// }
-
-
-// if(confirmpassid===""){
-// document.getElementById("confirmpassError").innerText="Confirm your password"
-// valid=false
-// }
-
-
-
+        function validateForm() {
+            const n = nameValidn();
+            const e = emailValidn();
+            const p = passwordValidn();
+            return n && e && p;
+        }
     </script>
 </body>
-
 </html>
-
-
-
-
-
-<!-- 
-//const name=document.getElementById("fullName").value.trim()
-const phone=document.getElementById("phone").value.trim()
-const address=document.getElementById("addressline1").value.trim()
-const city=document.getElementById("city").value.trim()
-const state=document.getElementById("state").value.trim()
-const pincode=document.getElementById("pincode").value.trim()
-
-const phonePattern=/^[0-9]{10}$/
-const pincodePattern=/^[0-9]{6}$/
-
-clearErrors()
-
-if(name===""){
-document.getElementById("nameError").innerText="Enter full name"
-valid=false
-}
-
-if(type===""){
-document.getElementById("typeError").innerText="Enter address type"
-valid=false
-}
-
-if(!phonePattern.test(phone)){
-document.getElementById("phoneError").innerText="Enter valid 10 digit phone"
-valid=false
-}
-
-if(address===""){
-document.getElementById("addressError").innerText="Enter address"
-valid=false
-}
-
-if(city===""){
-document.getElementById("cityError").innerText="Enter city"
-valid=false
-}
-
-if(state===""){
-document.getElementById("stateError").innerText="Enter state"
-valid=false
-}
-
-if(!pincodePattern.test(pincode)){
-document.getElementById("pincodeError").innerText="Enter valid 6 digit pincode"
-valid=false
-}
-
-if(!valid){
-e.preventDefault()
-}
-
-})
-function deleteAddress(id){
-
-Swal.fire({
-title: "Are you sure?",
-text: "This address will be permanently deleted!",
-icon: "warning",
-showCancelButton: true,
-confirmButtonColor: "#e74c3c",
-cancelButtonColor: "#6c757d",
-confirmButtonText: "Yes, delete it"
-}).then((result) => {
-
-if(result.isConfirmed){
-
-Toastify({
-text: "Address deleted successfully",
-duration: 2000,
-gravity: "top",
-position: "right",
-backgroundColor: "#e74c3c",
-}).showToast();
-
-setTimeout(()=>{
-window.location.href="/deleteAddress?id="+id
-},1500)
-
-}
-
-})
-
-} -->

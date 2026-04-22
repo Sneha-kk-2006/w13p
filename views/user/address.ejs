@@ -1,460 +1,330 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SNOVA | Address</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | Addresses</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        :root {
+            --primary-black: #000;
+            --off-white: #fff;
+            --text-gray: #666;
+            --border-light: #eee;
+        }
 
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
-<style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-body{
-font-family: Arial, Helvetica, sans-serif;
-margin:0;
-background:#f4eded;
-}
+        body {
+            background-color: var(--off-white);
+            color: var(--primary-black);
+            -webkit-font-smoothing: antialiased;
+        }
 
-/* TOP NAV */
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
 
-.navbar{
-background:#000;
-color:#fff;
-padding:15px 40px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-}
+        .main-content {
+            flex: 1;
+            padding: 60px 5%;
+        }
 
-.logo{
-color:#00d084;
-font-size:22px;
-font-weight:bold;
-}
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 50px;
+        }
 
-.nav-links a{
-color:#fff;
-margin:0 15px;
-text-decoration:none;
-}
+        .address-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
 
-/* LAYOUT */
+        .address-card-minimal {
+            border: 0.5px solid var(--border-light);
+            padding: 30px;
+            position: relative;
+            background: #fbfbfb;
+            transition: 0.3s;
+        }
 
-.container{
-display:flex;
-}
+        .address-card-minimal:hover {
+            border-color: #000;
+        }
 
-/* SIDEBAR */
+        .address-type {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: block;
+            color: #999;
+        }
 
-.sidebar{
-width:230px;
-background:#0d1b2a;
-min-height:100vh;
-padding-top:20px;
-}
+        .address-details {
+            font-size: 0.75rem;
+            line-height: 1.8;
+            letter-spacing: 0.5px;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+        }
 
-.sidebar h3{
-color:#fff;
-padding-left:20px;
-}
+        .badge-default {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+        }
 
-.sidebar a{
-display:block;
-padding:15px 20px;
-color:#fff;
-text-decoration:none;
-margin:10px;
-border-radius:8px;
-}
+        .card-actions {
+            display: flex;
+            gap: 20px;
+            border-top: 0.5px solid var(--border-light);
+            padding-top: 20px;
+        }
 
-.sidebar a:hover{
-background:#1abc9c;
-}
+        .action-link {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            text-decoration: underline;
+            cursor: pointer;
+            color: #000;
+            background: none;
+            border: none;
+        }
 
-.active{
-background:#1abc9c;
-}
+        .btn-add-minimal {
+            display: inline-block;
+            margin-top: 40px;
+            padding: 15px 40px;
+            border: 1px solid #000;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+            background: transparent;
+        }
 
-/* MAIN */
+        .btn-add-minimal:hover {
+            background: #000;
+            color: #fff;
+        }
 
-.main{
-flex:1;
-padding:40px;
-}
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(255,255,255,0.95);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
 
-/* CARD */
+        .modal-box {
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
 
-.address-container{
-background:#fff;
-border-radius:14px;
-padding:30px;
-box-shadow:0 2px 10px rgba(0,0,0,0.1);
-}
+        .modal-box h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+        }
 
-.address-header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:20px;
-}
+        .modal-form input, .modal-form textarea {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid #000;
+            padding: 12px 0;
+            font-size: 0.8rem;
+            outline: none;
+            background: transparent;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+        }
 
-.address-card{
-background:#f8f8f8;
-padding:20px;
-border-radius:10px;
-margin-bottom:15px;
-border:1px solid #ddd;
-}
+        .error-msg {
+            font-size: 0.55rem;
+            color: #d32f2f;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: -10px;
+            margin-bottom: 15px;
+            display: block;
+        }
 
-.address-card h4{
-margin:0;
-}
-
-.address-actions{
-margin-top:10px;
-}
-
-.btn{
-border:none;
-padding:8px 15px;
-border-radius:6px;
-cursor:pointer;
-}
-
-.btn-add{
-background:#1abc9c;
-color:#fff;
-}
-
-.btn-edit{
-background:#3498db;
-color:#fff;
-}
-
-.btn-delete{
-background:#e74c3c;
-color:#fff;
-}
-
-.btn-default{
-background:#6c5ce7;
-color:#fff;
-}
-
-/* MODAL */
-
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.5);
-justify-content:center;
-align-items:center;
-  overflow-y: auto;
-}
-
-.modal-content{
-background:#fff;
-padding:25px;
-border-radius:10px;
-width:400px;
-  max-height: 80vh;
-  overflow-y: auto;
-}
-
-.modal-content h3{
-margin-top:0;
-}
-
-.modal-content input,
-.modal-content textarea{
-width:100%;
-padding:10px;
-margin-bottom:5px;
-border-radius:6px;
-border:1px solid #ccc;
-}
-
-.error{
-color:red;
-font-size:13px;
-margin-bottom:8px;
-display:block;
-}
-
-.modal-buttons{
-text-align:right;
-}
-
-</style>
+        @media (max-width: 768px) {
+            .dashboard-container { flex-direction: column; }
+        }
+    </style>
 </head>
-
 <body>
 
-<%- include('../partials/user/header') %>
-
-<div class="container">
-
-<%- include('../partials/user/sidebar') %>
-
-<div class="main">
-
-<div class="address-container">
-
-<div class="address-header">
-<h2>My Addresses</h2>
-
-<button class="btn btn-add" onclick="openAddModal()">+ Add Address</button>
-</div>
-
-
-
-<!-- ADDRESS LIST -->
-
-<% if(addresses.length > 0){ %>
-
-<% addresses.forEach(address => { %>
-
-<div class="address-card">
-
-<h4><%= address.type %> Address</h4>
-
-<p><%= address.fullName %></p>
-<p><%= address.addressline1 %></p>
-<p><%= address.city %>, <%= address.state %> - <%= address.pincode %></p>
-<p>Phone: <%= address.phone %></p>
-
-<div class="address-actions">
-
-<% if(address.isDefault){ %>
-<button class="btn btn-default" style="background:#1abc9c">Default</button>
-<% } else { %>
-<a href="/setDefaultAddress?id=<%= address._id %>" class="btn btn-default">Set Default</a>
-<% } %>
-
-<button 
-class="btn btn-edit"
-onclick='editAddress(<%- JSON.stringify(address) %>)'>
-Edit
-</button>
-
-<button class="btn btn-delete" onclick="deleteAddress('<%= address._id %>')">
-Delete
-</button>
-
-</div>
-
-</div>
-
-<% }) %>
-
-<% } else { %>
-
-<p>No addresses added yet.</p>
-
-<% } %>
-
-</div>
-
-</div>
-
-</div>
-
-<!-- MODAL -->
-
-<div class="modal" id="addressModal">
-
-<div class="modal-content">
-
-<h3 id="modalTitle">Add Address</h3>
-
-<form id="addressForm" action="/addAddress" method="post">
-
-<input type="hidden" name="id" id="addressId">
-
-<input type="text" name="type" id="type" placeholder="Type (Home / Work)">
-<span class="error" id="typeError"></span>
-
-<input type="text" name="fullName" id="fullName" placeholder="Full Name">
-<span class="error" id="nameError"></span>
-
-<input type="text" name="phone" id="phone" placeholder="Phone Number">
-<span class="error" id="phoneError"></span>
-
-<textarea name="addressline1" id="addressline1" placeholder="Street Address line 1"></textarea>
-<span class="error" id="addressError"></span>
-
-<textarea name="addressline2" id="addressline2" placeholder="Street Address line 2 (optional)"></textarea>
-
-<input type="text" name="city" id="city" placeholder="City">
-<span class="error" id="cityError"></span>
-
-<input type="text" name="state" id="state" placeholder="State">
-<span class="error" id="stateError"></span>
-
-<input type="text" name="country" id="country" placeholder="Country">
-<span class="error" id="countryError"></span>
-
-<input type="text" name="pincode" id="pincode" placeholder="Pincode">
-<span class="error" id="pincodeError"></span>
-
-<div class="modal-buttons">
-<button class="btn btn-add">Save</button>
-<button type="button" class="btn btn-delete" onclick="closeModal()">Cancel</button>
-</div>
-
-</form>
-
-</div>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<script>
-
-function openAddModal(){
-
-document.getElementById("modalTitle").innerText="Add Address"
-document.getElementById("addressForm").action="/addAddress"
-document.getElementById("addressForm").reset()
-clearErrors()
-
-document.getElementById("addressModal").style.display="flex"
-
-}
-
-
-function editAddress(address){
-
-console.log(address) 
-
-document.getElementById("modalTitle").innerText="Edit Address"
-document.getElementById("addressForm").action="/editAddress"
-
-document.getElementById("addressId").value = address._id
-document.getElementById("type").value = address.type
-document.getElementById("fullName").value = address.fullName
-document.getElementById("phone").value = address.phone
-document.getElementById("addressline1").value = address.addressline1
-document.getElementById("addressline2").value = address.addressline2
-document.getElementById("city").value = address.city
-document.getElementById("state").value = address.state
-document.getElementById("country").value = address.country
-document.getElementById("pincode").value = address.pincode
-
-clearErrors()
-
-document.getElementById("addressModal").style.display="flex"
-}
-
-function closeModal(){
-document.getElementById("addressModal").style.display="none"
-}
-
-function clearErrors(){
-document.querySelectorAll(".error").forEach(el=>el.innerText="")
-}
-
-document.getElementById("addressForm").addEventListener("submit",function(e){
-
-let valid=true
-
-const name=document.getElementById("fullName").value.trim()
-const type=document.getElementById("type").value.trim()
-const phone=document.getElementById("phone").value.trim()
-const address=document.getElementById("addressline1").value.trim()
-const city=document.getElementById("city").value.trim()
-const state=document.getElementById("state").value.trim()
-const country=document.getElementById("country").value.trim()
-const pincode=document.getElementById("pincode").value.trim()
-
-const phonePattern=/^[0-9]{10}$/
-const pincodePattern=/^[0-9]{6}$/
-
-clearErrors()
-
-if(name===""){
-document.getElementById("nameError").innerText="Enter full name"
-valid=false
-}
-
-if(type===""){
-document.getElementById("typeError").innerText="Enter address type"
-valid=false
-}
-
-if(!phonePattern.test(phone)){
-document.getElementById("phoneError").innerText="Enter valid 10 digit phone"
-valid=false
-}
-
-if(address===""){
-document.getElementById("addressError").innerText="Enter address"
-valid=false
-}
-
-if(city===""){
-document.getElementById("cityError").innerText="Enter city"
-valid=false
-}
-
-if(state===""){
-document.getElementById("stateError").innerText="Enter state"
-valid=false
-}
-if(country===""){
-document.getElementById("countryError").innerText="Enter country"
-valid=false
-}
-
-if(!pincodePattern.test(pincode)){
-document.getElementById("pincodeError").innerText="Enter valid 6 digit pincode"
-valid=false
-}
-
-if(!valid){
-e.preventDefault()
-}
-
-})
-function deleteAddress(id){
-
-Swal.fire({
-title: "Are you sure?",
-text: "This address will be permanently deleted!",
-icon: "warning",
-showCancelButton: true,
-confirmButtonColor: "#e74c3c",
-cancelButtonColor: "#6c757d",
-confirmButtonText: "Yes, delete it"
-}).then((result) => {
-
-if(result.isConfirmed){
-
-Toastify({
-text: "Address deleted successfully",
-duration: 2000,
-gravity: "top",
-position: "right",
-backgroundColor: "#e74c3c",
-}).showToast();
-
-setTimeout(()=>{
-window.location.href="/deleteAddress?id="+id
-},1500)
-
-}
-
-})
-
-}
-
-</script>
-
+    <%- include('../partials/user/header') %>
+
+    <div class="dashboard-container">
+        <% var activePage = 'address'; %>
+        <%- include('../partials/user/sidebar', { activePage: 'address' }) %>
+
+        <main class="main-content">
+            <h1 class="page-title">MY ADDRESSES</h1>
+
+            <div class="address-list">
+                <% if(addresses.length > 0) { %>
+                    <% addresses.forEach(address => { %>
+                        <div class="address-card-minimal">
+                            <span class="address-type"><%= address.type %> Address</span>
+                            <% if(address.isDefault) { %>
+                                <span class="badge-default"><i class="fa-solid fa-circle-check"></i> Default</span>
+                            <% } %>
+
+                            <div class="address-details">
+                                <p><strong><%= address.fullName %></strong></p>
+                                <p><%= address.addressline1 %></p>
+                                <% if(address.addressline2){ %><p><%= address.addressline2 %></p><% } %>
+                                <p><%= address.city %>, <%= address.state %></p>
+                                <p><%= address.country %> - <%= address.pincode %></p>
+                                <p>T: <%= address.phone %></p>
+                            </div>
+
+                            <div class="card-actions">
+                                <button class="action-link" onclick='editAddress(<%- JSON.stringify(address) %>)'>Edit</button>
+                                <button class="action-link" style="color: #999;" onclick="deleteAddress('<%= address._id %>')">Delete</button>
+                                <% if(!address.isDefault) { %>
+                                    <a href="/setDefaultAddress?id=<%= address._id %>" class="action-link">Set Default</a>
+                                <% } %>
+                            </div>
+                        </div>
+                    <% }) %>
+                <% } else { %>
+                    <p class="text-xs uppercase tracking-widest text-gray-400">No addresses registered yet.</p>
+                <% } %>
+            </div>
+
+            <button class="btn-add-minimal" onclick="openAddModal()">Add new address</button>
+        </main>
+    </div>
+
+    <!-- Address Modal -->
+    <div class="modal-overlay" id="addressModal">
+        <div class="modal-box">
+            <h3 class="flex justify-between items-center"><span id="modalTitle">ADDRESS DETAILS</span> <span onclick="closeModal()" class="cursor-pointer text-xl font-sans">&times;</span></h3>
+            
+            <form id="addressForm" action="/addAddress" method="POST" class="modal-form">
+                <input type="hidden" name="id" id="addressId">
+
+                <input type="text" name="type" id="type" placeholder="Type (Home / Work)">
+                <span class="error-msg" id="typeError"></span>
+
+                <input type="text" name="fullName" id="fullName" placeholder="Full Name">
+                <span class="error-msg" id="nameError"></span>
+
+                <input type="text" name="phone" id="phone" placeholder="Phone Number">
+                <span class="error-msg" id="phoneError"></span>
+
+                <textarea name="addressline1" id="addressline1" placeholder="Address Line 1" rows="1"></textarea>
+                <span class="error-msg" id="addressError"></span>
+
+                <input type="text" name="city" id="city" placeholder="City">
+                <span class="error-msg" id="cityError"></span>
+
+                <input type="text" name="state" id="state" placeholder="State">
+                <span class="error-msg" id="stateError"></span>
+
+                <input type="text" name="country" id="country" placeholder="Country">
+                <span class="error-msg" id="countryError"></span>
+
+                <input type="text" name="pincode" id="pincode" placeholder="Pincode">
+                <span class="error-msg" id="pincodeError"></span>
+
+                <button type="submit" class="btn-add-minimal w-full">Save Address</button>
+            </form>
+        </div>
+    </div>
+
+    <%- include('../partials/user/footer') %>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        function openAddModal() {
+            document.getElementById("modalTitle").innerText = "ADD ADDRESS";
+            document.getElementById("addressForm").action = "/addAddress";
+            document.getElementById("addressForm").reset();
+            document.getElementById("addressModal").style.display = "flex";
+        }
+
+        function editAddress(address) {
+            document.getElementById("modalTitle").innerText = "EDIT ADDRESS";
+            document.getElementById("addressForm").action = "/editAddress";
+            document.getElementById("addressId").value = address._id;
+            document.getElementById("type").value = address.type;
+            document.getElementById("fullName").value = address.fullName;
+            document.getElementById("phone").value = address.phone;
+            document.getElementById("addressline1").value = address.addressline1;
+            document.getElementById("city").value = address.city;
+            document.getElementById("state").value = address.state;
+            document.getElementById("country").value = address.country;
+            document.getElementById("pincode").value = address.pincode;
+            document.getElementById("addressModal").style.display = "flex";
+        }
+
+        function closeModal() { document.getElementById("addressModal").style.display = "none"; }
+
+        document.getElementById("addressForm").addEventListener("submit", function(e) {
+            let valid = true;
+            document.querySelectorAll(".error-msg").forEach(el => el.innerText = "");
+            
+            const fields = ["fullName", "type", "phone", "addressline1", "city", "state", "country", "pincode"];
+            fields.forEach(f => {
+                if(!document.getElementById(f).value.trim()) {
+                    valid = false;
+                    document.getElementById(f.replace("fullName", "name").replace("addressline1", "address") + "Error").innerText = "Required";
+                }
+            });
+
+            if(!valid) e.preventDefault();
+        });
+
+        function deleteAddress(id) {
+            Swal.fire({
+                title: 'Delete this address?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#000',
+                confirmButtonText: 'Delete'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "/deleteAddress?id=" + id;
+                }
+            });
+        }
+    </script>
 </body>
 </html>

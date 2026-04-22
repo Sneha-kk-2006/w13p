@@ -1,96 +1,74 @@
- <style>
-    
-    .dashboard {
-      display: flex;
-      height: calc(100vh - 70px);
-    }
-
-    /* SIDEBAR */
-
+<style>
     .sidebar {
-      width: 250px;
-      background:color(#0d1b2a red green blue);
-         /* background: var(--sidebar); */
-      color: white;
-      padding: 25px 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+        width: 300px;
+        background: #fff;
+        padding: 60px 40px;
+        display: flex;
+        flex-direction: column;
+        border-right: 0.5px solid #eee;
+        height: auto;
+        min-height: calc(100vh - 80px);
     }
 
     .sidebar h3 {
-      font-size: 14px;
-      color: #94a3b8;
-      margin: 10px 10px 5px;
+        font-size: 0.65rem;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: #999;
+        margin-bottom: 30px;
+        font-weight: 700;
     }
 
     .side-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      color: white;
-      font-size: 14px;
-      transition: 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 12px 0;
+        text-decoration: none;
+        color: #000;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 500;
+        border-bottom: 1px solid transparent;
+        transition: 0.3s;
+    }
+
+    .side-link i, .side-link .material-symbols-outlined {
+        font-size: 18px;
     }
 
     .side-link:hover {
-      background: var(--sidebar-hover);
+        padding-left: 10px;
+        color: #666;
     }
 
     .side-link.active {
-      background: #10b981;
+        font-weight: 700;
+        border-bottom: 1px solid #000;
     }
+</style>
 
-    /* CONTENT */
+<aside class="sidebar">
+    <h3>PERSONAL AREA</h3>
 
-    .content {
-      flex: 1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 40px;
-    }
+    <a class="side-link <%= activePage === 'profile' ? 'active' : '' %>" href="/profile">
+        <i class="fa-regular fa-user"></i> Profile
+    </a>
 
-    .profile-card {
-      background: var(--card-bg);
-      width: 900px;
-      border-radius: 14px;
-      padding: 35px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-    }
+    <a class="side-link <%= activePage === 'address' ? 'active' : '' %>" href="/address">
+        <i class="fa-solid fa-location-dot"></i> Address
+    </a>
 
- </style>
- 
- 
- 
- 
- 
- <aside class="sidebar">
+    <a class="side-link <%= activePage === 'orders' ? 'active' : '' %>" href="/orders">
+        <i class="fa-solid fa-bag-shopping"></i> Orders
+    </a>
 
-        <h3>ACCOUNT</h3>
+    <a class="side-link <%= activePage === 'wishlist' ? 'active' : '' %>" href="/wishlist">
+        <i class="fa-regular fa-heart"></i> Wishlist
+    </a>
 
-        <a class="side-link" href="profile">
-          <span class="material-symbols-outlined">person</span>Profile
-        </a>
-
-        <a class="side-link" href="address">
-          <span class="material-symbols-outlined">location_on</span>Address
-        </a>
-
-        <a class="side-link">
-          <span class="material-symbols-outlined">package</span>Orders
-        </a>
-
-        <a class="side-link">
-          <span class="material-symbols-outlined">favorite</span>Wishlist
-        </a>
-
-        <a class="side-link">
-          <span class="material-symbols-outlined">account_balance_wallet</span>Wallet
-        </a>
-
-      </aside>
+    <a class="side-link <%= activePage === 'wallet' ? 'active' : '' %>" href="/wallet">
+        <i class="fa-solid fa-wallet"></i> Wallet
+    </a>
+</aside>

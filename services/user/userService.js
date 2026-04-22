@@ -150,7 +150,7 @@ const resetPasswordService = async (data, session) => {
   await userRepository.updatePasswordByEmail(session.auth.email, hashedPassword);
   delete session.auth;
 
-  return { success: true, message: SUCCESS.PASSWORD_RESET };
+  return { success: true, message: SUCCESS.PASSWORD_RESET, redirectUrl: "/login" };
 };
 
 

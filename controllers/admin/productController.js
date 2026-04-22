@@ -20,7 +20,8 @@ const loadProduct = async (req, res) => {
         const products = await product.find(filter)
             .populate('category')
             .skip((currentPage - 1) * limit)
-            .limit(limit);
+            .limit(limit)
+            .sort({createdAt:-1});
 
         const categories = await category.find();
 
@@ -243,5 +244,40 @@ const deleteVariant = async (req, res) => {
     }
 }
 
-module.exports = { loadProduct, addProduct, editProduct, deleteProduct, toggleProductStatus, addVariant, editVariant, deleteVariant };
+const setPrimaryImage = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { src } = req.body;
+        const prod = await product.findById(id);
+        if (!prod) return res.status(404).json({ success: false, message: 'Product not found' });
+
+        const imgIdx = prod.images.indexOf(src);
+        if (imgIdx !== -1) {
+            prod.images.splice(imgIdx, 1);
+            prod.images.unshift(src);
+            await prod.save();
+            return res.json({ success: true });
+        }
+        res.status(400).json({ success: false, message: 'Image not found in product' });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+}
+
+const viewVariants = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const prod = await product.findById(id).populate('category');
+        if (!prod) return res.redirect('/admin/product');
+
+        res.render('admin/variantList', {
+            product: prod
+        });
+    } catch (error) {
+        console.error(error);
+        res.redirect('/admin/product');
+    }
+}
+
+module.exports = { loadProduct, addProduct, editProduct, deleteProduct, toggleProductStatus, addVariant, editVariant, deleteVariant, setPrimaryImage, viewVariants };
 
