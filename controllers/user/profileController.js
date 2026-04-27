@@ -5,14 +5,12 @@ const { changeUserPassword } = require("../../services/user/profileService");
 
 const loadprofile = async (req, res) => {
   try {
-    const userId = req.session.user;
+    const userId = req.session.user?._id;
     if (!userId) return res.redirect("/login");
 
     const userData = await userRepository.findById(userId);
     if (!userData) return res.redirect("/login");
      
-    
-
     res.render("user/profile", { user: userData });
   } catch (error) {
     console.error("Error loading profile:", error);
@@ -26,11 +24,13 @@ const updateProfile = async (req, res) => {
     const result = await profileService.updateProfileService(req);
 
     if (!result.success) {
-    
       return res.status(400).json({ success: false, message: result.message });
     }
-     const updatedUser = await userRepository.findById(req.session.user);
-    req.session.user = updatedUser; 
+     const updatedUser = await userRepository.findById(req.session.user._id);
+    req.session.user = {
+      _id: updatedUser._id,
+      role: updatedUser.role
+    }; 
     
     return res.redirect(result.redirect);
   } catch (error) {
@@ -51,7 +51,7 @@ const loadChangePassword = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const userId = req.session.user;
+    const userId = req.session.user?._id;
     if (!userId) return res.status(401).json({ success: false, message: "Unauthorized" });
 
     const { currentPassword, newPassword, confirmPassword } = req.body;

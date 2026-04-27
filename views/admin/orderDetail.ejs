@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | Order Detail</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .admin-main {
+            flex: 1;
+            padding: 60px 40px;
+            background-color: #fbfbfb;
+            min-height: 100vh;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: #999;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 30px;
+            transition: 0.3s;
+        }
+
+        .back-link:hover {
+            color: #000;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 40px;
+            border-bottom: 0.5px solid #eee;
+            padding-bottom: 30px;
+        }
+
+        .order-info-primary h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+
+        .order-meta {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #999;
+            margin-top: 10px;
+            font-weight: 600;
+        }
+
+        .status-pill {
+            padding: 8px 15px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+            border: 1px solid #000;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 40px;
+        }
+
+        .card {
+            background: #fff;
+            border: 0.5px solid #eee;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .card-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            color: #000;
+            border-bottom: 0.5px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 15px 0;
+            border-bottom: 0.5px solid #f9f9f9;
+        }
+
+        .item-image {
+            width: 70px;
+            height: 70px;
+            background: #f8f8f8;
+            object-fit: cover;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+
+        .item-meta {
+            font-size: 0.7rem;
+            color: #999;
+        }
+
+        .item-price {
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .summary-total {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #000;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .address-box {
+            line-height: 1.8;
+            font-size: 0.8rem;
+            color: #555;
+        }
+
+        .address-name {
+            font-weight: 800;
+            color: #000;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 10px;
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('../partials/admin/header', { activePage: 'orders' }) %>
+
+    <main class="admin-main">
+        <a href="/admin/orders" class="back-link">
+            <i class="fa-solid fa-arrow-left"></i> Back to Archive
+        </a>
+
+        <header class="order-header">
+            <div class="order-info-primary">
+                <h1>Order #<%= order.orderId %></h1>
+                <div class="order-meta">
+                    Placed on <%= new Date(order.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                </div>
+            </div>
+            <div class="status-pill">
+                <%= order.orderStatus %>
+            </div>
+        </header>
+
+        <div class="detail-grid">
+            <div class="main-content">
+                <div class="card">
+                    <h2 class="card-title">Order Manifest</h2>
+                    <% order.orderItems.forEach(item => { %>
+                        <div class="item-row">
+                            <img src="<%= (item.product && item.product.images && item.product.images.length > 0) ? item.product.images[0] : 'https://via.placeholder.com/70' %>" class="item-image">
+                            <div class="item-details">
+                                <div class="item-name"><%= item.product ? item.product.name : 'Unknown Product' %></div>
+                                <div class="item-meta">Quantity: <%= item.quantity %></div>
+                            </div>
+                            <div class="item-price">₹<%= (item.price * item.quantity).toLocaleString() %></div>
+                        </div>
+                    <% }) %>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Shipping Logistics</h2>
+                    <div class="address-box">
+                        <span class="address-name"><%= order.shippingAddress.fullName %></span>
+                        <%= order.shippingAddress.addressline1 %><br>
+                        <% if(order.shippingAddress.addressline2) { %> <%= order.shippingAddress.addressline2 %><br> <% } %>
+                        <%= order.shippingAddress.city %>, <%= order.shippingAddress.state %> - <%= order.shippingAddress.pincode %><br>
+                        <%= order.shippingAddress.country %><br>
+                        <span style="font-weight: 700; color: #000; margin-top: 10px; display: block;">T: <%= order.shippingAddress.phone %></span>
+                    </div>
+                </div>
+            </div>
+
+            <aside class="sidebar-content">
+                <div class="card">
+                    <h2 class="card-title">Financial Summary</h2>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>₹<%= order.totalPrice.toLocaleString() %></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span>Gratis</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Payment Method</span>
+                        <span style="font-weight: 700;"><%= order.paymentMethod %></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Payment Status</span>
+                        <span style="color: <%= order.paymentStatus === 'Paid' ? '#2ecc71' : '#e74c3c' %>; font-weight: 700;"><%= order.paymentStatus %></span>
+                    </div>
+                    <div class="summary-row summary-total">
+                        <span>Total Revenue</span>
+                        <span>₹<%= order.totalPrice.toLocaleString() %></span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 class="card-title">Customer Profile</h2>
+                    <div class="user-info">
+                        <div class="user-name" style="font-size: 0.85rem; font-weight: 800; color: #000;"><%= order.userId ? order.userId.name : 'Guest' %></div>
+                        <div class="user-email" style="font-size: 0.7rem; color: #999; margin-top: 5px;"><%= order.userId ? order.userId.email : 'No email provided' %></div>
+                        <div style="font-size: 0.7rem; color: #999; margin-top: 5px;">Phone: <%= order.userId ? order.userId.phone : 'N/A' %></div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+</body>
+</html>

@@ -5,12 +5,12 @@ const addressRepository = require("../../repositories/user");
 // load address page
 const loadAddress = async (req, res) => {
   try {
-    const result = await addressService.getUserAddresses(req.session.user);
+    const result = await addressService.getUserAddresses(req.session.user._id);
 
     if (!result.success) {
       return res.redirect(result.redirect);
     }
-       const user = await User.findById(req.session.user);
+       const user = await User.findById(req.session.user._id);
     return res.render("user/address", {
       addresses: result.addresses,
       user:user
@@ -25,9 +25,10 @@ const loadAddress = async (req, res) => {
 // add address
 const addAddress = async (req, res) => {
   try {
+    const redirect = req.body.redirect || req.query.redirect || "/address";
     const result = await addressService.addAddressService(
-      req.body,
-      req.session.user
+      { ...req.body, redirect },
+      req.session.user._id
     );
     if (!result.success) {
       if (result.redirect) {
@@ -64,7 +65,8 @@ const deleteAddress = async (req, res) => {
 const loadEditAddress = async (req, res) => {
   try {
     const addressId = req.query.id;
-    const userId = req.session.user;
+    const redirect = req.query.redirect || "/address";
+    const userId = req.session.user._id;
 
     const result = await addressService.getEditAddress(
       addressId,
@@ -76,7 +78,8 @@ const loadEditAddress = async (req, res) => {
     }
 
     res.render("user/edit-address", {
-      address: result.address
+      address: result.address,
+      redirect: redirect
     });
 
   } catch (error) {
@@ -89,10 +92,11 @@ const loadEditAddress = async (req, res) => {
 
 const editAddress = async (req, res) => {
   try {
-    const userId = req.session.user;
+    const userId = req.session.user._id;
+    const redirect = req.body.redirect || "/address";
 
     const result = await addressService.updateAddressService(
-      req.body,
+      { ...req.body, redirect },
       userId
     );
 
@@ -114,7 +118,7 @@ const editAddress = async (req, res) => {
 const setDefaultAddress = async (req, res) => {
   try {
     const addressId = req.query.id;
-    const userId = req.session.user;
+    const userId = req.session.user._id;
 
     await Address.updateMany({ userId }, { $set: { isDefault: false } });
     await Address.findByIdAndUpdate(addressId, { $set: { isDefault: true } });

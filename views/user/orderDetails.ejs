@@ -1,0 +1,358 @@
+<%- include("../partials/user/header") %>
+
+<style>
+    :root {
+        --primary: #1a1a1a;
+        --accent: #d4af37;
+        --bg-soft: #f8f9fa;
+        --border-color: #e5e5e5;
+        --text-muted: #6c757d;
+    }
+
+    body {
+        background-color: var(--bg-soft);
+        font-family: 'Inter', sans-serif;
+    }
+
+    .order-details-container {
+        max-width: 1000px;
+        margin: 40px auto;
+        padding: 0 20px;
+    }
+
+    .breadcrumb {
+        font-size: 0.85rem;
+        margin-bottom: 24px;
+        color: var(--text-muted);
+    }
+
+    .breadcrumb a {
+        color: var(--primary);
+        text-decoration: none;
+    }
+
+    .order-header {
+        background: white;
+        padding: 32px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+        border: 1px solid var(--border-color);
+    }
+
+    .order-header h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+
+    .status-badge {
+        padding: 6px 16px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .status-pending { background: #fff4e5; color: #b76e00; }
+    .status-shipped { background: #e5f1ff; color: #0066cc; }
+    .status-delivered { background: #e6fffa; color: #008767; }
+    .status-cancelled { background: #ffe5e5; color: #cc0000; }
+
+    .details-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+    }
+
+    @media (max-width: 992px) {
+        .details-grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+        background: white;
+        border-radius: 16px;
+        padding: 32px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        margin-bottom: 24px;
+    }
+
+    .card-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 24px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .order-item {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 24px;
+        padding-bottom: 24px;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .order-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+    }
+
+    .item-img {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 12px;
+    }
+
+    .item-info h4 {
+        margin: 0 0 8px 0;
+        font-size: 1.1rem;
+    }
+
+    .item-info p {
+        margin: 0;
+        color: var(--text-muted);
+        font-size: 0.9rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 0.95rem;
+    }
+
+    .summary-row.total {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 2px solid var(--primary);
+        font-weight: 800;
+        font-size: 1.2rem;
+    }
+
+    .address-info p {
+        margin: 0 0 8px 0;
+        line-height: 1.6;
+        color: var(--text-muted);
+    }
+
+    .address-info strong {
+        color: var(--primary);
+        display: block;
+        margin-bottom: 4px;
+    }
+</style>
+
+<div class="order-details-container">
+    <div class="breadcrumb">
+        <a href="/profile">My Account</a> / <a href="/profile">Orders</a> / Order #<%= order.orderId %>
+    </div>
+
+    <div class="order-header">
+        <div>
+            <h1>Order #<%= order.orderId %></h1>
+            <p style="color: var(--text-muted); margin: 4px 0 0 0; font-size: 0.9rem;">
+                Placed on <%= new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+            </p>
+        </div>
+        <span class="status-badge status-<%= order.orderStatus.toLowerCase().replace(/ /g, '-') %>">
+            <%= order.orderStatus %>
+        </span>
+    </div>
+
+    <!-- Status Tracker -->
+    <% if (order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned') { %>
+        <% 
+            const statuses = ['Pending', 'Shipped', 'Out for Delivery', 'Delivered'];
+            const currentIndex = statuses.indexOf(order.orderStatus);
+            const progressWidth = (currentIndex / (statuses.length - 1)) * 100;
+        %>
+        <div class="card status-tracker-card">
+            <div class="tracker-container">
+                <div class="progress-track">
+                    <div class="progress-bar" style="width: <%= progressWidth %>%"></div>
+                    <div class="truck-icon" style="left: calc(<%= progressWidth %>% - 20px)">
+                        <i class="fa-solid fa-truck-fast"></i>
+                    </div>
+                </div>
+                <div class="status-steps">
+                    <% statuses.forEach((status, index) => { %>
+                        <div class="step <%= index <= currentIndex ? 'active' : '' %>">
+                            <div class="step-dot"></div>
+                            <span class="step-label"><%= status %></span>
+                        </div>
+                    <% }) %>
+                </div>
+            </div>
+        </div>
+    <% } %>
+
+    <style>
+        .status-tracker-card {
+            padding: 40px 60px !important;
+            margin-bottom: 24px;
+        }
+        .tracker-container {
+            position: relative;
+            padding-top: 20px;
+        }
+        .progress-track {
+            position: relative;
+            height: 4px;
+            background: #eee;
+            border-radius: 2px;
+            margin-bottom: 20px;
+        }
+        .progress-bar {
+            position: absolute;
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .truck-icon {
+            position: absolute;
+            top: -30px;
+            font-size: 24px;
+            color: var(--primary);
+            transition: left 1s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            background: white;
+            padding: 5px;
+        }
+        .status-steps {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+        }
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            background: #eee;
+            border-radius: 50%;
+            margin-bottom: 12px;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #eee;
+            z-index: 1;
+            transition: 0.3s;
+        }
+        .step.active .step-dot {
+            background: var(--primary);
+            box-shadow: 0 0 0 2px var(--primary);
+        }
+        .step-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            color: #999;
+            transition: 0.3s;
+        }
+        .step.active .step-label {
+            color: var(--primary);
+        }
+        @media (max-width: 576px) {
+            .status-tracker-card { padding: 30px 20px !important; }
+            .step-label { font-size: 0.5rem; }
+        }
+    </style>
+
+    <div class="details-grid">
+        <div class="details-left">
+            <div class="card">
+                <h3 class="card-title">Order Items</h3>
+                <% order.orderItems.forEach(item => { %>
+                    <% 
+                        let displayImg = '';
+                        if (item.product) {
+                            if (item.product.images && item.product.images.length > 0) {
+                                displayImg = item.product.images[0];
+                            } else if (item.product.variants && item.product.variants.length > 0) {
+                                const varWithImg = item.product.variants.find(v => v.images && v.images.length > 0);
+                                if (varWithImg) displayImg = varWithImg.images[0];
+                            }
+                        }
+                    %>
+                    <div class="order-item">
+                        <% if (item.product) { %>
+                            <% 
+                                let finalSrc = displayImg;
+                                if (finalSrc && !finalSrc.startsWith('/') && !finalSrc.startsWith('http')) {
+                                    finalSrc = '/uploads/products/' + finalSrc;
+                                }
+                            %>
+                            <img src="<%= finalSrc %>" 
+                                 alt="<%= item.product.name %>" 
+                                 class="item-img" 
+                                 onerror="this.onerror=null; if(!this.src.includes('/uploads/products/')) this.src='/uploads/products/'+'<%= displayImg %>'; else this.src='/uploads/'+'<%= displayImg %>'; this.onerror=function(){ this.src='https://placehold.co/300x400?text=SNOVA'; }">
+                        <% } else { %>
+                            <img src="https://placehold.co/300x400?text=Removed" class="item-img">
+                        <% } %>
+                        <div class="item-info">
+                            <h4><%= item.product ? item.product.name : 'Product Removed' %></h4>
+                            <p>Quantity: <%= item.quantity %></p>
+                            <p style="font-weight: 600; color: var(--primary); margin-top: 8px;">₹<%= item.price %></p>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+        <div class="details-right">
+            <div class="card">
+                <h3 class="card-title">Shipping Address</h3>
+                <div class="address-info">
+                    <strong><%= order.shippingAddress.fullName %></strong>
+                    <p><%= order.shippingAddress.addressline1 %></p>
+                    <p><%= order.shippingAddress.city %>, <%= order.shippingAddress.state %></p>
+                    <p><%= order.shippingAddress.country %> - <%= order.shippingAddress.pincode %></p>
+                    <p>Phone: <%= order.shippingAddress.phone %></p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Payment Info</h3>
+                <div class="summary-row">
+                    <span>Method</span>
+                    <span style="font-weight: 600;"><%= order.paymentMethod %></span>
+                </div>
+                <div class="summary-row">
+                    <span>Status</span>
+                    <span style="font-weight: 600;"><%= order.paymentStatus %></span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Order Summary</h3>
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>₹<%= order.totalPrice %></span>
+                </div>
+                <div class="summary-row">
+                    <span>Shipping</span>
+                    <span style="color: #28a745;">Free</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total</span>
+                    <span>₹<%= order.totalPrice %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("../partials/user/footer") %>

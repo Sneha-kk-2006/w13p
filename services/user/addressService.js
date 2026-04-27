@@ -32,6 +32,7 @@ const addAddressService = async (data, userId) => {
     city,
     state,
     pincode,
+    redirect = "/address"
   } = data;
 
   console.log("Adding address for user:", userId, data);
@@ -58,7 +59,7 @@ const addAddressService = async (data, userId) => {
 
   return {
     success: true,
-    redirect: "/address",
+    redirect: redirect,
   };
 };
 
@@ -97,6 +98,7 @@ const updateAddressService = async (data, userId) => {
     city,
     state,
     pincode,
+    redirect = "/address"
   } = data;
 
   if (!fullName || !phone || !addressline1 || !city || !state || !pincode) {
@@ -121,7 +123,7 @@ const updateAddressService = async (data, userId) => {
 
   return {
     success: true,
-    redirect: "/address",
+    redirect: redirect,
   };
 };
 

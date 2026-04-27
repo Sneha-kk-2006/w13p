@@ -9,12 +9,15 @@ require("dotenv").config();
 const loadHomepage = async (req, res) => {
   try {
     const id = req.session.user?._id;
-    if (id) {
-      const userData = await user.findById(id);
-      res.render("user/home", { user: userData });
-    } else {
-      return res.render("user/home", { user: null });
-    }
+    const userData = id ? await user.findById(id) : null;
+
+    // Fetch latest 20 active products for home page to populate all editorial blocks
+    const products = await Product.find({ isDeleted: false, isListed: true })
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .populate('category');
+
+    res.render("user/home", { user: userData, products });
   } catch (error) {
     console.error("Home page error:", error);
     res.status(500).send("Server Error");
@@ -108,7 +111,7 @@ const login = async (req, res) => {
     };
     res.locals.user = result.userData;
 
-    return res.json({ success: true, redirectUrl: "/" });
+    return res.json({ success: true, redirectUrl: "/" ,message:"user logined"});
   } catch (error) {
     console.error("Login error:", error);
     return res.status(500).json({ success: false, message: ERROR.SERVER_ERROR });

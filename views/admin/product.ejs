@@ -47,7 +47,8 @@
         input:checked + .slider:before { transform: translateX(16px); }
 
         /* Zara Style Notifications */
-        .zara-toast { background: #000 !important; color: #fff !important; border-radius: 0 !important; font-family: 'Inter', sans-serif !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 2px !important; padding: 15px 40px !important; width: 100% !important; max-width: 600px !important; margin-top: 20px !important; box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; }
+        .zara-toast { background: #000 !important; color: #fff !important; border-radius: 0 !important; font-family: 'Inter', sans-serif !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 2px !important; padding: 15px 40px !important; width: 100% !important; max-width: 600px !important; margin-top: 20px !important; box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; z-index: 99999 !important; }
+        .swal2-container { z-index: 99999 !important; }
 
         /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 2000; display: none; align-items: center; justify-content: center; }
@@ -101,7 +102,7 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th>Identity</th>
+                        <th>Sl No.</th>
                         <th>Preview</th>
                         <th>Nomenclature</th>
                         <th>Category</th>
@@ -119,7 +120,7 @@
                     <% } else { %>
                         <% products.forEach((p, i)=> { %>
                             <tr>
-                                <td style="color: #999;">#<%= p._id.toString().slice(-6).toUpperCase() %></td>
+                                <td style="color: #999;"><%= (currentPage - 1) * limit + i + 1 %></td>
                                 <td>
                                     <% 
                                     let displayImg = 'https://placehold.co/600x800?text=SNOVA';
@@ -587,6 +588,20 @@
         <script>
             const currentPageProducts = <%- JSON.stringify(products) %>;
 
+            function showToast(msg, color = '#000') {
+                Swal.fire({
+                    text: msg,
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: color === 'red' ? '#c62828' : color === 'green' ? '#2e7d32' : '#000',
+                    color: '#fff',
+                    customClass: { popup: 'zara-toast' },
+                    showClass: { popup: 'animate__animated animate__fadeInDown' }
+                });
+            }
+
             function openEditModalByIndex(index) {
                 const p = currentPageProducts[index];
                 if (p) {
@@ -609,16 +624,13 @@
 
 
 
-            // ════════════════════════════════════════════════════════
-            //  HELPERS
-            // ════════════════════════════════════════════════════════
 
 
             function toggleVariantsRow(rowId) {
                 const row = document.getElementById(rowId);
                 const isHidden = row.style.display === 'none';
                 
-                // Hide all other open variant rows first for a clean experience
+    
                 document.querySelectorAll('.variant-expand-row').forEach(r => r.style.display = 'none');
                 
                 if (isHidden) {
@@ -642,9 +654,6 @@
             }
 
 
-            // ════════════════════════════════════════════════════════
-            //  VARIANT CONFIG
-            // ════════════════════════════════════════════════════════
             const SIZES = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
             const COLORS = [
                 { name: 'Red', hex: '#e74c3c' },
@@ -659,7 +668,7 @@
                 { name: 'Brown', hex: '#8d5524' },
             ];
 
-            // Sync empty-state hint for a variant tbody
+     
             function syncEmptyState(tbodyId) {
                 const tbody = document.getElementById(tbodyId);
                 const emptyId = tbodyId === 'addVariantsBody' ? 'addVariantEmpty' : 'editVariantEmpty';
@@ -724,10 +733,6 @@
 
 
 
-
-            // ════════════════════════════════════════════════════════
-            //  CROPPER FACTORY
-            // ════════════════════════════════════════════════════════
             function makeCropperFlow({ inputEl, progressEl, cropImgEl, cropModalEl, cropDoneBtn, skipBtn, previewEl, countEl, onDone, minFiles = 1 }) {
                 let cropper = null, queue = [], blobs = [], idx = 0;
 
@@ -908,7 +913,7 @@
                 if (price === "" || isNaN(price) || price < 0) return showToast('Valid Price is required', 'red');
                 if (stock === "" || isNaN(stock) || stock < 0) return showToast('Valid Stock is required', 'red');
                 if (!description) return showToast('Description is required', 'red');
-                // blobs check removed
+                
 
                 const fd = new FormData();
                 fd.append('name', name);

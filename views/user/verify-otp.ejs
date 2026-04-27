@@ -3,134 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SNOVA | Verify Your Account</title>
+    <title>SNOVA | Verify Identity</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     
     <style>
         :root {
-            --primary-black: #000;
-            --off-white: #fff;
+            --primary-black: #000000;
+            --off-white: #ffffff;
             --text-gray: #666;
-            --border-light: #eee;
+            --border-gray: #e5e5e5;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--off-white); color: var(--primary-black); min-height: 100vh; -webkit-font-smoothing: antialiased; display: flex; align-items: center; justify-content: center; }
 
-        body {
-            background-color: var(--off-white);
-            color: var(--primary-black);
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            -webkit-font-smoothing: antialiased;
-        }
+        .form-wrapper { width: 100%; max-width: 400px; padding: 40px; }
 
-        .verify-wrapper {
-            width: 100%;
-            max-width: 400px;
-            padding: 40px;
-            text-align: center;
-        }
+        .header { margin-bottom: 50px; }
+        .header h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; font-weight: 400; letter-spacing: -1px; text-transform: uppercase; margin-bottom: 15px; }
+        .header p { font-size: 0.7rem; color: var(--text-gray); text-transform: uppercase; letter-spacing: 2px; line-height: 1.6; }
 
-        .header h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.2rem;
-            text-transform: uppercase;
-            letter-spacing: -1px;
-            margin-bottom: 15px;
-        }
+        .form-group { margin-bottom: 35px; }
+        .form-group label { display: block; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 600; }
+        .form-group input { width: 100%; padding: 12px 0; border: none; border-bottom: 1px solid var(--primary-black); font-size: 0.9rem; outline: none; background: transparent; }
 
-        .instruction {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            color: var(--text-gray);
-            line-height: 1.8;
-            margin-bottom: 40px;
-        }
+        .otp-grid { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 40px; }
+        .otp-field { width: 100%; aspect-ratio: 1/1.2; border: none; border-bottom: 1.5px solid #000; text-align: center; font-size: 1.5rem; font-weight: 300; outline: none; background: transparent; }
 
-        .otp-grid {
-            display: flex;
-            justify-content: space-between;
-            gap: 10px;
-            margin-bottom: 30px;
-        }
+        .timer-row { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 40px; font-weight: 600; color: var(--text-gray); }
 
-        .otp-field {
-            width: 100%;
-            aspect-ratio: 1/1.2;
-            border: none;
-            border-bottom: 1.5px solid #000;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 300;
-            outline: none;
-            background: transparent;
-        }
+        .btn-minimal { width: 100%; padding: 20px; background: var(--primary-black); color: var(--off-white); border: 1px solid var(--primary-black); text-transform: uppercase; letter-spacing: 3px; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: 0.3s; margin-top: 20px; }
+        .btn-minimal:hover { background: transparent; color: var(--primary-black); }
 
-        .timer-row {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 40px;
-            font-weight: 600;
-        }
+        .footer-links { margin-top: 40px; text-align: center; }
+        .resend-box { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-gray); margin-bottom: 20px; }
+        .resend-link { color: #000; font-weight: 700; text-decoration: underline; cursor: pointer; opacity: 0.5; pointer-events: none; }
+        .resend-link.active { opacity: 1; pointer-events: auto; }
 
-        .btn-verify {
-            width: 100%;
-            background: #000;
-            color: #fff;
-            padding: 18px;
-            border: none;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            cursor: pointer;
-            margin-bottom: 30px;
-        }
-
-        .resend-box {
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: var(--text-gray);
-        }
-
-        .resend-link {
-            color: #000;
-            font-weight: 700;
-            text-decoration: underline;
-            cursor: pointer;
-        }
-
-        .back-link {
-            display: inline-block;
-            margin-top: 40px;
-            font-size: 0.6rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-decoration: underline;
-            color: #999;
-        }
+        .back-link { display: inline-block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #000; text-decoration: none; font-weight: 600; border-bottom: 1px solid transparent; transition: 0.3s; }
+        .back-link:hover { border-bottom: 1px solid #000; }
     </style>
 </head>
 <body>
-
-    <div class="verify-wrapper">
-        <div class="header">
-            <div style="font-family: 'Playfair Display'; font-size: 1.2rem; letter-spacing: 4px; margin-bottom: 50px; cursor: pointer;" onclick="location.href='/'">SNOVA</div>
-            <h1>Verification</h1>
-        </div>
-        <p class="instruction">We have sent a 6-digit access code<br>to your registered email address.</p>
+    <div class="form-wrapper">
+        <header class="header">
+            <div onclick="location.href='/'" style="cursor: pointer; font-family: 'Playfair Display', serif; font-size: 1.5rem; letter-spacing: 4px; margin-bottom: 60px; text-align: center;">SNOVA</div>
+            <h1>Verify Identity</h1>
+            <p>Enter the unique secure signature transmitted to your contact address.</p>
+        </header>
 
         <form id="otpForm" onsubmit="verifyOtp(); return false;">
             <div class="otp-grid">
@@ -141,35 +62,39 @@
                 <input type="text" class="otp-field" maxlength="1" inputmode="numeric" required>
                 <input type="text" class="otp-field" maxlength="1" inputmode="numeric" required>
             </div>
-
+            
             <div class="timer-row">
-                EXPIRING IN <span id="timer" style="color: #000;">00:59</span>
+                Authentication expires in <span id="timer" style="color: #000;">01:00</span>
             </div>
 
-            <button type="submit" class="btn-verify">Authenticate</button>
+            <button type="submit" class="btn-minimal">Authorize Entry</button>
         </form>
 
-        <div class="resend-box">
-            DIDN'T RECEIVE THE CODE? <span class="resend-link" onclick="resendOTP()">RESEND</span>
+        <div class="footer-links">
+            <div class="resend-box">
+                Didn't receive the code? <span id="resendBtn" class="resend-link" onclick="resendOTP()">Resend</span>
+            </div>
+            <a href="/login" class="back-link">Return to Identity Entry</a>
         </div>
-
-        <a href="/login" class="back-link">Return to login</a>
     </div>
 
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
-        let timeLeft = 59;
-        const timerElement = document.getElementById('timer');
+        let timeLeft = 60;
         let countdown;
+        const timerElement = document.getElementById('timer');
+        const resendBtn = document.getElementById('resendBtn');
+        const inputs = document.querySelectorAll('.otp-field');
 
         function startTimer() {
             if (countdown) clearInterval(countdown);
-            timeLeft = 59;
+            timeLeft = 60;
+            resendBtn.classList.remove('active');
             countdown = setInterval(() => {
                 if (timeLeft <= 0) {
                     clearInterval(countdown);
                     timerElement.innerText = "EXPIRED";
-                    timerElement.style.color = "red";
+                    resendBtn.classList.add('active');
                 } else {
                     timeLeft--;
                     timerElement.innerText = `00:${timeLeft < 10 ? '0'+timeLeft : timeLeft}`;
@@ -178,7 +103,6 @@
         }
         startTimer();
 
-        const inputs = document.querySelectorAll('.otp-field');
         inputs.forEach((input, index) => {
             input.addEventListener('input', (e) => {
                 if (e.target.value.length === 1 && index < inputs.length - 1) inputs[index + 1].focus();
@@ -199,10 +123,10 @@
                 });
                 const data = await res.json();
                 if (data.success) {
-                    Toastify({ text: "AUTHENTICATED", duration: 2000, gravity: "top", position: "right", backgroundColor: "#000" }).showToast();
+                    showToast("AUTHENTICATED", "#000");
                     setTimeout(() => window.location.href = data.redirectUrl, 1000);
                 } else {
-                    Toastify({ text: data.message || "INVALID CODE", duration: 3000, gravity: "top", position: "right", backgroundColor: "#d32f2f" }).showToast();
+                    showToast(data.message || "INVALID CODE", "#d32f2f");
                 }
             } catch (err) { console.error(err); }
         }
@@ -213,9 +137,26 @@
                 const res = await fetch('/resend-otp', { method: 'POST' });
                 const data = await res.json();
                 if (data.success) {
-                    Toastify({ text: "CODE RESENT", duration: 2000, gravity: "top", position: "right", backgroundColor: "#000" }).showToast();
+                    showToast("CODE RESENT", "#000");
                 }
             } catch (err) { console.error(err); }
+        }
+
+        function showToast(msg, bg) {
+            Toastify({
+                text: msg.toUpperCase(),
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                style: {
+                    background: "#000",
+                    color: "#fff",
+                    borderRadius: "0",
+                    fontSize: "10px",
+                    letterSpacing: "1px",
+                    fontFamily: "Inter"
+                }
+            }).showToast();
         }
     </script>
 </body>

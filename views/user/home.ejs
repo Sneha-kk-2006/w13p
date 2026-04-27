@@ -1,332 +1,352 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SNOVA | Official Store</title>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --primary-black: #000000;
-      --off-white: #ffffff;
-      --text-gray: #666;
-      --accent-gray: #f2f2f2;
-    }
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SNOVA | New In</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--k:#0a0a0a;--w:#fff;--g:#f3f3f3;--gm:#ddd;--gt:#999;--f:'Inter',sans-serif}
+body{font-family:var(--f);background:var(--w);color:var(--k);-webkit-font-smoothing:antialiased;overflow-x:hidden}
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+/* scroll progress */
+#prog{position:fixed;top:0;left:0;height:2px;background:var(--k);z-index:9999;width:0;transition:width .05s}
 
-    body {
-      background-color: var(--off-white);
-      color: var(--primary-black);
-      font-family: 'Inter', sans-serif;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
+/* reveal */
+.rv{opacity:0;transform:translateY(36px);transition:opacity .85s ease,transform .85s ease}
+.rv.on{opacity:1;transform:none}
 
-    /* Minimalist Zara-style Hero */
-    .zara-hero {
-      position: relative;
-      height: 100vh;
-      width: 100%;
-      overflow: hidden;
-    }
+/* ─── HERO ─── */
+.hero{position:relative;height:100vh;overflow:hidden;background:#000}
+.hero video, .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;animation: zoomIn 12s ease-in-out infinite alternate}
+@keyframes zoomIn{from{transform:scale(1)}to{transform:scale(1.08)}}
+.hero__veil{position:absolute;inset:0;background:linear-gradient(170deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.08) 50%,rgba(0,0,0,.6) 100%)}
+.hero__body{position:absolute;bottom:0;left:0;right:0;padding:0 56px 60px;display:flex;align-items:flex-end;justify-content:space-between}
+.hero__left{display:flex;flex-direction:column;gap:14px}
+.hero__tag{font-size:.52rem;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.hero__h1{font-size:clamp(4rem,12vw,11rem);font-weight:300;letter-spacing:-4px;line-height:.85;text-transform:uppercase;color:var(--w)}
+.hero__actions{display:flex;align-items:center;gap:18px;margin-top:4px}
+.btn-white{display:inline-block;padding:14px 38px;border:1px solid rgba(255,255,255,.85);color:var(--w);font-size:.57rem;letter-spacing:3.5px;text-transform:uppercase;text-decoration:none;transition:background .28s,color .28s}
+.btn-white:hover{background:var(--w);color:var(--k)}
+.mute-btn{width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:var(--w);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);font-size:.8rem;transition:background .2s;flex-shrink:0}
+.mute-btn:hover{background:rgba(255,255,255,.22)}
+.hero__right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;padding-bottom:4px}
+.hero__scroll{font-size:.48rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.45);writing-mode:vertical-rl;transform:rotate(180deg)}
 
-    .hero-slide {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
-      transition: opacity 0.8s ease;
-    }
+/* ─── TICKER ─── */
+.ticker{overflow:hidden;border-top:1px solid var(--gm);border-bottom:1px solid var(--gm);padding:12px 0;background:var(--w)}
+.ticker__t{display:flex;gap:48px;animation:tick 22s linear infinite;white-space:nowrap}
+.ticker__t span{font-size:.56rem;letter-spacing:3px;text-transform:uppercase;flex-shrink:0}
+.ticker__t .dot{color:var(--gt)}
+@keyframes tick{to{transform:translateX(-50%)}}
 
-    .hero-overlay {
-      position: absolute;
-      bottom: 10%;
-      left: 5%;
-      z-index: 10;
-    }
+/* ─── SECTION HEADER ─── */
+.sh{padding:58px 48px 26px;display:flex;align-items:baseline;justify-content:space-between}
+.sh__t{font-size:.58rem;letter-spacing:3.5px;text-transform:uppercase;font-weight:500}
+.sh__a{font-size:.56rem;letter-spacing:2px;text-transform:uppercase;color:var(--k);text-decoration:none;border-bottom:1px solid var(--k);padding-bottom:1px}
 
-    .hero-overlay h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 4rem;
-      font-weight: 400;
-      line-height: 0.9;
-      margin-bottom: 20px;
-      letter-spacing: -2px;
-    }
+/* ─── EDITORIAL SPLIT ─── */
+.esplit{display:grid;grid-template-columns:1fr 1fr;height:88vh}
+.ep{position:relative;overflow:hidden}
+.ep img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
+.ep:hover img{transform:scale(1.05)}
+.ep__lbl{position:absolute;bottom:32px;left:28px}
+.ep__lbl p{font-size:.49rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:8px}
+.ep__lbl a{font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.5);padding-bottom:2px}
 
-    .hero-cta {
-      display: inline-block;
-      padding: 10px 0;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      color: var(--primary-black);
-      text-decoration: none;
-      border-bottom: 1px solid var(--primary-black);
-      transition: 0.3s;
-    }
+/* ─── PRODUCT GRID ─── */
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 48px 72px}
+.pc{text-decoration:none;color:var(--k)}
+.pc__box{aspect-ratio:3/4;overflow:hidden;background:var(--g);position:relative;margin-bottom:10px}
+.pc__box img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .7s cubic-bezier(.25,.46,.45,.94)}
+.pc:hover .pc__box img{transform:scale(1.06)}
+.pc__badge{position:absolute;top:12px;left:12px;font-size:.46rem;letter-spacing:2px;text-transform:uppercase;background:var(--w);padding:3px 8px;font-weight:500}
+.pc__n{font-size:.67rem;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
+.pc__p{font-size:.67rem;color:var(--gt)}
 
-    .hero-cta:hover {
-      padding-right: 20px;
-    }
+/* ─── FULL STORY ─── */
+.story{position:relative;height:92vh;overflow:hidden}
+.story img{width:100%;height:100%;object-fit:cover;object-position:center;animation:kb 14s ease-in-out infinite alternate}
+@keyframes kb{from{transform:scale(1)}to{transform:scale(1.07)}}
+.story__veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)}
+.story__body{position:absolute;bottom:56px;left:56px}
+.story__tag{font-size:.49rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:12px}
+.story__h{font-size:clamp(2.5rem,6vw,6rem);font-weight:300;letter-spacing:-1.5px;line-height:.95;text-transform:uppercase;color:var(--w);margin-bottom:26px}
+.story__a{font-size:.57rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.55);padding-bottom:2px}
 
-    /* Editorial Grid */
-    .editorial-container {
-      padding: 40px 2%;
-    }
+/* ─── DARK SPLIT ─── */
+.dsplit{display:grid;grid-template-columns:1fr 1.45fr;min-height:88vh;background:#060606}
+.ds__txt{display:flex;flex-direction:column;justify-content:flex-end;padding:64px 52px;gap:20px}
+.ds__eye{font-size:.49rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.35)}
+.ds__h{font-size:clamp(2rem,4.5vw,5.5rem);font-weight:300;letter-spacing:-1px;line-height:.95;text-transform:uppercase;color:var(--w)}
+.ds__p{font-size:.67rem;line-height:1.9;color:rgba(255,255,255,.4);max-width:270px;font-weight:300}
+.ds__btn{display:inline-block;padding:14px 32px;border:1px solid rgba(255,255,255,.25);font-size:.56rem;letter-spacing:3px;text-transform:uppercase;color:var(--w);text-decoration:none;width:fit-content;transition:background .25s,border-color .25s}
+.ds__btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.6)}
+.ds__img{position:relative;overflow:hidden}
+.ds__img img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.86);transition:transform 1s cubic-bezier(.25,.46,.45,.94)}
+.dsplit:hover .ds__img img{transform:scale(1.04)}
+.ds__img::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,#060606 0%,transparent 22%);pointer-events:none}
 
-    .editorial-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 15px;
-    }
+/* ─── 3 COL ─── */
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 6px 64px}
+.ti{position:relative;overflow:hidden;aspect-ratio:2/3}
+.ti img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
+.ti:hover img{transform:scale(1.05)}
+.ti__lbl{position:absolute;bottom:22px;left:22px}
+.ti__lbl span{display:block;font-size:.48rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px}
+.ti__lbl a{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.44);padding-bottom:2px}
 
-    .editorial-item {
-      position: relative;
-      overflow: hidden;
-      aspect-ratio: 2/3;
-    }
+/* ─── LOOKBOOK ─── */
+.lb{padding:0 48px 72px}
+.lb__grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;height:88vh}
+.li{overflow:hidden}
+.li.tall{grid-row:1/3}
+.li img{width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
+.li:hover img{transform:scale(1.05)}
 
-    .editorial-item img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    }
+/* ─── BANNER ROW ─── */
+.brow{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 6px 72px}
+.bi{position:relative;overflow:hidden;aspect-ratio:3/4}
+.bi img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
+.bi:hover img{transform:scale(1.05)}
+.bi__info{position:absolute;bottom:28px;left:24px}
+.bi__info p{font-size:.48rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:6px}
+.bi__info a{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.44);padding-bottom:2px}
 
-    .editorial-item:hover img {
-      transform: scale(1.05);
-    }
+/* ─── NEWSLETTER ─── */
+.nl{background:var(--g);padding:90px 48px;text-align:center;border-top:1px solid var(--gm)}
+.nl p{font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:var(--gt);margin-bottom:12px}
+.nl h3{font-size:1rem;font-weight:300;letter-spacing:1px;text-transform:uppercase;margin-bottom:32px}
+.nl form{display:flex;max-width:400px;margin:0 auto;border-bottom:1px solid var(--k)}
+.nl input{flex:1;border:none;background:transparent;padding:13px 0;font-size:.66rem;outline:none;font-family:var(--f)}
+.nl input::placeholder{color:var(--gt);font-size:.59rem;text-transform:uppercase}
+.nl button{background:none;border:none;font-size:.53rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:var(--f);font-weight:500}
 
-    .item-label {
-      position: absolute;
-      bottom: 20px;
-      left: 20px;
-      color: white;
-    }
-
-    .item-label h3 {
-      text-transform: uppercase;
-      font-size: 0.8rem;
-      letter-spacing: 1.5px;
-      font-weight: 500;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
-    }
-
-    /* Section Headers */
-    .section-title {
-      padding: 80px 5% 40px;
-      text-align: center;
-    }
-
-    .section-title h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 2.5rem;
-      font-weight: 400;
-      margin-bottom: 10px;
-    }
-
-    .section-title p {
-      font-size: 0.8rem;
-      color: var(--text-gray);
-      text-transform: uppercase;
-      letter-spacing: 2px;
-    }
-
-    /* Minimal Product Card */
-    .z-product-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      padding: 0 2% 80px;
-      gap: 10px;
-    }
-
-    .z-card {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    .z-img-box {
-      aspect-ratio: 3/4;
-      background: #f8f8f8;
-      overflow: hidden;
-      margin-bottom: 12px;
-    }
-
-    .z-img-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .z-info {
-      font-size: 0.75rem;
-      line-height: 1.5;
-    }
-
-    .z-name {
-      font-weight: 400;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .z-price {
-      font-weight: 600;
-    }
-
-    /* Footer adjustments */
-    .newsletter-section {
-      background: var(--accent-gray);
-      padding: 100px 5%;
-      text-align: center;
-    }
-
-    .newsletter-section h4 {
-      text-transform: uppercase;
-      font-size: 0.7rem;
-      letter-spacing: 3px;
-      margin-bottom: 30px;
-    }
-
-    .newsletter-form {
-      display: flex;
-      max-width: 500px;
-      margin: 0 auto;
-      border-bottom: 1px solid var(--primary-black);
-    }
-
-    .newsletter-form input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      padding: 15px 0;
-      outline: none;
-      font-size: 0.8rem;
-    }
-
-    .newsletter-form button {
-      background: transparent;
-      border: none;
-      text-transform: uppercase;
-      font-size: 0.6rem;
-      font-weight: 600;
-      letter-spacing: 2px;
-      cursor: pointer;
-    }
-
-    @media (max-width: 1024px) {
-      .hero-overlay h1 { font-size: 3rem; }
-      .z-product-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (max-width: 768px) {
-      .editorial-grid { grid-template-columns: 1fr; }
-      .hero-overlay h1 { font-size: 2.5rem; }
-    }
-  </style>
+/* ─── RESPONSIVE ─── */
+@media(max-width:1024px){.pgrid{grid-template-columns:repeat(2,1fr)}.tg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:768px){
+  .esplit{grid-template-columns:1fr}.ep{height:55vw}
+  .dsplit{grid-template-columns:1fr}.ds__txt{order:2;padding:36px 24px 52px}.ds__img{order:1;min-height:55vw}
+  .hero__body{padding:0 24px 44px}.hero__h1{font-size:3.5rem;letter-spacing:-2px}
+  .hero__right{display:none}
+  .pgrid{grid-template-columns:repeat(2,1fr);padding:0 16px 52px}
+  .sh{padding:44px 20px 18px}
+  .lb__grid{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:auto}.li.tall{grid-row:auto}
+  .lb{padding:0 16px 52px}
+  .brow{grid-template-columns:1fr}.story__body{left:24px;bottom:32px}
+  .nl{padding:60px 24px}
+}
+@media(max-width:480px){.tg{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
 
-  <%- include('../partials/user/header') %>
+<div id="prog"></div>
+<%- include('../partials/user/header') %>
 
-  <!-- Full Screen Hero Slide -->
-  <main class="zara-hero">
-    <div class="hero-slide" style="background-image: url('/images/editorial/hero_editorial_1.png')"></div>
-    <div class="hero-overlay">
-      <h1>NEW<br>CATEGORIES</h1>
-      <a href="/products" class="hero-cta">View Everything</a>
+<% 
+// Helper to get product image safely by cycling through available products
+function getProductImg(index, fallbackUrl) {
+  if (typeof products !== 'undefined' && products.length > 0) {
+    const safeIndex = index % products.length;
+    const p = products[safeIndex];
+    let img = '';
+    if (p.images && p.images[0]) img = p.images[0];
+    else if (p.variants && p.variants.length > 0 && p.variants[0].images && p.variants[0].images[0]) img = p.variants[0].images[0];
+    
+    if (img) return img.startsWith('/') ? img : '/uploads/products/' + img;
+  }
+  return fallbackUrl;
+}
+%>
+
+<!-- HERO IMAGE -->
+<section class="hero">
+  <img src="<%= getProductImg(0, '/images/hero-poster.png') %>" alt="Hero Image" loading="eager">
+  <div class="hero__veil"></div>
+  <div class="hero__body">
+    <div class="hero__left">
+      <p class="hero__tag">Spring · Summer 2025</p>
+      <h1 class="hero__h1">New<br>In</h1>
+      <div class="hero__actions">
+        <a href="/products" class="btn-white">Shop Now</a>
+      </div>
     </div>
-  </main>
-
-  <!-- Editorial Category Grid -->
-  <section class="editorial-container">
-    <div class="editorial-grid">
-      <div class="editorial-item">
-        <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=800&q=80" alt="Woman Fashion">
-        <div class="item-label">
-          <a href="/category?category=WOMAN" style="color:white; text-decoration:none;"><h3>Woman</h3></a>
-        </div>
-      </div>
-      <div class="editorial-item">
-        <img src="/images/editorial/hero_editorial_2.png" alt="Man Fashion">
-        <div class="item-label">
-          <a href="/category?category=MAN" style="color:white; text-decoration:none;"><h3>Man</h3></a>
-        </div>
-      </div>
+    <div class="hero__right">
+      <span class="hero__scroll">Scroll Down</span>
+      <i class="fa fa-arrow-down" style="color:rgba(255,255,255,.4);font-size:.7rem"></i>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- Trending Products Section -->
-  <section class="section-title">
-    <p>Handpicked for you</p>
-    <h2>TRENDING NOW</h2>
-  </section>
+<!-- TICKER -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__t">
+    <span>New In Woman</span><span class="dot">·</span><span>New In Man</span><span class="dot">·</span>
+    <span>Dresses</span><span class="dot">·</span><span>Blazers</span><span class="dot">·</span>
+    <span>Knitwear</span><span class="dot">·</span><span>Trousers</span><span class="dot">·</span>
+    <span>Outerwear</span><span class="dot">·</span><span>Shoes</span><span class="dot">·</span><span>Accessories</span><span class="dot">·</span>
+    <span>New In Woman</span><span class="dot">·</span><span>New In Man</span><span class="dot">·</span>
+    <span>Dresses</span><span class="dot">·</span><span>Blazers</span><span class="dot">·</span>
+    <span>Knitwear</span><span class="dot">·</span><span>Trousers</span><span class="dot">·</span>
+    <span>Outerwear</span><span class="dot">·</span><span>Shoes</span><span class="dot">·</span><span>Accessories</span><span class="dot">·</span>
+  </div>
+</div>
 
-  <section class="z-product-grid">
-    <!-- Simplified Zara-style card -->
-    <a href="/products" class="z-card">
-      <div class="z-img-box">
-        <img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80" alt="">
-      </div>
-      <div class="z-info">
-        <div class="z-name">Oversized Poplin Shirt</div>
-        <div class="z-price">₹2,990.00</div>
-      </div>
-    </a>
+<!-- EDITORIAL SPLIT -->
+<section class="esplit rv">
+  <div class="ep">
+    <img src="<%= getProductImg(8, 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=80') %>" alt="Woman" loading="lazy">
+    <div class="ep__lbl"><p>Woman</p><a href="/category?category=WOMAN">Shop Woman</a></div>
+  </div>
+  <div class="ep">
+    <img src="<%= getProductImg(9, 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=900&q=80') %>" alt="Man" loading="lazy">
+    <div class="ep__lbl"><p>Man</p><a href="/category?category=MAN">Shop Man</a></div>
+  </div>
+</section>
 
-    <a href="/products" class="z-card">
-      <div class="z-img-box">
-        <img src="https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=500&q=80" alt="">
-      </div>
-      <div class="z-info">
-        <div class="z-name">Ribbed Knit Top</div>
-        <div class="z-price">₹1,590.00</div>
-      </div>
-    </a>
+<!-- NEW ARRIVALS -->
+<div class="sh rv"><span class="sh__t">New Arrivals</span><a href="/products" class="sh__a">View All</a></div>
+<div class="pgrid rv">
+  <% if (typeof products !== 'undefined' && products.length > 0) { %>
+    <% products.slice(0, 4).forEach(product => { %>
+      <a href="/product/<%= product._id %>" class="pc">
+        <div class="pc__box">
+          <% 
+            let displayImg = '';
+            if (product.images && product.images[0]) {
+              displayImg = product.images[0];
+            } else if (product.variants && product.variants.length > 0 && product.variants[0].images && product.variants[0].images[0]) {
+              displayImg = product.variants[0].images[0];
+            }
+            let finalImg = displayImg ? (displayImg.startsWith('/') ? displayImg : '/uploads/products/' + displayImg) : '';
+          %>
+          <img src="<%= finalImg %>" onerror="this.src='<%= finalImg %>'" alt="<%= product.name %>" loading="lazy">
+          <% if (product.discount > 0) { %>
+            <span class="pc__badge">Sale</span>
+          <% } else { %>
+            <span class="pc__badge">New</span>
+          <% } %>
+        </div>
+        <div class="pc__n"><%= product.name %></div>
+        <div class="pc__p">₹<%= product.price %></div>
+      </a>
+    <% }) %>
+  <% } else { %>
+    <p style="grid-column: 1/-1; text-align:center; color:#999; font-size:0.8rem; padding: 20px;">No products found</p>
+  <% } %>
+</div>
 
-    <a href="/products" class="z-card">
-      <div class="z-img-box">
-        <img src="https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=500&q=80" alt="">
-      </div>
-      <div class="z-info">
-        <div class="z-name">Linen Blend Trousers</div>
-        <div class="z-price">₹4,990.00</div>
-      </div>
-    </a>
+<!-- STORY BLOCK -->
+<section class="story rv">
+  <img src="<%= getProductImg(10, 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1800&q=85') %>" alt="Studio Collection" loading="lazy">
+  <div class="story__veil"></div>
+  <div class="story__body">
+    <p class="story__tag">Exclusive Edit</p>
+    <h2 class="story__h">The Studio<br>Collection</h2>
+    <a href="/products" class="story__a">Discover</a>
+  </div>
+</section>
 
-    <a href="/products" class="z-card">
-      <div class="z-img-box">
-        <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=500&q=80" alt="">
-      </div>
-      <div class="z-info">
-        <div class="z-name">Floral Midi Dress</div>
-        <div class="z-price">₹3,290.00</div>
-      </div>
-    </a>
-  </section>
+<!-- DARK SPLIT -->
+<section class="dsplit rv">
+  <div class="ds__txt">
+    <p class="ds__eye">Exclusive &middot; After Dark</p>
+    <h2 class="ds__h">City<br>Nights</h2>
+    <p class="ds__p">Draped silhouettes for the after-hours. Minimal design meets the glow of the skyline.</p>
+    <a href="/products" class="ds__btn">Shop The Edit</a>
+  </div>
+  <div class="ds__img">
+    <img src="<%= getProductImg(11, 'https://images.unsplash.com/photo-1554568218-0f1715e72254?auto=format&fit=crop&w=1000&q=85') %>" alt="Night editorial" loading="lazy">
+  </div>
+</section>
 
-  <!-- Newsletter Section -->
-  <section class="newsletter-section">
-    <h4>JOIN OUR NEWSLETTER</h4>
-    <form class="newsletter-form">
-      <input type="email" placeholder="ENTER YOUR EMAIL ADDRESS">
-      <button type="submit">Subscribe</button>
-    </form>
-  </section>
+<!-- CATEGORIES -->
+<div class="sh rv"><span class="sh__t">Shop By Category</span><a href="/products" class="sh__a">All Categories</a></div>
+<div class="tg rv">
+  <div class="ti"><img src="<%= getProductImg(12, 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=700&q=80') %>" alt="Dresses" loading="lazy"><div class="ti__lbl"><span>Category</span><a href="/products">Dresses</a></div></div>
+  <div class="ti"><img src="<%= getProductImg(13, 'https://images.unsplash.com/photo-1583846717393-dc2412c95ed7?auto=format&fit=crop&w=700&q=80') %>" alt="Knitwear" loading="lazy"><div class="ti__lbl"><span>Category</span><a href="/products">Knitwear</a></div></div>
+  <div class="ti"><img src="<%= getProductImg(14, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=700&q=80') %>" alt="Outerwear" loading="lazy"><div class="ti__lbl"><span>Category</span><a href="/products">Outerwear</a></div></div>
+</div>
 
-  <%- include('../partials/user/footer') %>
+<!-- MORE PRODUCTS -->
+<div class="sh rv"><span class="sh__t">Trending Now</span><a href="/products" class="sh__a">View All</a></div>
+<div class="pgrid rv">
+  <% if (typeof products !== 'undefined' && products.length > 4) { %>
+    <% products.slice(4, 8).forEach(product => { %>
+      <a href="/product/<%= product._id %>" class="pc">
+        <div class="pc__box">
+          <% 
+            let displayImg = '';
+            if (product.images && product.images[0]) {
+              displayImg = product.images[0];
+            } else if (product.variants && product.variants.length > 0 && product.variants[0].images && product.variants[0].images[0]) {
+              displayImg = product.variants[0].images[0];
+            }
+            let finalImg = displayImg ? (displayImg.startsWith('/') ? displayImg : '/uploads/products/' + displayImg) : '';
+          %>
+          <img src="<%= finalImg %>" onerror="this.src='<%= finalImg %>'" alt="<%= product.name %>" loading="lazy">
+          <span class="pc__badge">Trending</span>
+        </div>
+        <div class="pc__n"><%= product.name %></div>
+        <div class="pc__p">₹<%= product.price %></div>
+      </a>
+    <% }) %>
+  <% } else { %>
+    <p style="grid-column: 1/-1; text-align:center; color:#999; font-size:0.8rem; padding: 20px;">More items coming soon</p>
+  <% } %>
+</div>
 
+<!-- LOOKBOOK -->
+<div class="sh rv"><span class="sh__t">The Lookbook</span><a href="/products" class="sh__a">View Looks</a></div>
+<div class="lb rv">
+  <div class="lb__grid">
+    <div class="li tall"><img src="<%= getProductImg(15, 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=900&q=80') %>" alt="" loading="lazy"></div>
+    <div class="li"><img src="<%= getProductImg(16, 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80') %>" alt="" loading="lazy"></div>
+    <div class="li"><img src="<%= getProductImg(17, 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80') %>" alt="" loading="lazy"></div>
+    <div class="li"><img src="<%= getProductImg(18, 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=600&q=80') %>" alt="" loading="lazy"></div>
+    <div class="li"><img src="<%= getProductImg(19, 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=600&q=80') %>" alt="" loading="lazy"></div>
+  </div>
+</div>
+
+<!-- BANNER ROW -->
+<div class="brow rv">
+  <div class="bi"><img src="<%= getProductImg(11, 'https://images.unsplash.com/photo-1554568218-0f1715e72254?auto=format&fit=crop&w=800&q=80') %>" alt="" loading="lazy"><div class="bi__info"><p>The Edit</p><a href="/products">Evening Essentials</a></div></div>
+  <div class="bi"><img src="<%= getProductImg(12, 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80') %>" alt="" loading="lazy"><div class="bi__info"><p>The Edit</p><a href="/products">Weekend Casual</a></div></div>
+</div>
+
+<!-- NEWSLETTER -->
+<section class="nl rv">
+  <p>Stay Connected</p>
+  <h3>Join the SNOVA Community</h3>
+  <form onsubmit="return false;">
+    <input type="email" placeholder="Your email address">
+    <button type="submit">Subscribe →</button>
+  </form>
+</section>
+
+<%- include('../partials/user/footer') %>
+
+<script>
+// Progress bar
+const prog=document.getElementById('prog');
+window.addEventListener('scroll',()=>{
+  const pct=document.documentElement.scrollTop/(document.documentElement.scrollHeight-window.innerHeight)*100;
+  prog.style.width=pct+'%';
+});
+
+
+
+// Scroll reveal
+new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('on') });
+},{threshold:.08}).observe.bind(null);
+
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('on') });
+},{threshold:.08});
+document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
+</script>
 </body>
 </html>

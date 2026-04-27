@@ -7,6 +7,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     
     <style>
         :root {
@@ -206,11 +208,17 @@
                                 <div class="item-meta">Color: <%= item.color %></div>
                                 <div class="item-meta">Size: <%= item.size %></div>
                                 
-                                <div class="qty-controls">
-                                    <i class="fa-solid fa-minus qty-btn" onclick="updateQty('<%= item._id %>', -1)"></i>
-                                    <span class="qty-val" id="qty-<%= item._id %>"><%= item.quantity %></span>
-                                    <i class="fa-solid fa-plus qty-btn" onclick="updateQty('<%= item._id %>', 1)"></i>
-                                </div>
+                                <% if (item.stock === 0) { %>
+                                    <div class="mt-5">
+                                        <span class="text-red-600 font-bold text-[10px] uppercase tracking-widest">Sold Out</span>
+                                    </div>
+                                <% } else { %>
+                                    <div class="qty-controls">
+                                        <i class="fa-solid fa-minus qty-btn" onclick="updateQty('<%= item._id %>', -1)"></i>
+                                        <span class="qty-val" id="qty-<%= item._id %>"><%= item.quantity %></span>
+                                        <i class="fa-solid fa-plus qty-btn" onclick="updateQty('<%= item._id %>', 1)"></i>
+                                    </div>
+                                <% } %>
                             </div>
                             <div class="item-price-side">
                                 <div class="price-val" id="totalPrice-<%= item._id %>">₹<%= item.totalPrice.toLocaleString('en-IN') %></div>
@@ -296,6 +304,20 @@
             } catch (err) { console.error(err); }
         }
 
+        function showToast(msg, bg = '#000') {
+            Swal.fire({
+                text: msg,
+                toast: true,
+                position: 'top',
+                showConfirmButton: false,
+                timer: 3000,
+                background: bg,
+                color: '#fff',
+                customClass: { popup: 'zara-toast' },
+                showClass: { popup: 'animate__animated animate__fadeInDown' }
+            });
+        }
+
         async function updateQty(itemId, change) {
             try {
                 const res = await fetch('/cart/updateQty', { 
@@ -309,6 +331,8 @@
                     document.getElementById(`totalPrice-${itemId}`).textContent = `₹${data.itemTotal.toLocaleString('en-IN')}`;
                     document.getElementById(`subtotal`).textContent = `₹${data.subtotal.toLocaleString('en-IN')}`;
                     document.getElementById(`main-total`).textContent = `₹${data.total.toLocaleString('en-IN')}`;
+                } else {
+                    showToast(data.msg || 'Cannot update quantity', '#c62828');
                 }
             } catch (err) { console.error(err); }
         }

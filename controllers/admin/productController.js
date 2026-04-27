@@ -1,5 +1,5 @@
-const product=require('../../models/productSchema');
-const category=require('../../models/categorySchema')
+const product = require('../../models/productSchema');
+const category = require('../../models/categorySchema')
 
 
 const loadProduct = async (req, res) => {
@@ -21,7 +21,7 @@ const loadProduct = async (req, res) => {
             .populate('category')
             .skip((currentPage - 1) * limit)
             .limit(limit)
-            .sort({createdAt:-1});
+            .sort({ createdAt: -1 });
 
         const categories = await category.find();
 
@@ -49,39 +49,49 @@ const loadProduct = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
 
-        const { name, description ,image,price,stock,category, size, color} = req.body;
+        const { name, description, image, price, stock, category, size, color } = req.body;
 
-        const images = req.files?.map(file =>'/uploads/products/'+ file.filename) || [];
-        const stockVal=parseInt(stock);
-        if(isNaN(stockVal)||stockVal<0){
-            return res.status(400).json({success:false,message:'invalid stock value'})
+        const images = req.files?.map(file => '/uploads/products/' + file.filename) || [];
+        const stockVal = parseInt(stock);
+        if (isNaN(stockVal) || stockVal < 0) {
+            return res.status(400).json({ success: false, message: 'invalid stock value' })
         }
-        const existing=await product.findOne({name});
-        if(existing){
-            return res.status(400).json({success:false,message :"product already exists"})
+        const existing = await product.findOne({ name });
+        if (existing) {
+            return res.status(400).json({ success: false, message: "product already exists" })
         }
-        if(price<0){
-              return res.status(400).json({success:false,message :"price not negative"})
+        if (price < 0) {
+            return res.status(400).json({ success: false, message: "price not negative" })
         }
-        const newProduct = new product({  
+        if (stock < 0) {
+            return res.status(400).json({ success: false, message: "stock not negative" })
+        }
+        const newProduct = new product({
             name,
             description,
             images,
             price,
-            stock:stockVal,
+            stock: stockVal,
             category,
             size: size || "",
             color: color || "",
             isActive: true,
-            isDeleted: false
+            isDeleted: false,
+            // Create the first variant record automatically for inventory tracking
+            variants: [{
+                size: size || "One Size",
+                color: color || "Default",
+                stock: stockVal,
+                price: price,
+                images: images
+            }]
         });
 
-
-        console.log("new product",newProduct)
+        console.log("new product", newProduct);
 
         await newProduct.save();
-   res.json({ success: true, message: 'Product added successfully' });
-      
+        res.json({ success: true, message: 'Product added and initial variant created' });
+
 
     } catch (error) {
         console.log("error1", error);
@@ -129,7 +139,7 @@ const deleteProduct = async (req, res) => {
     try {
 
         await product.findByIdAndUpdate(req.params.id, { isDeleted: true });
-  console.log("deleted")
+        console.log("deleted")
         res.json({ success: true, message: 'Product deleted successfully' });
 
     } catch (error) {
@@ -144,9 +154,9 @@ const toggleProductStatus = async (req, res) => {
         const products = await product.findById(req.params.id);
         products.isActive = !products.isActive;
         await products.save();
-        res.json({ 
-            success: true, 
-            status: products.isActive ? 'Active' : 'Inactive' 
+        res.json({
+            success: true,
+            status: products.isActive ? 'Active' : 'Inactive'
         });
     } catch (error) {
         console.log("error", error);
@@ -161,39 +171,47 @@ const toggleProductStatus = async (req, res) => {
 const addVariant = async (req, res) => {
     try {
         const { id } = req.params;
-        const { size, color, stock, price } = req.body;
+        const { size, color, stock, price, fabrics } = req.body;
+        console.log(req.body)
         const images = req.files?.map(file => '/uploads/products/' + file.filename) || [];
 
         const prod = await product.findById(id);
         if (!prod) return res.status(404).json({ success: false, message: 'Product not found' });
 
         const sizes = Array.isArray(size) ? size : [size];
-        
+        const stockVal = parseInt(stock) || 0;
+        const priceVal = parseFloat(price) || 0;
+        if (!fabrics) {
+            return res.status(404).json({ success: false, message: 'fabrics not found' })
+        }
         sizes.forEach(s => {
             if (s) {
-             
-                const existingVariant = prod.variants.find(v => v.size === s && v.color === color);
-                
-                if (existingVariant) {
-                 
-                    existingVariant.stock += (parseInt(stock) || 0);
-                    if (price) existingVariant.price = parseFloat(price);
-                    if (images.length > 0) existingVariant.images = images;
+
+                const vIdx = prod.variants.findIndex(v => v.size === s && v.color === color && v.fabrics === fabrics);
+
+                if (vIdx !== -1) {
+
+                    prod.variants[vIdx].stock += stockVal;
+                    if (priceVal > 0) prod.variants[vIdx].price = priceVal;
+                    if (images.length > 0) prod.variants[vIdx].images = images;
                 } else {
                     // Add new
                     prod.variants.push({
                         size: s,
                         color,
-                        stock: parseInt(stock) || 0,
-                        price: parseFloat(price) || 0,
-                        images
+                        fabrics: fabrics,
+                        stock: stockVal,
+                        price: priceVal || prod.price,
+                        images: images.length > 0 ? images : prod.images
                     });
                 }
             }
         });
 
+        //    console.log("debug",prod)
+        prod.markModified('variants');
         await prod.save();
-        res.json({ success: true, message: 'Variant(s) updated/added successfully' });
+        res.json({ success: true, message: 'Variant inventory synchronized' });
     } catch (error) {
         console.error('addVariant error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
@@ -204,7 +222,7 @@ const editVariant = async (req, res) => {
     try {
         const { productId, variantId } = req.params;
         const { size, color, stock, price } = req.body;
-        
+
         const prod = await product.findById(productId);
         if (!prod) return res.status(404).json({ success: false, message: 'Product not found' });
 
@@ -215,6 +233,7 @@ const editVariant = async (req, res) => {
         variant.color = color;
         variant.stock = parseInt(stock) || 0;
         variant.price = parseFloat(price) || 0;
+        // variant.fabrics = fabrics;
 
         if (req.files && req.files.length > 0) {
             variant.images = req.files.map(file => '/uploads/products/' + file.filename);
@@ -279,5 +298,50 @@ const viewVariants = async (req, res) => {
     }
 }
 
-module.exports = { loadProduct, addProduct, editProduct, deleteProduct, toggleProductStatus, addVariant, editVariant, deleteVariant, setPrimaryImage, viewVariants };
+const loadInventory = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+    const search = req.query.search || "";
+
+    let query = { isDeleted: false };
+    if (search) {
+      query.name = { $regex: search, $options: "i" };
+    }
+
+    const products = await product.find(query)
+      .populate("category")
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    const totalProducts = await product.countDocuments(query);
+    const totalPages = Math.ceil(totalProducts / limit);
+
+    res.render("admin/inventory", {
+      products,
+      currentPage: page,
+      totalPages,
+      search,
+    });
+  } catch (error) {
+    console.error("Error loading inventory:", error);
+    res.redirect("/admin/error");
+  }
+};
+
+module.exports = {
+  loadProduct,
+  addProduct,
+  editProduct,
+  deleteProduct,
+  toggleProductStatus,
+  addVariant,
+  editVariant,
+  deleteVariant,
+  setPrimaryImage,
+  viewVariants,
+  loadInventory,
+};
 

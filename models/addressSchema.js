@@ -16,9 +16,7 @@ const addressSchema = new Schema(
       type: String,
       required: true,
     },
-    addressline2: {
-      type: String,
-    },
+   
     city: {
       type: String,
       required: true,

@@ -40,13 +40,21 @@ const User = require('./models/userSchema');
 
 app.use(async (req, res, next) => {
   try {
-    if (req.session.user?._id) {
-      const fullUser = await User.findById(req.session.user._id).lean();
+    let userId = null;
+    if (typeof req.session.user === "string") {
+      userId = req.session.user;
+    } else if (req.session.user && req.session.user._id) {
+      userId = req.session.user._id;
+    }
+
+    if (userId) {
+      const fullUser = await User.findById(userId).lean();
       res.locals.user = fullUser || null;
     } else {
       res.locals.user = null;
     }
   } catch (e) {
+    console.error("Auth Middleware Error:", e);
     res.locals.user = null;
   }
   next();

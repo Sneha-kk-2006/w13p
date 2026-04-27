@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const variantSchema = new mongoose.Schema({
   size:  { type: String, required: true },
   color: { type: String, required: true },
+  fabrics:{type:String,required:false,default:''},
   stock: { type: Number, default: 0 },
   price: { type: Number, default: 0 },
   images: [String]
@@ -30,6 +31,7 @@ const productSchema = new mongoose.Schema(
     images: [String],
     size: { type: String, default: "" },
     color: { type: String, default: "" },
+    fabrics:{type:String,default:""},
     variants: [variantSchema],
     stock: {
       type: Number,

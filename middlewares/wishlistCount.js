@@ -2,8 +2,15 @@ const Wishlist = require('../models/wishlistSchema');
 
 const attachWishlistCount = async (req, res, next) => {
     try {
-        if (req.session?.user?._id) {
-            const wishlist = await Wishlist.findOne({ userId: req.session.user._id }).populate({
+        let userId = null;
+        if (typeof req.session.user === "string") {
+            userId = req.session.user;
+        } else if (req.session.user && req.session.user._id) {
+            userId = req.session.user._id;
+        }
+
+        if (userId) {
+            const wishlist = await Wishlist.findOne({ userId: userId }).populate({
                 path: 'products.productId',
                 populate: { path: 'category' }
             });

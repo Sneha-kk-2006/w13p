@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | Order Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        .admin-main {
+            flex: 1;
+            padding: 60px 40px;
+            background-color: #fbfbfb;
+            min-height: 100vh;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+
+        /* Search & Filter Bar */
+        .controls-bar {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+            background: #fff;
+            padding: 20px;
+            border: 0.5px solid #eee;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .search-wrapper {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 15px 12px 40px;
+            border: 0.5px solid #eee;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-input:focus {
+            border-color: #000;
+        }
+
+        .filter-select {
+            padding: 12px 15px;
+            border: 0.5px solid #eee;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            outline: none;
+            cursor: pointer;
+            min-width: 150px;
+        }
+
+        .btn-action {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-action:hover {
+            opacity: 0.8;
+        }
+
+        /* Table Styles */
+        .table-container {
+            background: #fff;
+            border: 0.5px solid #eee;
+            overflow-x: auto;
+        }
+
+        .minimal-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .minimal-table th {
+            text-align: left;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #999;
+            padding: 20px;
+            border-bottom: 0.5px solid #eee;
+            font-weight: 700;
+        }
+
+        .minimal-table td {
+            padding: 20px;
+            font-size: 0.75rem;
+            border-bottom: 0.5px solid #eee;
+            letter-spacing: 0.5px;
+        }
+
+        .order-id {
+            font-weight: 700;
+            color: #000;
+            text-transform: uppercase;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .user-email {
+            font-size: 0.65rem;
+            color: #999;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .status-pending { background: #fff4e5; color: #b7791f; }
+        .status-shipped { background: #e6fffa; color: #2c7a7b; }
+        .status-delivered { background: #f0fff4; color: #2f855a; }
+        .status-cancelled { background: #fff5f5; color: #c53030; }
+        .status-out-for-delivery { background: #ebf8ff; color: #2b6cb0; }
+
+        .status-select {
+            padding: 5px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            border: 0.5px solid #eee;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .btn-view {
+            text-decoration: none;
+            color: #000;
+            font-weight: 700;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 2px;
+            transition: 0.3s;
+        }
+
+        .btn-view:hover {
+            opacity: 0.6;
+        }
+
+        /* Pagination */
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        .page-link {
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 0.5px solid #eee;
+            text-decoration: none;
+            color: #000;
+            font-size: 0.7rem;
+            font-weight: 600;
+            transition: 0.3s;
+            background: #fff;
+        }
+
+        .page-link.active {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .page-link:hover:not(.active) {
+            background: #f5f5f5;
+        }
+
+        /* Zara Style Notifications */
+        .zara-toast {
+            background: #000 !important;
+            color: #fff !important;
+            border-radius: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.65rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 2px !important;
+            padding: 15px 40px !important;
+            width: auto !important;
+            max-width: 600px !important;
+            margin-top: 20px !important;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('../partials/admin/header', { activePage: 'orders' }) %>
+
+    <main class="admin-main">
+        <header class="page-header">
+            <h1 class="page-title">Order Repository</h1>
+        </header>
+
+        <section class="controls-bar">
+            <form action="/admin/orders" method="GET" style="display: flex; gap: 20px; width: 100%; flex-wrap: wrap;">
+                <div class="search-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="search" class="search-input" placeholder="Search by Order ID or Name..." value="<%= search %>">
+                </div>
+
+                <select name="status" class="filter-select" onchange="this.form.submit()">
+                    <option value="">All Statuses</option>
+                    <option value="Pending" <%= filterStatus === 'Pending' ? 'selected' : '' %>>Pending</option>
+                    <option value="Shipped" <%= filterStatus === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                    <option value="Out for Delivery" <%= filterStatus === 'Out for Delivery' ? 'selected' : '' %>>Out for Delivery</option>
+                    <option value="Delivered" <%= filterStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                    <option value="Cancelled" <%= filterStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                </select>
+
+                <select name="sort" class="filter-select" onchange="this.form.submit()">
+                    <option value="desc" <%= sortOrder === 'desc' ? 'selected' : '' %>>Newest First</option>
+                    <option value="asc" <%= sortOrder === 'asc' ? 'selected' : '' %>>Oldest First</option>
+                </select>
+
+                <button type="submit" class="btn-action">Filter</button>
+                <a href="/admin/orders" class="btn-action" style="background: #999; text-decoration: none; display: flex; align-items: center;">Reset</a>
+            </form>
+        </section>
+
+        <div class="table-container">
+            <table class="minimal-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Date</th>
+                        <th>Customer</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (orders && orders.length > 0) { %>
+                        <% orders.forEach(order => { %>
+                            <tr>
+                                <td class="order-id">#<%= order.orderId %></td>
+                                <td><%= new Date(order.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) %></td>
+                                <td>
+                                    <div class="user-info">
+                                        <span class="user-name"><%= order.userId ? order.userId.name : 'Unknown' %></span>
+                                        <span class="user-email"><%= order.userId ? order.userId.email : '' %></span>
+                                    </div>
+                                </td>
+                                <td style="font-weight: 600;">₹<%= order.totalPrice.toLocaleString() %></td>
+                                <td>
+                                    <select class="status-select" onchange="updateStatus('<%= order.orderId %>', this.value)">
+                                        <option value="Pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %> <%= order.orderStatus === 'Delivered' || order.orderStatus === 'Cancelled' ? 'disabled' : '' %>>Pending</option>
+                                        <option value="Shipped" <%= order.orderStatus === 'Shipped' ? 'selected' : '' %> <%= order.orderStatus === 'Delivered' || order.orderStatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
+                                        <option value="Out for Delivery" <%= order.orderStatus === 'Out for Delivery' ? 'selected' : '' %> <%= order.orderStatus === 'Delivered' || order.orderStatus === 'Cancelled' ? 'disabled' : '' %>>Out for Delivery</option>
+                                        <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : '' %> <%= order.orderStatus === 'Cancelled' ? 'disabled' : '' %>>Delivered</option>
+                                        <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : '' %> <%= order.orderStatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
+                                        <% if (order.orderStatus === 'Delivered') { %>
+                                            <option value="Returned" <%= order.orderStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                        <% } %>
+                                    </select>
+                                </td>
+                                <td>
+                                    <a href="/admin/orders/detail/<%= order.orderId %>" class="btn-view">Details</a>
+                                </td>
+                            </tr>
+                        <% }) %>
+                    <% } else { %>
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 50px; color: #999;">No orders found matching your criteria.</td>
+                        </tr>
+                    <% } %>
+                </tbody>
+            </table>
+        </div>
+
+        <% if (totalPages > 1) { %>
+            <div class="pagination">
+                <% if (currentPage > 1) { %>
+                    <a href="/admin/orders?page=<%= currentPage - 1 %>&search=<%= search %>&status=<%= filterStatus %>&sort=<%= sortOrder %>" class="page-link">&lt;</a>
+                <% } %>
+
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/admin/orders?page=<%= i %>&search=<%= search %>&status=<%= filterStatus %>&sort=<%= sortOrder %>" class="page-link <%= currentPage === i ? 'active' : '' %>">
+                        <%= i %>
+                    </a>
+                <% } %>
+
+                <% if (currentPage < totalPages) { %>
+                    <a href="/admin/orders?page=<%= currentPage + 1 %>&search=<%= search %>&status=<%= filterStatus %>&sort=<%= sortOrder %>" class="page-link">&gt;</a>
+                <% } %>
+            </div>
+        <% } %>
+    </main>
+
+    <script>
+        async function updateStatus(orderId, newStatus) {
+            try {
+                const response = await fetch('/admin/orders/updateStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId, status: newStatus })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        text: 'Order status updated',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        background: '#000',
+                        color: '#fff',
+                        customClass: { popup: 'zara-toast' },
+                        showClass: { popup: 'animate__animated animate__fadeInDown' }
+                    });
+                } else {
+                    Swal.fire({
+                        text: data.message || 'Something went wrong',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        background: '#c62828',
+                        color: '#fff',
+                        customClass: { popup: 'zara-toast' },
+                        showClass: { popup: 'animate__animated animate__fadeInDown' },
+                        didClose: () => { location.reload(); }
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    text: 'An unexpected error occurred',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: '#c62828',
+                    color: '#fff',
+                    customClass: { popup: 'zara-toast' },
+                    showClass: { popup: 'animate__animated animate__fadeInDown' }
+                });
+            }
+        }
+    </script>
+</body>
+</html>

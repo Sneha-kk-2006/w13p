@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | My Orders</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-black: #000;
+            --off-white: #fff;
+            --text-gray: #666;
+            --border-light: #eee;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--off-white);
+            color: var(--primary-black);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 60px 5%;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 50px;
+        }
+
+        .orders-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .orders-table th {
+            text-align: left;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: #999;
+            padding: 20px;
+            border-bottom: 1px solid #000;
+        }
+
+        .orders-table td {
+            padding: 25px 20px;
+            border-bottom: 0.5px solid var(--border-light);
+            font-size: 0.8rem;
+            vertical-align: middle;
+        }
+
+        .order-id {
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .status-pending { background: #fff4e5; color: #b76e00; }
+        .status-shipped { background: #e5f1ff; color: #0066cc; }
+        .status-delivered { background: #e6fffa; color: #008767; }
+        .status-cancelled { background: #ffe5e5; color: #cc0000; }
+
+        .view-link {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 600;
+            text-decoration: underline;
+            color: #000;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-container { flex-direction: column; }
+            .orders-table th:nth-child(3), .orders-table td:nth-child(3) { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('../partials/user/header') %>
+
+    <div class="dashboard-container">
+        <% var activePage = 'orders'; %>
+        <%- include('../partials/user/sidebar', { activePage: 'orders' }) %>
+
+        <main class="main-content">
+            <h1 class="page-title">MY ORDERS</h1>
+
+            <% if (orders && orders.length > 0) { %>
+                <table class="orders-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Payment</th>
+                            <th>Status</th>
+                            <th>Total</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% orders.forEach(order => { %>
+                            <tr>
+                                <td class="order-id">#<%= order.orderId %></td>
+                                <td><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></td>
+                                <td style="text-transform: uppercase; font-size: 0.7rem;"><%= order.paymentMethod %></td>
+                                <td>
+                                    <span class="status-badge status-<%= order.orderStatus.toLowerCase().replace(/ /g, '-') %>">
+                                        <%= order.orderStatus %>
+                                    </span>
+                                </td>
+                                <td style="font-weight: 600;">₹<%= order.totalPrice %></td>
+                                <td style="text-align: right;">
+                                    <a href="/order-details/<%= order._id %>" class="view-link">View Details</a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } else { %>
+                <div style="text-align: center; padding: 100px 0;">
+                    <i class="fa-solid fa-bag-shopping" style="font-size: 3rem; color: #eee; margin-bottom: 20px;"></i>
+                    <p style="text-transform: uppercase; letter-spacing: 2px; font-size: 0.8rem; color: #999;">You haven't placed any orders yet.</p>
+                    <a href="/products" class="view-link" style="display: block; margin-top: 20px;">Start Shopping</a>
+                </div>
+            <% } %>
+        </main>
+    </div>
+
+    <%- include('../partials/user/footer') %>
+
+</body>
+</html>

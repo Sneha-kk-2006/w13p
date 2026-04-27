@@ -20,4 +20,4 @@ const SUCCESS = {
   PASSWORD_RESET: "Password updated successfully"
 };
 
-module.exports = { ERRORS, SUCCESS };
+module.exports = { ERRORS, SUCCESS };     

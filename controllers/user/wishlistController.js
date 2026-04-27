@@ -14,9 +14,10 @@ const getWishlist = async (req, res) => {
             wishlist = new Wishlist({ userId, products: [] });
             await wishlist.save();
         }
+        let sortedWishlist=wishlist.products.sort((a,b)=>b.productId._id.getTimestamp()-a.productId._id.getTimestamp());
 
         res.render('user/wishlist', { 
-            wishlist: wishlist.products,
+            wishlist:sortedWishlist,
             pageTitle: 'My Wishlist'
         });
 

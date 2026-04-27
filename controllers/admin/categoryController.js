@@ -24,7 +24,6 @@ const loadp=async(req,res)=>{
        const totalPage=Math.ceil(total/limit)
      
 
-        //    const categories = await category.find({ isDeleted: false });
    res.render('admin/categoryManagement',{categories,search,currentPage:page,totalPage,total,limit})
     }catch(error){
 console.log(error)
@@ -41,9 +40,8 @@ const addCategory = async (req, res) => {
       return res.status(400).json({ message: "Name required" });
     }
 
-    
     const exists = await category.findOne({
-      name: { $regex: new RegExp(`^${name.trim()}$`, "i") },
+      name: { $regex: new RegExp(`^${name.trim()}$`,"i") },
       isDeleted: false
     });
 

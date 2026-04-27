@@ -10,7 +10,9 @@ const addressController = require('../controllers/user/addressController');
 // const googleController = require("../../controllers/user/authController");
 const productController = require('../controllers/user/productController')
 const cartController = require('../controllers/user/cartController')
-const wishlistController=require('../controllers/user/wishlistController')
+const wishlistController = require('../controllers/user/wishlistController')
+const orderController = require('../controllers/user/orderController');
+
 
 
 
@@ -69,9 +71,18 @@ router.post('/cart/remove', cartController.remove)
 router.post('/cart/clearCart', cartController.clearCart)
 
 
-router.get('/wishlist',wishlistController.getWishlist)
+router.get('/wishlist', wishlistController.getWishlist)
 router.post('/wishlist/add', wishlistController.addToWishlist)
 router.post('/wishlist/remove', wishlistController.removeFromWishlist)
+
+
+router.get('/checkout', userAuth, orderController.loadCheckout);
+router.post('/checkout/place-order', userAuth, orderController.placeOrder);
+router.get('/checkout/success/:id', userAuth, orderController.loadOrderSuccess);
+router.get('/order-details/:id', userAuth, orderController.loadOrderDetails);
+router.get('/orders', userAuth, orderController.loadOrders);
+
+
 
 
 

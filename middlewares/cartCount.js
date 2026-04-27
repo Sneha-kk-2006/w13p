@@ -2,8 +2,15 @@ const Cart=require('../models/cartSchema');
 
 const attachCartCount=async(req,res,next)=>{
     try{
-        if(req.session?.user?._id){
-            const cart = await Cart.findOne({userId:req.session.user._id}).populate({
+        let userId = null;
+        if (typeof req.session.user === "string") {
+            userId = req.session.user;
+        } else if (req.session.user && req.session.user._id) {
+            userId = req.session.user._id;
+        }
+
+        if(userId){
+            const cart = await Cart.findOne({userId:userId}).populate({
                 path: 'items.productId',
                 populate: { path: 'category' }
             });

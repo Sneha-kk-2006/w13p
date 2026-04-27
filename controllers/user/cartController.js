@@ -45,6 +45,7 @@
             if (existingIndex > -1) {
                 const currentQty = cart.items[existingIndex].quantity;
                 const newQty = currentQty + 1;
+                // let  MAX_QTY=5;
 
                 if (newQty > MAX_QTY)       return res.json({ success: false, msg: `Max ${MAX_QTY} per item` });
                 
@@ -55,10 +56,19 @@
                     if (variant) availableStock = variant.stock;
                 }
 
+                if (availableStock === 0) return res.json({ success: false, msg: "This item is currently sold out" });
                 if (newQty > availableStock) return res.json({ success: false, msg: `Only ${availableStock} in stock` });
 
                 cart.items[existingIndex].quantity = newQty;
             } else {
+                let availableStock = product.stock;
+                if (variantId) {
+                    const variant = product.variants.id(variantId);
+                    if (variant) availableStock = variant.stock;
+                }
+
+                if (availableStock === 0) return res.json({ success: false, msg: "This item is currently sold out" });
+
                 cart.items.push({
                     productId: product.id,
                     variantId: variantId || null,
@@ -120,40 +130,60 @@
             (!item.productId.category || (item.productId.category.isActive !== false && item.productId.category.isDeleted !== true))
         );
         
+        cartData.items.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt));
 
-        const subtotal = cartData.items.reduce((sum, item) =>
-            sum + (item.quantity * (item.productId.price || 0)), 0
-        );
+        let subtotal = 0;
+        let discount = 0;
+        
+        const mappedItems = cartData.items.map(item => {
+            const product = item.productId;
+            let targetPrice = product.price || 0;
+            let targetColor = product.color || 'N/A';
+            let targetSize = product.size || 'N/A';
+            let targetStock = product.stock || 0;
+            let targetImage = product.images?.[0] || '';
 
-        const discount = cartData.items.reduce((sum, item) => {
-            const price = item.productId.price || 0;
-            const discountPct = item.productId.discount || 0;
-            return sum + (price * (discountPct / 100) * item.quantity);
-        }, 0);
+            if (item.variantId && product.variants && product.variants.length > 0) {
+                const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+                if (variant) {
+                    targetPrice = variant.price || targetPrice;
+                    targetColor = variant.color || targetColor;
+                    targetSize = variant.size || targetSize;
+                    targetStock = variant.stock;
+                    if (variant.images && variant.images.length > 0) {
+                        targetImage = variant.images[0];
+                    }
+                }
+            }
+
+            const discountPct = product.discount || 0;
+            const salePrice = Math.round(targetPrice * (1 - discountPct / 100));
+
+            const itemSubtotal = targetPrice * item.quantity;
+            const itemDiscount = (targetPrice * (discountPct / 100)) * item.quantity;
+
+            subtotal += itemSubtotal;
+            discount += itemDiscount;
+
+            return {
+                _id:          item._id,
+                productId:    product._id,
+                productName:  product.name,
+                productImage: targetImage,
+                color:        targetColor,
+                size:         targetSize,
+                unitPrice:    salePrice,
+                oldPrice:     targetPrice,
+                quantity:     item.quantity,
+                totalPrice:   item.quantity * salePrice,
+                stock:        targetStock
+            };
+        });
 
         const total = subtotal - discount;
 
-
         res.render('user/cart', {
-            items: cartData.items.map(item => {
-                const originalPrice = item.productId.price || 0;
-                const discountPct = item.productId.discount || 0;
-                const salePrice = Math.round(originalPrice * (1 - discountPct / 100));
-                
-                return {
-                    _id:          item._id,
-                    productId:    item.productId._id,
-                    productName:  item.productId.name,
-                    productImage: item.productId.images?.[0] || '',
-                    color:        item.productId.color || 'N/A',
-                    size:         item.productId.size || 'N/A',
-                    unitPrice:    salePrice, // Show the actual price they pay
-                    oldPrice:     originalPrice,
-                    quantity:     item.quantity,
-                    totalPrice:   item.quantity * salePrice,
-                    stock:        item.productId.stock
-                };
-            }),
+            items: mappedItems,
             subtotal,
             discount,
             total,
@@ -180,39 +210,67 @@
 
             const product = item.productId;
 
+            let availableStock = product.stock;
+            let targetPrice = product.price || 0;
+            
+            if (item.variantId && product.variants && product.variants.length > 0) {
+                const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+                if (variant) {
+                    availableStock = variant.stock;
+                    targetPrice = variant.price || targetPrice;
+                }
+            }
+            let  MAX_QTY=10
+
             let newQty = item.quantity + change;
-
+          
             if (newQty < 1) newQty = 1;
-            if (newQty > MAX_QTY)
-                return res.json({ success: false, msg: `Max ${MAX_QTY}` });
 
-            if (newQty > product.stock)
-                return res.json({ success: false, msg: `Only ${product.stock} left` });
+            if (availableStock === 0) {
+                return res.json({ success: false, msg: "This item is currently sold out" });
+            }
+
+            if (change > 0 && newQty > MAX_QTY) {
+                return res.json({ success: false, msg: `Max ${MAX_QTY} allowed` });
+            }
+
+            if (change > 0 && newQty > availableStock) {
+                return res.json({ success: false, msg: `Only ${availableStock} left in stock` });
+            }
+           
+
 
             item.quantity = newQty;
 
+
             await cart.save();
 
-            // Re-calculate totals
+          
             const updatedCart = await Cart.findOne({ userId }).populate("items.productId");
             
-            const subtotal = updatedCart.items.reduce((sum, itm) => 
-                sum + (itm.quantity * (itm.productId?.price || 0)), 0
-            );
+            let finalSubtotal = 0;
+            let finalDiscount = 0;
+            
+            updatedCart.items.forEach(itm => {
+                const p = itm.productId;
+                if (!p) return;
+                let prc = p.price || 0;
+                if (itm.variantId && p.variants && p.variants.length > 0) {
+                    const v = p.variants.find(v => v._id.toString() === itm.variantId.toString());
+                    if (v && v.price) prc = v.price;
+                }
+                const dsc = p.discount || 0;
+                finalSubtotal += (prc * itm.quantity);
+                finalDiscount += (prc * (dsc / 100) * itm.quantity);
+            });
 
-            const discount = updatedCart.items.reduce((sum, itm) => {
-                const prc = itm.productId?.price || 0;
-                const dsc = itm.productId?.discount || 0;
-                return sum + (prc * (dsc / 100) * itm.quantity);
-            }, 0);
-
-            const total = subtotal - discount;
-            const salePrice = Math.round((product.price || 0) * (1 - (product.discount || 0) / 100));
+            const total = finalSubtotal - finalDiscount;
+            const salePrice = Math.round(targetPrice * (1 - (product.discount || 0) / 100));
             const itemTotal = item.quantity * salePrice;
 
             return res.json({ 
                 success: true, 
-                subtotal, 
+                subtotal: finalSubtotal, 
                 total, 
                 itemTotal,
                 quantity: item.quantity 

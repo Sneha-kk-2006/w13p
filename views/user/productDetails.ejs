@@ -148,7 +148,30 @@
         }
 
         .v-opt:hover { border-color: #000; }
-        .v-opt.active { border-color: #000; background: #000; color: #fff; }
+        .v-opt.active { border: 1.5px solid #000; background: #000; color: #fff; }
+
+        /* --- Colour + Size Selectors --- */
+        .selector-section { margin-bottom: 28px; }
+        .selector-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 14px; display: flex; gap: 6px; align-items: baseline; }
+        .selector-label span.val { font-weight: 400; color: #555; }
+
+        /* Colour swatches */
+        .colour-row { display: flex; gap: 10px; flex-wrap: wrap; }
+        .colour-swatch { width: 60px; height: 76px; border: 2px solid transparent; cursor: pointer; overflow: hidden; transition: 0.2s; position: relative; }
+        .colour-swatch img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .colour-swatch.active { border: 2px solid #000; }
+        .colour-swatch:hover { border-color: #555; }
+
+        /* Size boxes */
+        .size-row { display: flex; flex-wrap: wrap; gap: 8px; }
+        .size-box { min-width: 52px; padding: 11px 14px; border: 1px solid #ddd; text-align: center; font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: 0.2s; color: #000; user-select: none; }
+        .size-box:hover { border-color: #000; }
+        .size-box.active { border-color: #000; background: #000; color: #fff; }
+        .size-box.unavailable { border-color: #eee; color: #ccc; cursor: not-allowed; position: relative; }
+        .size-box.unavailable::after { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #ccc; transform: rotate(-15deg); }
+
+        .size-guide-link { display: none; }
+
 
         .btn-bag {
             width: 100%;
@@ -203,6 +226,21 @@
             .image-col { flex-direction: column-reverse; }
             .thumb-stack { flex-direction: row; width: 100%; }
         }
+        .main-img-box {
+    cursor: zoom-in;
+}
+
+.main-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform-origin: var(--zoom-x, 50%) var(--zoom-y, 50%);
+    transition: transform 0.1s ease-out;
+}
+
+.main-img-box:hover .main-img {
+    transform: scale(2);
+}
     </style>
 </head>
 <body>
@@ -214,7 +252,7 @@
             
             <!-- Images -->
             <div class="image-col">
-                <div class="thumb-stack">
+                <div class="thumb-stack" id="thumbStack">
                     <% 
                         const gallery = [...product.images];
                         if (product.variants) {
@@ -227,9 +265,14 @@
                         <img src="<%= img %>" class="thumb <%= i===0 ? 'active' : '' %>" onclick="changeImage('<%= img %>', this)">
                     <% }) %>
                 </div>
-                <div class="main-img-box" id="zoom-box">
-                    <img src="<%= gallery[0] || 'https://placehold.co/600x800?text=SNOVA' %>" alt="<%= product.name %>" id="main-view" class="main-img">
-                </div>
+                <div class="main-img-box" id="zoom-box"
+     onmousemove="handleZoom(event, this)"
+     onmouseleave="resetZoom(this)">
+    <img src="<%= gallery[0] || 'https://placehold.co/600x800?text=SNOVA' %>" 
+         alt="<%= product.name %>" 
+         id="main-view" 
+         class="main-img">
+</div>
             </div>
 
             <!-- Details -->
@@ -247,20 +290,71 @@
                 </div>
 
                 <% if (product.variants && product.variants.length > 0) { %>
-                    <span class="selector-label">Select Size / Color</span>
-                    <div class="variant-grid">
-                        <% const seen = new Set(); %>
-                        <% product.variants.forEach((v, idx) => { %>
-                            <% const key = `${v.size}-${v.color}`; %>
-                            <% if (!seen.has(key)) { seen.add(key); %>
-                                <div class="v-opt" onclick="selectVariant(<%= idx %>, this)">
-                                    <div class="font-bold"><%= v.size %></div>
-                                    <div class="text-[8px] opacity-60"><%= v.color %></div>
+                    <%
+                        // Group by color
+                        const colorMap = {};
+                        product.variants.forEach((v, idx) => {
+                            if (!colorMap[v.color]) colorMap[v.color] = { images: v.images || [], sizes: [] };
+                            colorMap[v.color].sizes.push({ size: v.size, stock: v.stock, idx });
+                        });
+                        const colorKeys = Object.keys(colorMap);
+                        const firstColor = colorKeys[0];
+                    %>
+
+                    <!-- COLOUR -->
+                    <div class="selector-section">
+                        <div class="selector-label">Colour: <span class="val" id="colourLabel"><%= firstColor %></span></div>
+                        <div class="colour-row">
+                            <% colorKeys.forEach((col, ci) => { %>
+                                <%
+                                    const swatchImg = colorMap[col].images[0] || product.images[0] || null;
+                                %>
+                                <div class="colour-swatch <%= ci === 0 ? 'active' : '' %>" 
+                                     data-color="<%= col %>"
+                                     onclick="selectColour(this, '<%= col %>')">
+                                    <% if (swatchImg) { %>
+                                        <img src="<%= swatchImg %>" alt="<%= col %>">
+                                    <% } else { %>
+                                        <div style="width:100%;height:100%;background:<%= col.toLowerCase() === 'white' ? '#f5f5f5' : (col.toLowerCase() === 'black' ? '#111' : col.toLowerCase()) %>"></div>
+                                    <% } %>
                                 </div>
-                            <% } %>
-                        <% }) %>
+                            <% }) %>
+                        </div>
                     </div>
+
+                    <!-- SIZE -->
+                    <div class="selector-section">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+                            <div class="selector-label" style="margin:0;">Size: <span class="val" id="sizeLabel">—</span></div>
+                        </div>
+                        <div class="size-row" id="sizeRow">
+                            <% colorMap[firstColor].sizes.forEach(s => { %>
+                                <div class="size-box <%= s.stock <= 0 ? 'unavailable' : '' %>" 
+                                     data-idx="<%= s.idx %>" 
+                                     data-stock="<%= s.stock %>"
+                                     data-size="<%= s.size %>"
+                                     onclick="<%= s.stock > 0 ? 'selectSize(this)' : '' %>">
+                                    <%= s.size %>
+                                </div>
+                            <% }) %>
+                        </div>
+                    </div>
+
                     <input type="hidden" id="selected-v" value="">
+
+                    <!-- Hidden: full variant data for JS -->
+                    <script>
+                        const variantColorMap = <%- JSON.stringify(
+                            Object.fromEntries(
+                                Object.entries(colorMap).map(([col, data]) => [
+                                    col, {
+                                        images: data.images,
+                                        sizes: data.sizes
+                                    }
+                                ])
+                            )
+                        ) %>;
+                    </script>
                 <% } %>
 
                 <p class="p-desc"><%= product.description %></p>
@@ -279,43 +373,49 @@
             </div>
         </div>
 
-        <!-- Related Selection -->
+
+        <!-- Related Products — Zara Style -->
         <% if (relatedProducts && relatedProducts.length > 0) { %>
-            <div class="section-separator">
-                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 40px;">
-                    <div>
-                        <h3 class="related-title" style="margin-bottom: 5px;">Match With</h3>
-                        <p style="font-size: 0.55rem; text-transform: uppercase; letter-spacing: 2px; color: #999;">Curated Selections From the Same Category</p>
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-16">
-                    <% relatedProducts.forEach(item => { %>
-                        <a href="/product/<%= item._id %>" class="block group">
-                            <div class="aspect-[3/4] overflow-hidden mb-5 bg-gray-50">
-                                <% 
-                                    let displayImg = '';
-                                    if (item.images && item.images[0] && item.images[0] !== '') {
-                                        displayImg = item.images[0];
-                                    } else if (item.variants && item.variants.length > 0) {
-                                        const varWithImg = item.variants.find(v => v.images && v.images[0]);
-                                        if (varWithImg) displayImg = varWithImg.images[0];
-                                    }
-                                    if(!displayImg) displayImg = 'https://placehold.co/600x800?text=SNOVA';
-                                %>
-                                <img src="<%= displayImg %>" alt="<%= item.name %>" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out" onerror="this.src='https://placehold.co/600x800?text=SNOVA'">
+        <div style="border-top: 0.5px solid #eee; padding-top: 60px; margin-top: 70px;">
+
+            <p style="font-size: 0.58rem; text-transform: uppercase; letter-spacing: 3px; font-weight: 700; color: #b8a06a; margin-bottom: 30px;">You May Be Interested In</p>
+
+            <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; align-items: start;">
+                <% relatedProducts.forEach(item => { %>
+                    <%
+                        let displayImg = '';
+                        if (item.images && item.images[0] && item.images[0] !== '') {
+                            displayImg = item.images[0];
+                        } else if (item.variants && item.variants.length > 0) {
+                            const varWithImg = item.variants.find(v => v.images && v.images[0]);
+                            if (varWithImg) displayImg = varWithImg.images[0];
+                        }
+                        if (!displayImg) displayImg = 'https://placehold.co/300x400?text=SNOVA';
+                    %>
+                    <div style="position: relative;">
+                        <a href="/product/<%= item._id %>" style="text-decoration: none; display: block;">
+                            <div style="width: 100%; height: 260px; overflow: hidden; background: #f4f4f4; margin-bottom: 10px;">
+                                <img src="<%= displayImg %>" 
+                                     alt="<%= item.name %>"
+                                     onerror="this.src='https://placehold.co/300x400?text=SNOVA'"
+                                     style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; display: block;">
                             </div>
-                            <div class="flex justify-between items-start">
-                                <div style="max-width: 80%;">
-                                    <span style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; display: block; margin-bottom: 4px; color: #000;"><%= item.name %></span>
-                                    <span style="font-size: 0.55rem; text-transform: uppercase; letter-spacing: 1px; color: #999;"><%= item.category ? item.category.name : 'Category' %></span>
-                                </div>
-                                <span style="font-size: 0.75rem; font-weight: 500; color: #000;">₹<%= item.price.toLocaleString('en-IN') %></span>
+                            <div style="padding: 0 2px;">
+                                <p style="font-size: 0.7rem; font-weight: 500; color: #333; margin-bottom: 4px;">
+                                    ₹ <%= item.price.toLocaleString('en-IN') %>
+                                </p>
+                                <p style="font-size: 0.6rem; font-weight: 400; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                                    <%= item.name %>
+                                </p>
                             </div>
                         </a>
-                    <% }) %>
-                </div>
+                        <button onclick="quickAdd('<%= item._id %>')"
+                                style="display: block; background: none; border: none; cursor: pointer; font-size: 1rem; color: #555; padding: 0 2px; line-height: 1; transition: color 0.2s;"
+                                onmouseover="this.style.color='#000'" onmouseout="this.style.color='#555'">+</button>
+                    </div>
+                <% }) %>
             </div>
+        </div>
         <% } %>
     </div>
 
@@ -341,10 +441,51 @@
         }
 
         const variants = <%- JSON.stringify(product.variants || []) %>;
-        function selectVariant(idx, el) {
-            document.querySelectorAll('.v-opt').forEach(o => o.classList.remove('active'));
+        const allProductImages = <%- JSON.stringify(product.images || []) %>;
+
+        function selectColour(el, color) {
+            // Activate swatch
+            document.querySelectorAll('.colour-swatch').forEach(s => s.classList.remove('active'));
             el.classList.add('active');
-            document.getElementById('selected-v').value = variants[idx]._id;
+            // Update label
+            document.getElementById('colourLabel').textContent = color;
+            // Reset size selection
+            document.getElementById('selected-v').value = '';
+            document.getElementById('sizeLabel').textContent = '\u2014';
+            // Rebuild size row
+            const sizeRow = document.getElementById('sizeRow');
+            const data = variantColorMap[color];
+            sizeRow.innerHTML = '';
+            (data.sizes || []).forEach(s => {
+                const box = document.createElement('div');
+                box.className = 'size-box' + (s.stock <= 0 ? ' unavailable' : '');
+                box.dataset.idx = s.idx;
+                box.dataset.stock = s.stock;
+                box.dataset.size = s.size;
+                box.textContent = s.size;
+                if (s.stock > 0) box.onclick = () => selectSize(box);
+                sizeRow.appendChild(box);
+            });
+            // Rebuild left gallery with this color's images
+            const imgs = (data.images && data.images.length > 0) ? data.images : allProductImages;
+            const thumbStack = document.getElementById('thumbStack');
+            const mainView = document.getElementById('main-view');
+            thumbStack.innerHTML = '';
+            imgs.forEach((src, i) => {
+                const img = document.createElement('img');
+                img.src = src;
+                img.className = 'thumb' + (i === 0 ? ' active' : '');
+                img.onclick = () => changeImage(src, img);
+                thumbStack.appendChild(img);
+            });
+            mainView.src = imgs[0];
+        }
+
+        function selectSize(el) {
+            document.querySelectorAll('.size-box').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('sizeLabel').textContent = el.dataset.size;
+            document.getElementById('selected-v').value = variants[el.dataset.idx]._id;
         }
 
         async function addToCart(productId) {
@@ -377,6 +518,49 @@
                 }
             } catch (err) { console.error(err); }
         }
+
+        // Quick add from related products grid
+        async function quickAdd(productId) {
+            try {
+                const res = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productId, variantId: null })
+                });
+                const data = await res.json();
+                showToast(data.success ? 'Added to bag ✓' : (data.msg || 'Please select a variant on product page'));
+            } catch (err) {
+                showToast('Something went wrong');
+            }
+        }
+         
+
+       function handleZoom(e, box) {
+    const rect = box.getBoundingClientRect();
+    const x = ((e.clientX - rect.left) / rect.width) * 100;
+    const y = ((e.clientY - rect.top) / rect.height) * 100;
+    const img = box.querySelector('.main-img');
+    img.style.transformOrigin = `${x}% ${y}%`;
+    img.style.transform = 'scale(2)';
+}
+
+function resetZoom(box) {
+    const img = box.querySelector('.main-img');
+    img.style.transform = 'scale(1)';
+    img.style.transformOrigin = '50% 50%';
+}
+
+
+
+
+
+
+
+        // Hover scale on related product images
+        document.querySelectorAll('.rel-img').forEach(img => {
+            img.parentElement.addEventListener('mouseenter', () => img.style.transform = 'scale(1.04)');
+            img.parentElement.addEventListener('mouseleave', () => img.style.transform = 'scale(1)');
+        });
     </script>
 </body>
 </html>
