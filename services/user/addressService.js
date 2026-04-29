@@ -40,13 +40,33 @@ const addAddressService = async (data, userId) => {
     return { success: false, redirect: "/login" };
   }
 
-  if (!fullName || !phone || !addressline1 || !city || !state || !pincode) {
+  const trimmedName = fullName.trim();
+  if (!trimmedName || !phone || !addressline1 || !city || !state || !pincode) {
     return { success: false, message: "Required fields missing" };
+  }
+
+  const nameRegex = /^[a-zA-Z\s]{3,50}$/;
+  const phoneRegex = /^[6-9]\d{9}$/;
+  const pincodeRegex = /^\d{6}$/;
+
+  if (!nameRegex.test(trimmedName) || trimmedName.length < 3) {
+    console.log("Validation failed: Invalid name (too short or contains numbers/symbols)", fullName);
+    return { success: false, message: "Invalid name. Use only letters (min 3 chars)." };
+  }
+
+  if (!phoneRegex.test(phone)) {
+    console.log("Validation failed: Invalid phone", phone);
+    return { success: false, message: "Invalid phone number. Must be 10 digits starting with 6-9." };
+  }
+
+  if (!pincodeRegex.test(pincode)) {
+    console.log("Validation failed: Invalid pincode", pincode);
+    return { success: false, message: "Invalid pincode. Must be exactly 6 digits." };
   }
 
   await addressRepository.createAddress({
     userId,
-    fullName,
+    fullName: trimmedName,
     phone,
     type,
     addressline1,
@@ -101,12 +121,32 @@ const updateAddressService = async (data, userId) => {
     redirect = "/address"
   } = data;
 
-  if (!fullName || !phone || !addressline1 || !city || !state || !pincode) {
+  const trimmedName = fullName.trim();
+  if (!trimmedName || !phone || !addressline1 || !city || !state || !pincode) {
     return { success: false, message: "Required fields missing" };
   }
 
+  const nameRegex = /^[a-zA-Z\s]{3,50}$/;
+  const phoneRegex = /^[6-9]\d{9}$/;
+  const pincodeRegex = /^\d{6}$/;
+
+  if (!nameRegex.test(trimmedName) || trimmedName.length < 3) {
+    console.log("Validation failed: Invalid name (too short or contains numbers/symbols)", fullName);
+    return { success: false, message: "Invalid name. Use only letters (min 3 chars)." };
+  }
+
+  if (!phoneRegex.test(phone)) {
+    console.log("Validation failed: Invalid phone", phone);
+    return { success: false, message: "Invalid phone number. Must be 10 digits starting with 6-9." };
+  }
+
+  if (!pincodeRegex.test(pincode)) {
+    console.log("Validation failed: Invalid pincode", pincode);
+    return { success: false, message: "Invalid pincode. Must be exactly 6 digits." };
+  }
+
   const updatedAddress = await addressRepository.updateByIdAndUser(id, userId, {
-    fullName,
+    fullName: trimmedName,
     phone,
     type,
     addressline1,

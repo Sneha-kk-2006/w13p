@@ -62,6 +62,52 @@
     .status-shipped { background: #e5f1ff; color: #0066cc; }
     .status-delivered { background: #e6fffa; color: #008767; }
     .status-cancelled { background: #ffe5e5; color: #cc0000; }
+    .status-return-requested { background: #fff8e1; color: #ff8f00; }
+    .status-returned { background: #e8f5e9; color: #2e7d32; }
+    .status-return-rejected { background: #ffebee; color: #c62828; }
+
+    .btn-download-invoice {
+        width: 100%;
+        padding: 14px;
+        background-color: #000;
+        color: #fff;
+        border: 1px solid #000;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 10px;
+        cursor: pointer;
+        transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        text-decoration: none;
+    }
+
+    .btn-download-invoice:hover {
+        background-color: #333;
+    }
+
+    .btn-return-order {
+        width: 100%;
+        padding: 14px;
+        background-color: transparent;
+        color: #ff8f00;
+        border: 1px solid #ff8f00;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-return-order:hover {
+        background-color: #fff8e1;
+    }
 
     .details-grid {
         display: grid;
@@ -147,6 +193,23 @@
         color: var(--primary);
         display: block;
         margin-bottom: 4px;
+    .btn-cancel-order {
+        width: 100%;
+        padding: 14px;
+        background-color: transparent;
+        color: #cc0000;
+        border: 1px solid #cc0000;
+        border-radius: 8px;
+        font-weight: 600;
+        margin-top: 20px;
+        cursor: pointer;
+        transition: 0.3s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-cancel-order:hover {
+        background-color: #ffe5e5;
     }
 </style>
 
@@ -168,7 +231,7 @@
     </div>
 
     <!-- Status Tracker -->
-    <% if (order.orderStatus !== 'Cancelled' && order.orderStatus !== 'Returned') { %>
+    <% if (!['Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus)) { %>
         <% 
             const statuses = ['Pending', 'Shipped', 'Out for Delivery', 'Delivered'];
             const currentIndex = statuses.indexOf(order.orderStatus);
@@ -304,7 +367,25 @@
                         <% } %>
                         <div class="item-info">
                             <h4><%= item.product ? item.product.name : 'Product Removed' %></h4>
-                            <p>Quantity: <%= item.quantity %></p>
+                            <% 
+                                let itemSize = '';
+                                let itemColor = '';
+                                if (item.variantId && item.product && item.product.variants) {
+                                    const variant = item.product.variants.find(v => v._id.toString() === item.variantId.toString());
+                                    if (variant) {
+                                        itemSize = variant.size;
+                                        itemColor = variant.color;
+                                    }
+                                }
+                            %>
+                            <p style="margin-bottom: 4px;">Quantity: <%= item.quantity %></p>
+                            <% if (itemSize || itemColor) { %>
+                                <p style="margin-bottom: 4px; font-size: 0.85rem;">
+                                    <% if (itemSize) { %>Size: <strong><%= itemSize %></strong><% } %>
+                                    <% if (itemSize && itemColor) { %> | <% } %>
+                                    <% if (itemColor) { %>Color: <strong><%= itemColor %></strong><% } %>
+                                </p>
+                            <% } %>
                             <p style="font-weight: 600; color: var(--primary); margin-top: 8px;">₹<%= item.price %></p>
                         </div>
                     </div>
@@ -350,9 +431,141 @@
                     <span>Total</span>
                     <span>₹<%= order.totalPrice %></span>
                 </div>
+                <% if (order.orderStatus === 'Pending') { %>
+                    <button class="btn-cancel-order" onclick="promptCancelOrder('<%= order._id %>')">Cancel Order</button>
+                <% } else if (order.orderStatus === 'Delivered') { %>
+                    <button class="btn-return-order" onclick="promptReturnOrder('<%= order._id %>')">Return Order</button>
+                    <a href="/order/invoice/<%= order._id %>" class="btn-download-invoice">
+                        <i class="fas fa-file-pdf"></i> Download Invoice
+                    </a>
+                <% } %>
             </div>
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+function promptCancelOrder(orderId) {
+    Swal.fire({
+        title: 'Cancel Order',
+        text: 'Please select a reason for cancellation:',
+        input: 'select',
+        inputOptions: {
+            'Changed my mind': 'Changed my mind',
+            'Found a better price': 'Found a better price',
+            'Ordered by mistake': 'Ordered by mistake',
+            'Delivery takes too long': 'Delivery takes too long',
+            'Other': 'Other'
+        },
+        inputPlaceholder: 'Select a reason',
+        showCancelButton: true,
+        confirmButtonText: 'Confirm Cancellation',
+        cancelButtonText: 'Keep Order',
+        confirmButtonColor: '#000',
+        cancelButtonColor: '#999',
+        inputValidator: (value) => {
+            return new Promise((resolve) => {
+                if (value) {
+                    resolve();
+                } else {
+                    resolve('You need to select a reason');
+                }
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            cancelOrderRequest(orderId, result.value);
+        }
+    });
+}
+
+async function cancelOrderRequest(orderId, reason) {
+    try {
+        const res = await fetch(`/order/cancel/${orderId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            Swal.fire({
+                title: 'Cancelled',
+                text: 'Your order has been cancelled.',
+                icon: 'success',
+                confirmButtonColor: '#000'
+            }).then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire('Error', data.message || 'Something went wrong', 'error');
+        }
+    } catch(err) {
+        console.error(err);
+        Swal.fire('Error', 'Server error. Please try again later.', 'error');
+    }
+}
+function promptReturnOrder(orderId) {
+    Swal.fire({
+        title: 'Return Order',
+        text: 'Please select a reason for return:',
+        input: 'select',
+        inputOptions: {
+            'Defective product': 'Defective product',
+            'Wrong item received': 'Wrong item received',
+            'Product not as described': 'Product not as described',
+            'Quality issues': 'Quality issues',
+            'Other': 'Other'
+        },
+        inputPlaceholder: 'Select a reason',
+        showCancelButton: true,
+        confirmButtonText: 'Submit Request',
+        cancelButtonText: 'Cancel',
+        confirmButtonColor: '#ff8f00',
+        cancelButtonColor: '#999',
+        inputValidator: (value) => {
+            return new Promise((resolve) => {
+                if (value) {
+                    resolve();
+                } else {
+                    resolve('You need to select a reason');
+                }
+            });
+        }
+    }).then((result) => {
+        if (result.isConfirmed) {
+            returnOrderRequest(orderId, result.value);
+        }
+    });
+}
+
+async function returnOrderRequest(orderId, reason) {
+    try {
+        const res = await fetch(`/order/return/${orderId}`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ reason })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+            Swal.fire({
+                title: 'Requested',
+                text: 'Your return request has been submitted.',
+                icon: 'success',
+                confirmButtonColor: '#000'
+            }).then(() => {
+                location.reload();
+            });
+        } else {
+            Swal.fire('Error', data.message || 'Something went wrong', 'error');
+        }
+    } catch(err) {
+        console.error(err);
+        Swal.fire('Error', 'Server error. Please try again later.', 'error');
+    }
+}
+</script>
 
 <%- include("../partials/user/footer") %>

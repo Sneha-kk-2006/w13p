@@ -57,8 +57,6 @@ const updateOrderStatus = async (req, res) => {
     if (!order) {
       return res.status(404).json({ success: false, message: "Order not found" });
     }
-
-    // Logic: Prevent regression from terminal statuses
     if (order.orderStatus === "Delivered" && (status === "Pending" || status === "Shipped")) {
       return res.status(400).json({ success: false, message: "A delivered order cannot be set back to pending or shipped." });
     }
@@ -67,6 +65,23 @@ const updateOrderStatus = async (req, res) => {
     }
     if (order.orderStatus === "Returned" && status !== "Returned") {
       return res.status(400).json({ success: false, message: "A returned order cannot be changed to another status." });
+    }
+
+    if (status === "Returned" && order.orderStatus !== "Returned") {
+      for (const item of order.orderItems) {
+        const product = await Product.findById(item.product);
+        if (product) {
+          if (item.variantId && product.variants && product.variants.length > 0) {
+            const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+            if (variant) {
+              variant.stock += item.quantity;
+            }
+          } else {
+            product.stock += item.quantity;
+          }
+          await product.save();
+        }
+      }
     }
 
     order.orderStatus = status;

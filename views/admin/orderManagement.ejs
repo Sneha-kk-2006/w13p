@@ -168,6 +168,9 @@
         .status-delivered { background: #f0fff4; color: #2f855a; }
         .status-cancelled { background: #fff5f5; color: #c53030; }
         .status-out-for-delivery { background: #ebf8ff; color: #2b6cb0; }
+        .status-return-requested { background: #fffaf0; color: #dd6b20; }
+        .status-returned { background: #f0fff4; color: #2f855a; }
+        .status-return-rejected { background: #fff5f5; color: #c53030; }
 
         .status-select {
             padding: 5px;
@@ -267,6 +270,9 @@
                     <option value="Out for Delivery" <%= filterStatus === 'Out for Delivery' ? 'selected' : '' %>>Out for Delivery</option>
                     <option value="Delivered" <%= filterStatus === 'Delivered' ? 'selected' : '' %>>Delivered</option>
                     <option value="Cancelled" <%= filterStatus === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                    <option value="Return Requested" <%= filterStatus === 'Return Requested' ? 'selected' : '' %>>Return Requested</option>
+                    <option value="Returned" <%= filterStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                    <option value="Return Rejected" <%= filterStatus === 'Return Rejected' ? 'selected' : '' %>>Return Rejected</option>
                 </select>
 
                 <select name="sort" class="filter-select" onchange="this.form.submit()">
@@ -306,13 +312,20 @@
                                 <td style="font-weight: 600;">₹<%= order.totalPrice.toLocaleString() %></td>
                                 <td>
                                     <select class="status-select" onchange="updateStatus('<%= order.orderId %>', this.value)">
-                                        <option value="Pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %> <%= order.orderStatus === 'Delivered' || order.orderStatus === 'Cancelled' ? 'disabled' : '' %>>Pending</option>
-                                        <option value="Shipped" <%= order.orderStatus === 'Shipped' ? 'selected' : '' %> <%= order.orderStatus === 'Delivered' || order.orderStatus === 'Cancelled' ? 'disabled' : '' %>>Shipped</option>
-                                        <option value="Out for Delivery" <%= order.orderStatus === 'Out for Delivery' ? 'selected' : '' %> <%= order.orderStatus === 'Delivered' || order.orderStatus === 'Cancelled' ? 'disabled' : '' %>>Out for Delivery</option>
-                                        <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : '' %> <%= order.orderStatus === 'Cancelled' ? 'disabled' : '' %>>Delivered</option>
-                                        <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : '' %> <%= order.orderStatus === 'Delivered' ? 'disabled' : '' %>>Cancelled</option>
-                                        <% if (order.orderStatus === 'Delivered') { %>
-                                            <option value="Returned" <%= order.orderStatus === 'Returned' ? 'selected' : '' %>>Returned</option>
+                                        <option value="Pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Pending</option>
+                                        <option value="Shipped" <%= order.orderStatus === 'Shipped' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Shipped</option>
+                                        <option value="Out for Delivery" <%= order.orderStatus === 'Out for Delivery' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Out for Delivery</option>
+                                        <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : '' %> <%= ['Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Delivered</option>
+                                        <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : '' %> <%= ['Delivered', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Cancelled</option>
+                                        
+                                        <% if (order.orderStatus === 'Return Requested') { %>
+                                            <option value="Return Requested" selected disabled>Return Requested</option>
+                                            <option value="Returned">Approve Return</option>
+                                            <option value="Return Rejected">Reject Return</option>
+                                        <% } else if (order.orderStatus === 'Returned') { %>
+                                            <option value="Returned" selected disabled>Returned</option>
+                                        <% } else if (order.orderStatus === 'Return Rejected') { %>
+                                            <option value="Return Rejected" selected disabled>Return Rejected</option>
                                         <% } %>
                                     </select>
                                 </td>

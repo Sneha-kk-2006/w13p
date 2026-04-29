@@ -96,9 +96,27 @@
             color: #000;
         }
 
+        .btn-clear {
+            background: transparent;
+            color: #cc0000;
+            border: 1px solid #cc0000;
+            padding: 8px 16px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-clear:hover {
+            background: #ffe5e5;
+        }
+
         @media (max-width: 768px) {
             .dashboard-container { flex-direction: column; }
             .orders-table th:nth-child(3), .orders-table td:nth-child(3) { display: none; }
+            .page-header-container { flex-direction: column; gap: 20px; align-items: flex-start !important; }
         }
     </style>
 </head>
@@ -111,7 +129,12 @@
         <%- include('../partials/user/sidebar', { activePage: 'orders' }) %>
 
         <main class="main-content">
-            <h1 class="page-title">MY ORDERS</h1>
+            <div class="page-header-container" style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 50px;">
+                <h1 class="page-title" style="margin-bottom: 0;">MY ORDERS</h1>
+                <% if (orders && orders.length > 0) { %>
+                    <button class="btn-clear" onclick="clearOrderHistory()">Clear History</button>
+                <% } %>
+            </div>
 
             <% if (orders && orders.length > 0) { %>
                 <table class="orders-table">
@@ -137,7 +160,12 @@
                                     </span>
                                 </td>
                                 <td style="font-weight: 600;">₹<%= order.totalPrice %></td>
-                                <td style="text-align: right;">
+                                <td style="text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 15px;">
+                                    <% if (order.orderStatus === 'Delivered') { %>
+                                        <a href="/order/invoice/<%= order._id %>" title="Download Invoice" style="color: #000; font-size: 0.9rem;">
+                                            <i class="fa-solid fa-file-pdf"></i>
+                                        </a>
+                                    <% } %>
                                     <a href="/order-details/<%= order._id %>" class="view-link">View Details</a>
                                 </td>
                             </tr>
@@ -156,5 +184,44 @@
 
     <%- include('../partials/user/footer') %>
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function clearOrderHistory() {
+            Swal.fire({
+                title: 'Clear Order History?',
+                text: "This will permanently remove all orders from your history. You won't be able to view them again.",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#cc0000',
+                cancelButtonColor: '#999',
+                confirmButtonText: 'Yes, clear it!'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const response = await fetch('/orders/clear', {
+                            method: 'DELETE',
+                            headers: { 'Content-Type': 'application/json' }
+                        });
+                        const data = await response.json();
+                        
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Cleared!',
+                                text: 'Your order history has been deleted.',
+                                icon: 'success',
+                                confirmButtonColor: '#000'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Error', data.message || 'Could not clear history', 'error');
+                        }
+                    } catch (error) {
+                        Swal.fire('Error', 'An unexpected error occurred', 'error');
+                    }
+                }
+            });
+        }
+    </script>
 </body>
 </html>

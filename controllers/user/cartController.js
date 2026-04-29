@@ -30,6 +30,12 @@
             }
             const userId = req.session.user._id;
             const { productId, variantId } = req.body;
+          
+
+        if(!variantId){
+       
+              return res.json({success:false,msg:"please select a size "})
+        }
 
             const { ok, msg, product } = await validateProduct(productId);
             if (!ok) return res.json({ success: false, msg });
@@ -101,6 +107,7 @@
     const getcart = async (req, res) => {
     try {
         const userId = req.session?.user?._id;
+        
 
         if (!userId) {
             return res.redirect('/login');
@@ -116,7 +123,8 @@
                 items: [],
                 subtotal: 0,
                 discount: 0,
-                total: 0
+                total: 0,
+               
             });
         }
 
@@ -134,7 +142,8 @@
 
         let subtotal = 0;
         let discount = 0;
-        
+        let hasSoldOutitem=false;
+
         const mappedItems = cartData.items.map(item => {
             const product = item.productId;
             let targetPrice = product.price || 0;
@@ -142,6 +151,7 @@
             let targetSize = product.size || 'N/A';
             let targetStock = product.stock || 0;
             let targetImage = product.images?.[0] || '';
+            let isSoldOut=false;
 
             if (item.variantId && product.variants && product.variants.length > 0) {
                 const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
@@ -153,6 +163,15 @@
                     if (variant.images && variant.images.length > 0) {
                         targetImage = variant.images[0];
                     }
+                    if(variant.stock<=0||variant.stock<item.quantity){
+                      isSoldOut=true;
+                      hasSoldOutitem=true;
+                    }
+                }
+            }else{
+                if(product.stock<=0||product.stock<item.quantity){
+                      isSoldOut=true;
+                      hasSoldOutitem=true;
                 }
             }
 
@@ -165,6 +184,8 @@
             subtotal += itemSubtotal;
             discount += itemDiscount;
 
+
+
             return {
                 _id:          item._id,
                 productId:    product._id,
@@ -176,18 +197,22 @@
                 oldPrice:     targetPrice,
                 quantity:     item.quantity,
                 totalPrice:   item.quantity * salePrice,
-                stock:        targetStock
+                stock:        targetStock,
+                isSoldOut,
+            
             };
         });
 
         const total = subtotal - discount;
-
+        
         res.render('user/cart', {
             items: mappedItems,
             subtotal,
             discount,
             total,
-            MAX_QTY
+            MAX_QTY,
+            hasSoldOutitem,
+           
         });
 
     } catch (error) {

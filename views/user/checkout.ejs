@@ -237,6 +237,22 @@
     .checkout-section {
         animation: fadeIn 0.6s ease-out forwards;
     }
+
+    /* Zara Style Notifications */
+    .zara-toast {
+        background: #000 !important;
+        color: #fff !important;
+        border-radius: 0 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.65rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 2px !important;
+        padding: 15px 40px !important;
+        width: auto !important;
+        max-width: 600px !important;
+        margin-top: 20px !important;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
+    }
 </style>
 
 <div class="checkout-container">
@@ -358,34 +374,34 @@
             
             <div style="margin-bottom: 16px;">
                 <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Full Name</label>
-                <input type="text" name="fullName" id="addrFullName" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                <input type="text" name="fullName" id="addrFullName"  style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
             </div>
             <div style="margin-bottom: 16px;">
                 <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Phone</label>
-                <input type="text" name="phone" id="addrPhone" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                <input type="text" name="phone" id="addrPhone"  style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
             </div>
             <div style="margin-bottom: 16px;">
                 <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Address Line</label>
-                <input type="text" name="addressline1" id="addrLine1" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                <input type="text" name="addressline1" id="addrLine1" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                 <div>
                     <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">City</label>
-                    <input type="text" name="city" id="addrCity" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <input type="text" name="city" id="addrCity"  style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
                 </div>
                 <div>
                     <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">State</label>
-                    <input type="text" name="state" id="addrState" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <input type="text" name="state" id="addrState"  style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
                 </div>
             </div>
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px;">
                 <div>
                     <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Pincode</label>
-                    <input type="text" name="pincode" id="addrPincode" required style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <input type="text" name="pincode" id="addrPincode" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
                 </div>
                 <div>
                     <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px;">Country</label>
-                    <input type="text" name="country" id="addrCountry" required value="India" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <input type="text" name="country" id="addrCountry"value="India" style="width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px;">
                 </div>
             </div>
             
@@ -445,29 +461,57 @@
         btn.innerText = 'Saving...';
 
         try {
-            // Using a simple fetch here. 
-            // Note: Our controller currently redirects. We should either handle redirect or update controller to return JSON.
-            // For now, we'll let it redirect back to checkout.
-            
-            const searchParams = new URLSearchParams(data);
-            searchParams.append('redirect', '/checkout');
-            
-            // We use standard form submission to leverage existing controller logic easily
-            const tempForm = document.createElement('form');
-            tempForm.method = 'POST';
-            tempForm.action = url;
-            for (const [key, value] of searchParams) {
-                const input = document.createElement('input');
-                input.type = 'hidden';
-                input.name = key;
-                input.value = value;
-                tempForm.appendChild(input);
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+                Swal.fire({
+                    text: result.message || 'ADDRESS SAVED',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 2000,
+                    background: '#000',
+                    color: '#fff',
+                    customClass: { popup: 'zara-toast' }
+                }).then(() => {
+                    location.reload();
+                });
+            } else {
+                Swal.fire({
+                    text: result.message || 'FAILED TO SAVE ADDRESS',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: '#000',
+                    color: '#fff',
+                    customClass: { popup: 'zara-toast' }
+                });
+                btn.disabled = false;
+                btn.innerText = 'Save Address';
             }
-            document.body.appendChild(tempForm);
-            tempForm.submit();
 
         } catch (error) {
             console.error('Error:', error);
+            Swal.fire({
+                text: 'AN UNEXPECTED ERROR OCCURRED',
+                toast: true,
+                position: 'top',
+                showConfirmButton: false,
+                timer: 3000,
+                background: '#000',
+                color: '#fff',
+                customClass: { popup: 'zara-toast' }
+            });
             btn.disabled = false;
             btn.innerText = 'Save Address';
         }
@@ -476,17 +520,21 @@
     async function handlePlaceOrder() {
         if (!selectedAddressId) {
             Swal.fire({
-                icon: 'warning',
-                title: 'No Address Selected',
-                text: 'Please select a shipping address before placing your order.',
-                confirmButtonColor: '#1a1a1a'
+                text: 'PLEASE SELECT A SHIPPING ADDRESS',
+                toast: true,
+                position: 'top',
+                showConfirmButton: false,
+                timer: 3000,
+                background: '#000',
+                color: '#fff',
+                customClass: { popup: 'zara-toast' }
             });
             return;
         }
 
         const btn = document.getElementById('placeOrderBtn');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        btn.innerHTML = 'PROCESSING...';
 
         try {
             const response = await fetch('/checkout/place-order', {
@@ -502,34 +550,46 @@
 
             if (result.success) {
                 Swal.fire({
-                    icon: 'success',
-                    title: 'Order Placed!',
-                    text: 'Your order has been successfully placed.',
+                    text: 'ORDER PLACED SUCCESSFULLY',
+                    toast: true,
+                    position: 'top',
                     showConfirmButton: false,
-                    timer: 2000
+                    timer: 2000,
+                    background: '#000',
+                    color: '#fff',
+                    customClass: { popup: 'zara-toast' },
+                    showClass: { popup: 'animate__animated animate__fadeInDown' }
                 }).then(() => {
                     window.location.href = `/checkout/success/${result.orderId}`;
                 });
             } else {
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Order Failed',
-                    text: result.message || 'Something went wrong. Please try again.',
-                    confirmButtonColor: '#1a1a1a'
+                    text: result.message || 'ORDER FAILED',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: '#000',
+                    color: '#fff',
+                    customClass: { popup: 'zara-toast' }
                 });
                 btn.disabled = false;
-                btn.innerHTML = 'Place Order (COD)';
+                btn.innerHTML = 'PLACE ORDER (COD)';
             }
         } catch (error) {
             console.error('Error:', error);
             Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'An unexpected error occurred.',
-                confirmButtonColor: '#1a1a1a'
+                text: 'AN UNEXPECTED ERROR OCCURRED',
+                toast: true,
+                position: 'top',
+                showConfirmButton: false,
+                timer: 3000,
+                background: '#000',
+                color: '#fff',
+                customClass: { popup: 'zara-toast' }
             });
             btn.disabled = false;
-            btn.innerHTML = 'Place Order (COD)';
+            btn.innerHTML = 'PLACE ORDER (COD)';
         }
     }
 </script>

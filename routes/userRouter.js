@@ -81,7 +81,10 @@ router.post('/checkout/place-order', userAuth, orderController.placeOrder);
 router.get('/checkout/success/:id', userAuth, orderController.loadOrderSuccess);
 router.get('/order-details/:id', userAuth, orderController.loadOrderDetails);
 router.get('/orders', userAuth, orderController.loadOrders);
-
+router.post('/order/cancel/:orderId', userAuth, orderController.cancelOrder);
+router.post('/order/return/:orderId', userAuth, orderController.returnOrder);
+router.get('/order/invoice/:orderId', userAuth, orderController.downloadInvoice);
+router.delete('/orders/clear', userAuth, orderController.clearAllOrders);
 
 
 

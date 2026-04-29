@@ -170,14 +170,12 @@
             text-transform: uppercase;
         }
 
-        .error-msg {
-            font-size: 0.55rem;
-            color: #d32f2f;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: -10px;
-            margin-bottom: 15px;
-            display: block;
+        .zara-toast {
+            border-radius: 4px !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.75rem !important;
+            letter-spacing: 0.5px !important;
+            padding: 12px 20px !important;
         }
 
         @media (max-width: 768px) {
@@ -237,34 +235,19 @@
         <div class="modal-box">
             <h3 class="flex justify-between items-center"><span id="modalTitle">ADDRESS DETAILS</span> <span onclick="closeModal()" class="cursor-pointer text-xl font-sans">&times;</span></h3>
             
-            <form id="addressForm" action="/addAddress" method="POST" class="modal-form">
+            <form id="addressForm" class="modal-form">
                 <input type="hidden" name="id" id="addressId">
 
                 <input type="text" name="type" id="type" placeholder="Type (Home / Work)">
-                <span class="error-msg" id="typeError"></span>
-
                 <input type="text" name="fullName" id="fullName" placeholder="Full Name">
-                <span class="error-msg" id="nameError"></span>
-
                 <input type="text" name="phone" id="phone" placeholder="Phone Number">
-                <span class="error-msg" id="phoneError"></span>
-
                 <textarea name="addressline1" id="addressline1" placeholder="Address Line 1" rows="1"></textarea>
-                <span class="error-msg" id="addressError"></span>
-
                 <input type="text" name="city" id="city" placeholder="City">
-                <span class="error-msg" id="cityError"></span>
-
                 <input type="text" name="state" id="state" placeholder="State">
-                <span class="error-msg" id="stateError"></span>
-
                 <input type="text" name="country" id="country" placeholder="Country">
-                <span class="error-msg" id="countryError"></span>
-
                 <input type="text" name="pincode" id="pincode" placeholder="Pincode">
-                <span class="error-msg" id="pincodeError"></span>
 
-                <button type="submit" class="btn-add-minimal w-full">Save Address</button>
+                <button type="submit" id="submitBtn" class="btn-add-minimal w-full">Save Address</button>
             </form>
         </div>
     </div>
@@ -297,19 +280,72 @@
 
         function closeModal() { document.getElementById("addressModal").style.display = "none"; }
 
-        document.getElementById("addressForm").addEventListener("submit", function(e) {
-            let valid = true;
-            document.querySelectorAll(".error-msg").forEach(el => el.innerText = "");
+        document.getElementById("addressForm").addEventListener("submit", async function(e) {
+            e.preventDefault();
             
-            const fields = ["fullName", "type", "phone", "addressline1", "city", "state", "country", "pincode"];
-            fields.forEach(f => {
-                if(!document.getElementById(f).value.trim()) {
-                    valid = false;
-                    document.getElementById(f.replace("fullName", "name").replace("addressline1", "address") + "Error").innerText = "Required";
-                }
-            });
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData.entries());
+            const isEdit = !!data.id;
+            const url = isEdit ? '/editAddress' : '/addAddress';
+            const btn = document.getElementById('submitBtn');
+            
+            btn.disabled = true;
+            btn.innerText = "SAVING...";
 
-            if(!valid) e.preventDefault();
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    Swal.fire({
+                        text: result.message || 'ADDRESS SAVED',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        background: '#000',
+                        color: '#fff',
+                        customClass: { popup: 'zara-toast' }
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        text: result.message || 'FAILED TO SAVE ADDRESS',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        background: '#000',
+                        color: '#fff',
+                        customClass: { popup: 'zara-toast' }
+                    });
+                    btn.disabled = false;
+                    btn.innerText = "SAVE ADDRESS";
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                Swal.fire({
+                    text: 'AN UNEXPECTED ERROR OCCURRED',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: '#000',
+                    color: '#fff',
+                    customClass: { popup: 'zara-toast' }
+                });
+                btn.disabled = false;
+                btn.innerText = "SAVE ADDRESS";
+            }
         });
 
         function deleteAddress(id) {

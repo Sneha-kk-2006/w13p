@@ -176,9 +176,38 @@
                 <div class="order-meta">
                     Placed on <%= new Date(order.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
                 </div>
+                <% if (order.cancellationReason) { %>
+                    <div style="margin-top: 15px; color: #c53030; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">
+                        Cancellation Reason: <span style="font-weight: 400; color: #555;"><%= order.cancellationReason %></span>
+                    </div>
+                <% } %>
+                <% if (order.returnReason) { %>
+                    <div style="margin-top: 15px; color: #dd6b20; font-size: 0.75rem; text-transform: uppercase; font-weight: 700;">
+                        Return Reason: <span style="font-weight: 400; color: #555;"><%= order.returnReason %></span>
+                    </div>
+                <% } %>
             </div>
-            <div class="status-pill">
-                <%= order.orderStatus %>
+            <div class="status-action" style="text-align: right;">
+                <div class="order-meta" style="margin-bottom: 10px;">Status Control</div>
+                <select class="status-select" onchange="updateStatus('<%= order.orderId %>', this.value)" style="padding: 10px; font-size: 0.7rem; text-transform: uppercase; border: 1px solid #000; font-weight: 700; cursor: pointer;">
+                    <option value="Pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Pending</option>
+                    <option value="Shipped" <%= order.orderStatus === 'Shipped' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Shipped</option>
+                    <option value="Out for Delivery" <%= order.orderStatus === 'Out for Delivery' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Out for Delivery</option>
+                    <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : '' %> <%= ['Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Delivered</option>
+                    <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : '' %> <%= ['Delivered', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Cancelled</option>
+                    
+                    <% if (order.orderStatus === 'Return Requested') { %>
+                        <option value="Return Requested" selected disabled>Return Requested</option>
+                        <option value="Returned">Approve Return</option>
+                        <option value="Return Rejected">Reject Return</option>
+                    <% } else if (order.orderStatus === 'Returned') { %>
+                        <option value="Returned" selected disabled>Returned</option>
+                    <% } else if (order.orderStatus === 'Return Rejected') { %>
+                        <option value="Return Rejected" selected disabled>Return Rejected</option>
+                    <% } else { %>
+                         <div class="status-pill"><%= order.orderStatus %></div>
+                    <% } %>
+                </select>
             </div>
         </header>
 
@@ -247,5 +276,56 @@
             </aside>
         </div>
     </main>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        async function updateStatus(orderId, newStatus) {
+            try {
+                const response = await fetch('/admin/orders/updateStatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId, status: newStatus })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Swal.fire({
+                        text: 'Order status updated',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        background: '#000',
+                        color: '#fff',
+                        showClass: { popup: 'animate__animated animate__fadeInDown' }
+                    }).then(() => { location.reload(); });
+                } else {
+                    Swal.fire({
+                        text: data.message || 'Something went wrong',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        background: '#c62828',
+                        color: '#fff',
+                        didClose: () => { location.reload(); }
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({
+                    text: 'An unexpected error occurred',
+                    toast: true,
+                    position: 'top',
+                    showConfirmButton: false,
+                    timer: 3000,
+                    background: '#c62828',
+                    color: '#fff'
+                });
+            }
+        }
+    </script>
 </body>
 </html>

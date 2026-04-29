@@ -202,6 +202,26 @@
 
                 <button class="btn-minimal" onclick="openModal('editModal')">Edit Details</button>
 
+                <div class="section-header">SAVED ADDRESSES</div>
+                <div class="address-summary" style="margin-bottom: 30px;">
+                    <% if (addresses && addresses.length > 0) { %>
+                        <% addresses.forEach(addr => { %>
+                            <div style="margin-bottom: 15px; padding: 15px; border: 1px solid #eee; position: relative;">
+                                <span style="font-size: 0.55rem; text-transform: uppercase; letter-spacing: 1px; color: #999;"><%= addr.type %></span>
+                                <p style="font-size: 0.8rem; font-weight: 600; margin: 5px 0;"><%= addr.fullName %></p>
+                                <p style="font-size: 0.75rem; color: #666;"><%= addr.addressline1 %>, <%= addr.city %>, <%= addr.state %> - <%= addr.pincode %></p>
+                                <% if(addr.isDefault) { %>
+                                    <span style="position: absolute; top: 15px; right: 15px; font-size: 0.6rem; font-weight: 700;">DEFAULT</span>
+                                <% } %>
+                            </div>
+                        <% }); %>
+                        <a href="/address" class="btn-minimal" style="display: block; margin-top: 10px;">Manage All Addresses</a>
+                    <% } else { %>
+                        <p style="font-size: 0.75rem; color: #999;">No addresses saved yet.</p>
+                        <a href="/address" class="btn-minimal" style="display: block; margin-top: 10px;">Add New Address</a>
+                    <% } %>
+                </div>
+
                 <div class="section-header">SECURITY</div>
                 <% if(!user.googleId) { %>
                     <a href="/changePassword" class="btn-minimal" style="display:inline-block;">Update Password</a>

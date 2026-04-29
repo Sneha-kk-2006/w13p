@@ -1,15 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SNOVA | Shopping Bag</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
-    
+
     <style>
         :root {
             --primary-black: #000;
@@ -176,166 +179,211 @@
             z-index: 9999;
             align-items: center;
             justify-content: center;
-            background: rgba(255,255,255,0.9);
+            background: rgba(255, 255, 255, 0.9);
         }
 
-        #confirm-modal.show { display: flex; }
+        #confirm-modal.show {
+            display: flex;
+        }
 
         @media (max-width: 768px) {
-            .cart-item { flex-direction: column; gap: 15px; }
-            .item-price-side { text-align: left; }
+            .cart-item {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .item-price-side {
+                text-align: left;
+            }
         }
     </style>
 </head>
+
 <body>
 
     <%- include('../partials/user/header') %>
 
-    <div class="max-w-7xl mx-auto px-6 py-16">
-        <h1 class="cart-title">SHOPPING BAG</h1>
+        <div class="max-w-7xl mx-auto px-6 py-16">
+            <h1 class="cart-title">SHOPPING BAG</h1>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
-            <!-- Items Area -->
-            <div class="lg:col-span-2">
-                <div class="cart-header-minimal">Items in your bag (<%= items.length %>)</div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-16">
+                <!-- Items Area -->
+                <div class="lg:col-span-2">
+                    <div class="cart-header-minimal">Items in your bag (<%= items.length %>)</div>
 
-                <% if (items.length > 0) { %>
-                    <% items.forEach(item => { %>
-                        <div class="cart-item" id="cart-item-<%= item._id %>">
-                            <img src="<%= item.productImage %>" alt="<%= item.productName %>" class="item-img">
-                            <div class="item-details">
-                                <span class="item-name"><%= item.productName %></span>
-                                <div class="item-meta">Color: <%= item.color %></div>
-                                <div class="item-meta">Size: <%= item.size %></div>
-                                
-                                <% if (item.stock === 0) { %>
-                                    <div class="mt-5">
-                                        <span class="text-red-600 font-bold text-[10px] uppercase tracking-widest">Sold Out</span>
+                    <% if (items.length> 0) { %>
+                        <% items.forEach(item=> { %>
+                            <div class="cart-item" id="cart-item-<%= item._id %>">
+                                <img src="<%= item.productImage %>" alt="<%= item.productName %>" class="item-img">
+                                <div class="item-details">
+                                    <span class="item-name">
+                                        <%= item.productName %>
+                                    </span>
+                                    <div class="item-meta">Color: <%= item.color %>
                                     </div>
+                                    <div class="item-meta">Size: <%= item.size %>
+                                    </div>
+
+                                    <% if (item.stock===0) { %>
+                                        <div class="mt-5">
+                                            <span
+                                                class="text-red-600 font-bold text-[10px] uppercase tracking-widest">Sold
+                                                Out</span>
+                                        </div>
+                                        <% } else { %>
+                                            <div class="qty-controls">
+                                                <i class="fa-solid fa-minus qty-btn"
+                                                    onclick="updateQty('<%= item._id %>', -1)"></i>
+                                                <span class="qty-val" id="qty-<%= item._id %>">
+                                                    <%= item.quantity %>
+                                                </span>
+                                                <i class="fa-solid fa-plus qty-btn"
+                                                    onclick="updateQty('<%= item._id %>', 1)"></i>
+                                            </div>
+                                            <% } %>
+                                </div>
+                                <div class="item-price-side">
+                                    <div class="price-val" id="totalPrice-<%= item._id %>">₹<%=
+                                            item.totalPrice.toLocaleString('en-IN') %>
+                                    </div>
+                                    <div class="remove-link"
+                                        onclick="handleRemoveClick('<%= item._id %>', '<%= item.productName %>')">Remove
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
                                 <% } else { %>
-                                    <div class="qty-controls">
-                                        <i class="fa-solid fa-minus qty-btn" onclick="updateQty('<%= item._id %>', -1)"></i>
-                                        <span class="qty-val" id="qty-<%= item._id %>"><%= item.quantity %></span>
-                                        <i class="fa-solid fa-plus qty-btn" onclick="updateQty('<%= item._id %>', 1)"></i>
+                                    <div class="py-20 text-center">
+                                        <p class="text-xs uppercase tracking-widest text-gray-400">Your bag is currently
+                                            empty.</p>
+                                        <a href="/products"
+                                            class="mt-5 inline-block text-xs uppercase underline tracking-widest font-semibold">Start
+                                            Shopping</a>
                                     </div>
-                                <% } %>
-                            </div>
-                            <div class="item-price-side">
-                                <div class="price-val" id="totalPrice-<%= item._id %>">₹<%= item.totalPrice.toLocaleString('en-IN') %></div>
-                                <div class="remove-link" onclick="handleRemoveClick('<%= item._id %>', '<%= item.productName %>')">Remove</div>
-                            </div>
+                                    <% } %>
+                </div>
+
+                <!-- Summary Area -->
+                <div class="lg:col-span-1">
+                    <div class="summary-box">
+                        <span class="summary-title">Order Summary</span>
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="subtotal">₹<%= subtotal.toLocaleString('en-IN') %></span>
                         </div>
-                    <% }) %>
-                <% } else { %>
-                    <div class="py-20 text-center">
-                        <p class="text-xs uppercase tracking-widest text-gray-400">Your bag is currently empty.</p>
-                        <a href="/products" class="mt-5 inline-block text-xs uppercase underline tracking-widest font-semibold">Start Shopping</a>
-                    </div>
-                <% } %>
-            </div>
+                        <div class="summary-row">
+                            <span>Discount</span>
+                            <span class="text-gray-400">-₹<%= discount.toLocaleString('en-IN') %></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping</span>
+                            <span class="text-green-600">Free</span>
+                        </div>
+                        <div class="summary-row summary-total">
+                            <span>Total</span>
+                           
+                            <span id="main-total">₹<%= subtotal.toLocaleString('en-IN') %></span>
+                            
+                        </div>
 
-            <!-- Summary Area -->
-            <div class="lg:col-span-1">
-                <div class="summary-box">
-                    <span class="summary-title">Order Summary</span>
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span id="subtotal">₹<%= subtotal.toLocaleString('en-IN') %></span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Discount</span>
-                        <span class="text-gray-400">-₹<%= discount.toLocaleString('en-IN') %></span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Shipping</span>
-                        <span class="text-green-600">Free</span>
-                    </div>
-                    <div class="summary-row summary-total">
-                        <span>Total</span>
-                        <span id="main-total">₹<%= subtotal.toLocaleString('en-IN') %></span>
-                    </div>
+                        <% if (items.length> 0) { %>
+                            <%if(hasSoldOutitem){%>
+                                <button onclick="window.location.href='/checkout'" class="btn-checkout">Continue to
+                                    payment</button>
+                                <p style="color:red; margin-top:8px;">
+                                    ⚠️ Remove out-of-stock items to proceed
+                                </p>
 
-                    <% if (items.length > 0) { %>
-                        <button onclick="window.location.href='/checkout'" class="btn-checkout">Continue to payment</button>
-                    <% } %>
-                    
-                    <p class="mt-8 text-[9px] uppercase tracking-widest text-gray-400 text-center">Free returns on all orders within 30 days.</p>
+                                <% }else{ %>
+                                    <button onclick="window.location.href='/checkout'" class="btn-checkout">
+                                        Continue to payment
+                                    </button>
+                                    <% } %>
+                                        <% } %>
+
+
+                                            <p
+                                                class="mt-8 text-[9px] uppercase tracking-widest text-gray-400 text-center">
+                                                Free returns on all orders within 30 days.</p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Minimal Confirmation Modal -->
-    <div id="confirm-modal">
-        <div class="text-center p-10">
-            <h3 class="font-serif text-2xl mb-5 uppercase tracking-tighter">Remove item?</h3>
-            <p id="modal-item-name" class="text-[10px] uppercase tracking-widest text-gray-500 mb-10"></p>
-            <div class="flex gap-10 justify-center">
-                <button onclick="closeModal()" class="text-[10px] uppercase tracking-widest font-bold underline">Cancel</button>
-                <button id="modal-confirm-btn" class="text-[10px] uppercase tracking-widest font-bold text-red-600 underline">Delete</button>
+        <!-- Minimal Confirmation Modal -->
+        <div id="confirm-modal">
+            <div class="text-center p-10">
+                <h3 class="font-serif text-2xl mb-5 uppercase tracking-tighter">Remove item?</h3>
+                <p id="modal-item-name" class="text-[10px] uppercase tracking-widest text-gray-500 mb-10"></p>
+                <div class="flex gap-10 justify-center">
+                    <button onclick="closeModal()"
+                        class="text-[10px] uppercase tracking-widest font-bold underline">Cancel</button>
+                    <button id="modal-confirm-btn"
+                        class="text-[10px] uppercase tracking-widest font-bold text-red-600 underline">Delete</button>
+                </div>
             </div>
         </div>
-    </div>
 
-    <%- include('../partials/user/footer') %>
+        <%- include('../partials/user/footer') %>
 
-    <script>
-        let _pendingItemId = null;
+            <script>
+                let _pendingItemId = null;
 
-        function handleRemoveClick(itemId, name) {
-            _pendingItemId = itemId;
-            document.getElementById('modal-item-name').textContent = name;
-            document.getElementById('confirm-modal').classList.add('show');
-            document.getElementById('modal-confirm-btn').onclick = () => removeItem(itemId);
-        }
-
-        function closeModal() {
-            document.getElementById('confirm-modal').classList.remove('show');
-        }
-
-        async function removeItem(itemId) {
-            closeModal();
-            try {
-                const res = await fetch('/cart/remove', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ itemId }) });
-                const data = await res.json();
-                if (data.success) {
-                    location.reload();
+                function handleRemoveClick(itemId, name) {
+                    _pendingItemId = itemId;
+                    document.getElementById('modal-item-name').textContent = name;
+                    document.getElementById('confirm-modal').classList.add('show');
+                    document.getElementById('modal-confirm-btn').onclick = () => removeItem(itemId);
                 }
-            } catch (err) { console.error(err); }
-        }
 
-        function showToast(msg, bg = '#000') {
-            Swal.fire({
-                text: msg,
-                toast: true,
-                position: 'top',
-                showConfirmButton: false,
-                timer: 3000,
-                background: bg,
-                color: '#fff',
-                customClass: { popup: 'zara-toast' },
-                showClass: { popup: 'animate__animated animate__fadeInDown' }
-            });
-        }
-
-        async function updateQty(itemId, change) {
-            try {
-                const res = await fetch('/cart/updateQty', { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ itemId, change }) 
-                });
-                const data = await res.json();
-                if (data.success) {
-                    document.getElementById(`qty-${itemId}`).textContent = data.quantity;
-                    document.getElementById(`totalPrice-${itemId}`).textContent = `₹${data.itemTotal.toLocaleString('en-IN')}`;
-                    document.getElementById(`subtotal`).textContent = `₹${data.subtotal.toLocaleString('en-IN')}`;
-                    document.getElementById(`main-total`).textContent = `₹${data.total.toLocaleString('en-IN')}`;
-                } else {
-                    showToast(data.msg || 'Cannot update quantity', '#c62828');
+                function closeModal() {
+                    document.getElementById('confirm-modal').classList.remove('show');
                 }
-            } catch (err) { console.error(err); }
-        }
-    </script>
+
+                async function removeItem(itemId) {
+                    closeModal();
+                    try {
+                        const res = await fetch('/cart/remove', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ itemId }) });
+                        const data = await res.json();
+                        if (data.success) {
+                            location.reload();
+                        }
+                    } catch (err) { console.error(err); }
+                }
+
+                function showToast(msg, bg = '#000') {
+                    Swal.fire({
+                        text: msg,
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 3000,
+                        background: bg,
+                        color: '#fff',
+                        customClass: { popup: 'zara-toast' },
+                        showClass: { popup: 'animate__animated animate__fadeInDown' }
+                    });
+                }
+
+                async function updateQty(itemId, change) {
+                    try {
+                        const res = await fetch('/cart/updateQty', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ itemId, change })
+                        });
+                        const data = await res.json();
+                        if (data.success) {
+                            document.getElementById(`qty-${itemId}`).textContent = data.quantity;
+                            document.getElementById(`totalPrice-${itemId}`).textContent = `₹${data.itemTotal.toLocaleString('en-IN')}`;
+                            document.getElementById(`subtotal`).textContent = `₹${data.subtotal.toLocaleString('en-IN')}`;
+                            document.getElementById(`main-total`).textContent = `₹${data.total.toLocaleString('en-IN')}`;
+                        } else {
+                            showToast(data.msg || 'Cannot update quantity', '#c62828');
+                        }
+                    } catch (err) { console.error(err); }
+                }
+            </script>
 </body>
+
 </html>

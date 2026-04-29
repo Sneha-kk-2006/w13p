@@ -18,8 +18,9 @@ body{font-family:var(--f);background:var(--w);color:var(--k);-webkit-font-smooth
 .rv.on{opacity:1;transform:none}
 
 /* ─── HERO ─── */
-.hero{position:relative;height:100vh;overflow:hidden;background:#000}
-.hero video, .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;animation: zoomIn 12s ease-in-out infinite alternate}
+.hero{position:relative;width:100%;height:100vh;overflow:hidden;background:#000}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;animation: zoomIn 12s ease-in-out infinite alternate}
 @keyframes zoomIn{from{transform:scale(1)}to{transform:scale(1.08)}}
 .hero__veil{position:absolute;inset:0;background:linear-gradient(170deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.08) 50%,rgba(0,0,0,.6) 100%)}
 .hero__body{position:absolute;bottom:0;left:0;right:0;padding:0 56px 60px;display:flex;align-items:flex-end;justify-content:space-between}
@@ -49,11 +50,11 @@ body{font-family:var(--f);background:var(--w);color:var(--k);-webkit-font-smooth
 /* ─── EDITORIAL SPLIT ─── */
 .esplit{display:grid;grid-template-columns:1fr 1fr;height:88vh}
 .ep{position:relative;overflow:hidden}
-.ep img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
-.ep:hover img{transform:scale(1.05)}
-.ep__lbl{position:absolute;bottom:32px;left:28px}
-.ep__lbl p{font-size:.49rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:8px}
-.ep__lbl a{font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.5);padding-bottom:2px}
+.ep img, .ep video{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
+.ep:hover img, .ep:hover video{transform:scale(1.05)}
+.ep__lbl{position:absolute;bottom:32px;left:28px;z-index:2}
+.ep__lbl p{font-size:.49rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.9);margin-bottom:8px;text-shadow:0 2px 4px rgba(0,0,0,0.5)}
+.ep__lbl a{font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.5);padding-bottom:2px;text-shadow:0 2px 4px rgba(0,0,0,0.5)}
 
 /* ─── PRODUCT GRID ─── */
 .pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 48px 72px}
@@ -195,14 +196,22 @@ function getProductImg(index, fallbackUrl) {
 </div>
 
 <!-- EDITORIAL SPLIT -->
-<section class="esplit rv">
-  <div class="ep">
-    <img src="<%= getProductImg(8, 'https://images.unsplash.com/photo-1539109136881-3be0616acf4b?auto=format&fit=crop&w=900&q=80') %>" alt="Woman" loading="lazy">
-    <div class="ep__lbl"><p>Woman</p><a href="/category?category=WOMAN">Shop Woman</a></div>
+<section class="esplit">
+  <div class="ep rv">
+    <img src="<%= getProductImg(1, '/images/ep1.jpg') %>" alt="Editorial 1" loading="lazy">
+    <div class="ep__lbl">
+      <p>Essentials</p>
+      <a href="/products">Shop The Look</a>
+    </div>
   </div>
-  <div class="ep">
-    <img src="<%= getProductImg(9, 'https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?auto=format&fit=crop&w=900&q=80') %>" alt="Man" loading="lazy">
-    <div class="ep__lbl"><p>Man</p><a href="/category?category=MAN">Shop Man</a></div>
+  <div class="ep rv">
+    <video autoplay muted loop playsinline>
+      <source src="/videos/SaveClip.App_AQMHiw9BGiTFwdijmmB1kCnR3D8fTSAW0Sz0H-poZUO6XFYaN8RoCUTd3U680WcZqcNugS5fNHZqVhXBY4hELisecjSJA4gxsFrDrzc.mp4" type="video/mp4">
+    </video>
+    <div class="ep__lbl">
+      <p>Campaign</p>
+      <a href="/products">Watch & Shop</a>
+    </div>
   </div>
 </section>
 
@@ -336,7 +345,13 @@ window.addEventListener('scroll',()=>{
   prog.style.width=pct+'%';
 });
 
-
+// Mute toggle
+function toggleMute(){
+  const v=document.getElementById('vid');
+  const i=document.getElementById('muteIco');
+  v.muted=!v.muted;
+  i.className=v.muted?'fa fa-volume-xmark':'fa fa-volume-high';
+}
 
 // Scroll reveal
 new IntersectionObserver((entries)=>{

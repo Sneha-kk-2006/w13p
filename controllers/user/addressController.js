@@ -31,13 +31,18 @@ const addAddress = async (req, res) => {
       req.session.user._id
     );
     if (!result.success) {
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(400).json({ success: false, message: result.message || "Operation failed" });
+      }
       if (result.redirect) {
         return res.redirect(result.redirect);
       }
-
       return res.redirect("/address");
     }
 
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      return res.json({ success: true, message: "Operation successful" });
+    }
     return res.redirect(result.redirect);
 
   } catch (error) {
@@ -101,12 +106,18 @@ const editAddress = async (req, res) => {
     );
 
     if (!result.success) {
+      if (req.headers.accept && req.headers.accept.includes('application/json')) {
+        return res.status(400).json({ success: false, message: result.message || "Update failed" });
+      }
       if (result.redirect) {
         return res.redirect(result.redirect);
       }
       return res.redirect("/address");
     }
 
+    if (req.headers.accept && req.headers.accept.includes('application/json')) {
+      return res.json({ success: true, message: "Address updated successfully" });
+    }
     res.redirect(result.redirect);
 
   } catch (error) {

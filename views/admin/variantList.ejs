@@ -8,8 +8,29 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <style>
+        /* Cropper Modal Specifics */
+        .crop-modal-box {
+            background: #fff;
+            width: 95%;
+            max-width: 600px;
+            border-radius: 22px;
+            padding: 30px;
+            position: relative;
+        }
+        .crop-container {
+            width: 100%;
+            height: 400px;
+            background: #eee;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        .crop-container img {
+            max-width: 100%;
+        }
         :root {
             --border: #ebebeb;
             --muted: #888;
@@ -243,7 +264,7 @@
                 </div>
                 <div class="stat-card">
                     <span class="s-label">Variants</span>
-                    <span class="s-value"><%= product.variants.length %> <span style="font-size:0.8rem;font-weight:400;color:#888;">SKUs</span></span>
+                    <span class="s-value"><%= product.variants.length %> <span style="font-size:0.8rem;font-weight:400;color:#888;"></span></span>
                     <span class="s-sub">Defined in system</span>
                 </div>
                 <div class="stat-card">
@@ -404,7 +425,7 @@
                 </div>
                 <div class="stat-card">
                     <span class="s-label">Total Variants</span>
-                    <span class="s-value"><%= product.variants.length %> <span style="font-size:0.8rem;font-weight:400;color:#888;">SKUs</span></span>
+                    <span class="s-value"><%= product.variants.length %> <span style="font-size:0.8rem;font-weight:400;color:#888;"></span></span>
                     <span class="s-sub">In System</span>
                 </div>
                 <div class="stat-card">
@@ -423,7 +444,7 @@
                 <div class="table-toolbar">
                     <div class="search-wrap">
                         <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" class="search-input" id="searchInput" placeholder="Search SKU or attribute...">
+                        <input type="text" class="search-input" id="searchInput" placeholder="Search...">
                     </div>
                     <select class="filter-select" id="filterSelect">
                         <option value="all">All</option>
@@ -623,6 +644,25 @@
         </div>
     </div>
 
+    <!-- ══════════════════════════════════════════════ -->
+    <!--  IMAGE CROPPER MODAL                           -->
+    <!-- ══════════════════════════════════════════════ -->
+    <div class="modal-overlay" id="cropModal">
+        <div class="crop-modal-box">
+            <p class="modal-title">Perfect Your Shot</p>
+            <p class="modal-sub">Crop image to maintain aesthetic consistency</p>
+            
+            <div class="crop-container">
+                <img id="imageToCrop" src="">
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel-modal" onclick="closeModal('cropModal')">Cancel</button>
+                <button class="btn-save-modal" id="cropBtn">Apply Crop</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const productId = "<%= product._id %>";
 
@@ -706,16 +746,54 @@
         }
 
         // ─── IMAGE SLOTS ───────────────────────────
+        let cropper;
+        let currentSlotIndex = -1;
+        const croppedImages = [null, null, null, null];
+
         function triggerSlot(i) { document.getElementById('imgSlot'+i).click(); }
+        
         function slotPreview(input, i) {
             if (!input.files[0]) return;
+            currentSlotIndex = i;
             const reader = new FileReader();
             reader.onload = e => {
-                const slot = document.querySelectorAll('#imgSlots .img-slot')[i];
-                slot.innerHTML = `<img src="${e.target.result}">`;
+                const imageToCrop = document.getElementById('imageToCrop');
+                imageToCrop.src = e.target.result;
+                
+                imageToCrop.onload = () => {
+                    openModal('cropModal');
+                    if (cropper) cropper.destroy();
+                    cropper = new Cropper(imageToCrop, {
+                        aspectRatio: 3/4,
+                        viewMode: 2,
+                        guides: true,
+                        autoCropArea: 1,
+                        movable: true,
+                        zoomable: true,
+                        rotatable: true,
+                        scalable: true
+                    });
+                    // Remove the onload listener so it doesn't fire again
+                    imageToCrop.onload = null;
+                };
             };
             reader.readAsDataURL(input.files[0]);
         }
+
+        document.getElementById('cropBtn').addEventListener('click', () => {
+            if (!cropper) return;
+            const canvas = cropper.getCroppedCanvas({
+                width: 600,
+                height: 800
+            });
+            
+            canvas.toBlob(blob => {
+                croppedImages[currentSlotIndex] = blob;
+                const slot = document.querySelectorAll('#imgSlots .img-slot')[currentSlotIndex];
+                slot.innerHTML = `<img src="${canvas.toDataURL()}">`;
+                closeModal('cropModal');
+            }, 'image/jpeg', 0.9);
+        });
 
         // ─── SEARCH / FILTER TABLE ─────────────────
         document.getElementById('searchInput').addEventListener('input', function() {
@@ -756,12 +834,17 @@
             fd.append('color', color);
             fd.append('stock', stock);
             fd.append('price', price);
-            fd.append('fabrics',fabrics);
+            const fabricsInput = document.getElementById('vfabrics');
+            if (fabricsInput) fd.append('fabrics', fabricsInput.value.trim());
            
             // Attach any images
             for(let i=0; i<4; i++) {
-                const f = document.getElementById('imgSlot'+i).files[0];
-                if(f) fd.append('images', f);
+                if (croppedImages[i]) {
+                    fd.append('images', croppedImages[i], `variant-image-${i}.jpg`);
+                } else {
+                    const f = document.getElementById('imgSlot'+i).files[0];
+                    if(f) fd.append('images', f);
+                }
             }
             const res = await fetch(`/admin/product/addVariant/${productId}`, { method: 'POST', body: fd });
             if (res.ok) { showToast('Variant created'); setTimeout(() => location.reload(), 900); }

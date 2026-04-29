@@ -11,7 +11,12 @@ const loadprofile = async (req, res) => {
     const userData = await userRepository.findById(userId);
     if (!userData) return res.redirect("/login");
      
-    res.render("user/profile", { user: userData });
+    const addresses = await userRepository.findByUserId(userId);
+
+    res.render("user/profile", { 
+      user: userData,
+      addresses: addresses
+    });
   } catch (error) {
     console.error("Error loading profile:", error);
     res.redirect("/errorPage");

@@ -142,14 +142,23 @@
         <h1>Thank You!</h1>
         <p>Your order has been placed successfully. We've sent a confirmation email to your registered address.</p>
         
-        <div class="order-info">
-            <span>Order Reference</span>
-            <strong>#<%= order.orderId %></strong>
+        <div class="order-info" style="display: flex; gap: 40px; justify-content: center; text-align: center;">
+            <div>
+                <span>Order Reference</span>
+                <strong>#<%= order.orderId %></strong>
+            </div>
+            <div>
+                <span>Date Ordered</span>
+                <strong><%= new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></strong>
+            </div>
         </div>
         
         <div class="button-group">
             <a href="/order-details/<%= order._id %>" class="btn-success btn-primary-dark">
                 <i class="fas fa-list-alt"></i> Order Details
+            </a>
+            <a href="/order/invoice/<%= order._id %>" class="btn-success btn-outline">
+                <i class="fas fa-file-pdf"></i> Download Invoice
             </a>
             <a href="/products" class="btn-success btn-outline">
                 <i class="fas fa-shopping-bag"></i> Continue Shopping
