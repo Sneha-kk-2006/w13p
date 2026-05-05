@@ -1,33 +1,28 @@
 
-
-
 export function showToast(msg, type = "success") {
   const colors = {
-    success: "#22c55e",
-    error: "#ef4444",
+    success: "#000000",
+    error: "#ff0000",
     warning: "#f59e0b",
     info: "#3b82f6",
   };
 
-  const positions = {
-    error: "center",
-    warning: "center",
-    success: "right",
-    info: "right",
-  };
-
   Toastify({
-    text: msg,
+    text: (msg || "").toUpperCase(),
     duration: 3000,
     gravity: "top",
-    position: positions[type] || right,
-    close: true,
+    position: "center",
     stopOnFocus: true,
     style: {
-      background: colors[type],
-      borderRadius: "8px",
-      padding: "12px 20px",
-      fontSize: "14px",
+      background: colors[type] || "#000",
+      borderRadius: "0px",
+      padding: "15px 40px",
+      fontSize: "0.7rem",
+      letterSpacing: "1.5px",
+      textTransform: "uppercase",
+      fontWeight: "500",
+      fontFamily: "'Inter', sans-serif",
+      color: "#ffffff"
     },
   }).showToast();
 }

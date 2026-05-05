@@ -1,4 +1,6 @@
 <%- include("../partials/user/header") %>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <style>
     :root {
@@ -300,14 +302,24 @@
                             <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Pay when your order arrives</p>
                         </div>
                     </label>
-                    <label class="payment-option" style="opacity: 0.6; cursor: not-allowed;">
-                        <input type="radio" name="paymentMethod" value="Online" disabled>
+                    <label class="payment-option <%= walletBalance < total ? 'opacity-50 cursor-not-allowed' : '' %>">
+                        <input type="radio" name="paymentMethod" value="Wallet" <%= walletBalance < total ? 'disabled' : '' %>>
                         <div>
-                            <span style="font-weight: 600;">Online Payment</span>
-                            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Coming Soon</p>
+                            <span style="font-weight: 600;">Wallet Payment</span>
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">Balance: ₹<%= walletBalance.toLocaleString() %> <%= walletBalance < total ? '(Insufficient)' : '' %></p>
                         </div>
                     </label>
+                 <label class="payment-option">
+    <input type="radio" name="paymentMethod" value="Razorpay">
+    <div>
+        <span style="font-weight: 600;">Online Payment</span>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin: 0;">
+            UPI, Cards, Net Banking via Razorpay
+        </p>
+    </div>
+</label>
                 </div>
+
             </div>
         </div>
 
@@ -319,10 +331,26 @@
                 <div class="product-list">
                     <% items.forEach(item => { %>
                         <div class="product-item">
-                            <img src="/uploads/products/<%= item.productImage %>" 
+                            <% 
+                                let finalImage = item.productImage || '';
+                                let displaySrc = finalImage;
+                                
+                                // Ensure path is correct based on how it's stored
+                                if (finalImage && !finalImage.startsWith('/') && !finalImage.startsWith('http')) {
+                                    displaySrc = '/uploads/products/' + finalImage;
+                                }
+                            %>
+                            <img src="<%= displaySrc %>" 
                                  alt="<%= item.productName %>" 
                                  class="product-img" 
-                                 onerror="this.onerror=null; this.src='/uploads/<%= item.productImage %>'; this.onerror=function(){ this.src='https://placehold.co/300x400?text=SNOVA'; }">
+                                 onerror="this.onerror=null; 
+                                          if(!this.src.includes('/uploads/')) {
+                                              this.src='/uploads/products/'+'<%= finalImage %>';
+                                          } else if(this.src.includes('/uploads/products/')) {
+                                              this.src='/uploads/'+'<%= finalImage %>';
+                                          } else {
+                                              this.src='https://placehold.co/300x400?text=SNOVA';
+                                          }">
                             <div class="product-info">
                                 <h5><%= item.productName %></h5>
                                 <p>Qty: <%= item.quantity %> | Size: <%= item.size %></p>
@@ -345,10 +373,15 @@
                         <span>Shipping</span>
                         <span style="color: #28a745;">Free</span>
                     </div>
+                    <div class="summary-row">
+                        <span>GST (18%)</span>
+                        <span>+ ₹<%= gst.toLocaleString() %></span>
+                    </div>
                     <div class="summary-row total">
                         <span>Total Price</span>
-                        <span>₹<%= total %></span>
+                        <span>₹<%= total.toLocaleString() %></span>
                     </div>
+
                 </div>
 
                 <button class="place-order-btn" id="placeOrderBtn" onclick="handlePlaceOrder()">
@@ -413,6 +446,8 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     let selectedAddressId = '<%= addresses.find(a => a.isDefault)?._id || (addresses[0] ? addresses[0]._id : "") %>';
 
@@ -448,6 +483,27 @@
         document.getElementById('addressModal').style.display = 'flex';
     }
 
+    function showZaraToast(msg, type = 'success') {
+        Toastify({
+            text: msg.toUpperCase(),
+            duration: 3000,
+            gravity: "top",
+            position: "center",
+            style: { background: type === 'success' ? "#000" : "#ff0000", borderRadius: "0px" }
+        }).showToast();
+    }
+
+    // ── Dynamically update button label based on selected payment ──
+    document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
+        radio.addEventListener('change', () => {
+            const val = radio.value;
+            const btn = document.getElementById('placeOrderBtn');
+            if (val === 'COD') btn.innerText = 'Place Order (COD)';
+            else if (val === 'Wallet') btn.innerText = 'Pay with Wallet';
+            else if (val === 'Razorpay') btn.innerText = 'Pay Online (Razorpay)';
+        });
+    });
+
     async function saveAddress(e) {
         e.preventDefault();
         const form = e.target;
@@ -473,65 +529,40 @@
             const result = await response.json();
 
             if (result.success) {
-                Swal.fire({
-                    text: result.message || 'ADDRESS SAVED',
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    background: '#000',
-                    color: '#fff',
-                    customClass: { popup: 'zara-toast' }
-                }).then(() => {
-                    location.reload();
-                });
+                showZaraToast(result.message || 'ADDRESS SAVED');
+                setTimeout(() => { location.reload(); }, 2000);
             } else {
-                Swal.fire({
-                    text: result.message || 'FAILED TO SAVE ADDRESS',
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    background: '#000',
-                    color: '#fff',
-                    customClass: { popup: 'zara-toast' }
-                });
+                showZaraToast(result.message || 'FAILED TO SAVE ADDRESS', 'error');
                 btn.disabled = false;
                 btn.innerText = 'Save Address';
             }
 
         } catch (error) {
             console.error('Error:', error);
-            Swal.fire({
-                text: 'AN UNEXPECTED ERROR OCCURRED',
-                toast: true,
-                position: 'top',
-                showConfirmButton: false,
-                timer: 3000,
-                background: '#000',
-                color: '#fff',
-                customClass: { popup: 'zara-toast' }
-            });
+            showZaraToast('AN UNEXPECTED ERROR OCCURRED', 'error');
             btn.disabled = false;
             btn.innerText = 'Save Address';
         }
     }
 
+    // ── Main handler — routes to COD/Wallet or Razorpay ──
     async function handlePlaceOrder() {
         if (!selectedAddressId) {
-            Swal.fire({
-                text: 'PLEASE SELECT A SHIPPING ADDRESS',
-                toast: true,
-                position: 'top',
-                showConfirmButton: false,
-                timer: 3000,
-                background: '#000',
-                color: '#fff',
-                customClass: { popup: 'zara-toast' }
-            });
+            showZaraToast('PLEASE SELECT A SHIPPING ADDRESS', 'error');
             return;
         }
 
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+
+        if (paymentMethod === 'Razorpay') {
+            await handleRazorpayPayment();
+        } else {
+            await handleCODOrWallet(paymentMethod);
+        }
+    }
+
+    // ── COD / Wallet flow (your existing logic) ──
+    async function handleCODOrWallet(paymentMethod) {
         const btn = document.getElementById('placeOrderBtn');
         btn.disabled = true;
         btn.innerHTML = 'PROCESSING...';
@@ -542,54 +573,112 @@
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     addressId: selectedAddressId,
-                    paymentMethod: 'COD'
+                    paymentMethod
                 })
             });
 
             const result = await response.json();
 
             if (result.success) {
-                Swal.fire({
-                    text: 'ORDER PLACED SUCCESSFULLY',
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    background: '#000',
-                    color: '#fff',
-                    customClass: { popup: 'zara-toast' },
-                    showClass: { popup: 'animate__animated animate__fadeInDown' }
-                }).then(() => {
+                showZaraToast('ORDER PLACED SUCCESSFULLY');
+                setTimeout(() => {
                     window.location.href = `/checkout/success/${result.orderId}`;
-                });
+                }, 2000);
             } else {
-                Swal.fire({
-                    text: result.message || 'ORDER FAILED',
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    background: '#000',
-                    color: '#fff',
-                    customClass: { popup: 'zara-toast' }
-                });
+                showZaraToast(result.message || 'ORDER FAILED', 'error');
                 btn.disabled = false;
-                btn.innerHTML = 'PLACE ORDER (COD)';
+                btn.innerHTML = paymentMethod === 'Wallet' ? 'PAY WITH WALLET' : 'PLACE ORDER (COD)';
             }
         } catch (error) {
             console.error('Error:', error);
-            Swal.fire({
-                text: 'AN UNEXPECTED ERROR OCCURRED',
-                toast: true,
-                position: 'top',
-                showConfirmButton: false,
-                timer: 3000,
-                background: '#000',
-                color: '#fff',
-                customClass: { popup: 'zara-toast' }
-            });
+            showZaraToast('AN UNEXPECTED ERROR OCCURRED', 'error');
             btn.disabled = false;
             btn.innerHTML = 'PLACE ORDER (COD)';
+        }
+    }
+
+    // ── Razorpay flow ──
+    async function handleRazorpayPayment() {
+        const btn = document.getElementById('placeOrderBtn');
+        btn.disabled = true;
+        btn.innerHTML = 'OPENING PAYMENT...';
+
+        try {
+            // Step 1: Create Razorpay order on backend
+            const res = await fetch('/checkout/razorpayOrder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ addressId: selectedAddressId })
+            });
+
+            const data = await res.json();
+            if (!data.success) {
+                showZaraToast(data.message || 'FAILED TO INITIATE PAYMENT', 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
+                return;
+            }
+
+            // Step 2: Open Razorpay checkout
+            const options = {
+                key: data.keyId,
+                amount: data.amount,
+                currency: data.currency,
+                name: "SNOVA",
+                description: "Order Payment",
+                order_id: data.orderId,
+                handler: async function (response) {
+                    // Step 3: Verify payment + place order
+                    btn.innerHTML = 'VERIFYING PAYMENT...';
+
+                    const verifyRes = await fetch('/checkout/verifyPayment', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            addressId: selectedAddressId,
+                            paymentMethod: 'Razorpay'
+                        })
+                    });
+
+                    const result = await verifyRes.json();
+
+                    if (result.success) {
+                        showZaraToast('PAYMENT SUCCESSFUL! ORDER PLACED.');
+                        setTimeout(() => {
+                            window.location.href = `/checkout/success/${result.orderId}`;
+                        }, 2000);
+                    } else {
+                        showZaraToast(result.message || 'PAYMENT VERIFICATION FAILED', 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
+                    }
+                },
+                modal: {
+                    // User closed the Razorpay popup
+                    ondismiss: function () {
+                        showZaraToast('PAYMENT CANCELLED', 'error');
+                        btn.disabled = false;
+                        btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
+                    }
+                },
+                prefill: {
+                    name: "",   // Razorpay will prefill from its own session
+                    contact: ""
+                },
+                theme: { color: "#1a1a1a" }  // Matches your --primary color
+            };
+
+            const rzp = new window.Razorpay(options);
+            rzp.open();
+
+        } catch (error) {
+            console.error('Razorpay error:', error);
+            showZaraToast('AN UNEXPECTED ERROR OCCURRED', 'error');
+            btn.disabled = false;
+            btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
         }
     }
 </script>

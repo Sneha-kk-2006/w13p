@@ -272,19 +272,25 @@
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         function showToast(msg, type = 'success') {
-            Swal.fire({
-                text: msg,
-                toast: true,
-                position: 'top',
-                showConfirmButton: false,
-                timer: 3000,
-                background: type === 'error' ? '#c62828' : '#000',
-                color: '#fff',
-                customClass: { popup: 'zara-toast' },
-                showClass: { popup: 'animate__animated animate__fadeInDown' }
-            });
+            Toastify({
+                text: (msg || "").toUpperCase(),
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                style: { 
+                    background: type === 'error' ? "#ff0000" : "#000", 
+                    borderRadius: "0px",
+                    fontSize: "0.7rem",
+                    letterSpacing: "1.5px",
+                    fontWeight: "500",
+                    fontFamily: "'Inter', sans-serif",
+                    padding: "15px 40px"
+                }
+            }).showToast();
         }
 
         const passInput = document.getElementById("pass");

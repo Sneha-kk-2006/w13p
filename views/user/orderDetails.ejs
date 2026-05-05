@@ -1,4 +1,6 @@
 <%- include("../partials/user/header") %>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
 <style>
     :root {
@@ -353,15 +355,25 @@
                     <div class="order-item">
                         <% if (item.product) { %>
                             <% 
-                                let finalSrc = displayImg;
-                                if (finalSrc && !finalSrc.startsWith('/') && !finalSrc.startsWith('http')) {
-                                    finalSrc = '/uploads/products/' + finalSrc;
+                                let finalImage = displayImg || '';
+                                let displaySrc = finalImage;
+                                
+                                // Ensure path is correct based on how it's stored
+                                if (finalImage && !finalImage.startsWith('/') && !finalImage.startsWith('http')) {
+                                    displaySrc = '/uploads/products/' + finalImage;
                                 }
                             %>
-                            <img src="<%= finalSrc %>" 
+                            <img src="<%= displaySrc %>" 
                                  alt="<%= item.product.name %>" 
                                  class="item-img" 
-                                 onerror="this.onerror=null; if(!this.src.includes('/uploads/products/')) this.src='/uploads/products/'+'<%= displayImg %>'; else this.src='/uploads/'+'<%= displayImg %>'; this.onerror=function(){ this.src='https://placehold.co/300x400?text=SNOVA'; }">
+                                 onerror="this.onerror=null; 
+                                          if(!this.src.includes('/uploads/')) {
+                                              this.src='/uploads/products/'+'<%= finalImage %>';
+                                          } else if(this.src.includes('/uploads/products/')) {
+                                              this.src='/uploads/'+'<%= finalImage %>';
+                                          } else {
+                                              this.src='https://placehold.co/300x400?text=SNOVA';
+                                          }">
                         <% } else { %>
                             <img src="https://placehold.co/300x400?text=Removed" class="item-img">
                         <% } %>
@@ -387,6 +399,17 @@
                                 </p>
                             <% } %>
                             <p style="font-weight: 600; color: var(--primary); margin-top: 8px;">₹<%= item.price %></p>
+                        </div>
+                        <div class="item-actions" style="margin-left: auto; text-align: right; min-width: 150px;">
+                            <% const itemStatus = item.status || order.orderStatus; %>
+                            <span class="status-badge status-<%= itemStatus.toLowerCase().replace(/ /g, '-') %>" style="display: block; margin-bottom: 10px; font-size: 0.7rem;">
+                                <%= itemStatus %>
+                            </span>
+                            <% if (itemStatus === 'Pending') { %>
+                                <button class="btn-item-cancel" onclick="promptCancelItem('<%= order._id %>', '<%= item._id %>')" style="background: none; border: 1px solid #cc0000; color: #cc0000; padding: 5px 10px; font-size: 0.65rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Cancel Item</button>
+                            <% } else if (itemStatus === 'Delivered') { %>
+                                <button class="btn-item-return" onclick="promptReturnItem('<%= order._id %>', '<%= item._id %>')" style="background: none; border: 1px solid #ff8f00; color: #ff8f00; padding: 5px 10px; font-size: 0.65rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Return Item</button>
+                            <% } %>
                         </div>
                     </div>
                 <% }); %>
@@ -419,22 +442,45 @@
 
             <div class="card">
                 <h3 class="card-title">Order Summary</h3>
+                <% 
+                    let originalSubtotal = 0;
+                    let cancellationReduction = 0;
+                    order.orderItems.forEach(item => {
+                        const lineTotal = item.price * item.quantity;
+                        originalSubtotal += lineTotal;
+                        if (item.status === 'Cancelled') {
+                            cancellationReduction += lineTotal;
+                        }
+                    });
+                %>
                 <div class="summary-row">
                     <span>Subtotal</span>
-                    <span>₹<%= order.totalPrice %></span>
+                    <span>₹<%= originalSubtotal.toLocaleString() %></span>
+                </div>
+                <% if (cancellationReduction > 0) { %>
+                    <div class="summary-row">
+                        <span>Cancellation Adjustment</span>
+                        <span style="color: #cc0000;">- ₹<%= cancellationReduction.toLocaleString() %></span>
+                    </div>
+                <% } %>
+                <div class="summary-row">
+                    <span>Discount</span>
+                    <span style="color: #28a745;">- ₹<%= (order.discount || 0).toLocaleString() %></span>
+                </div>
+                <div class="summary-row">
+                    <span>GST (18%)</span>
+                    <span>+ ₹<%= (order.gst || 0).toLocaleString() %></span>
                 </div>
                 <div class="summary-row">
                     <span>Shipping</span>
                     <span style="color: #28a745;">Free</span>
                 </div>
                 <div class="summary-row total">
-                    <span>Total</span>
-                    <span>₹<%= order.totalPrice %></span>
+                    <span>Grand Total</span>
+                    <span>₹<%= order.totalPrice.toLocaleString() %></span>
                 </div>
-                <% if (order.orderStatus === 'Pending') { %>
-                    <button class="btn-cancel-order" onclick="promptCancelOrder('<%= order._id %>')">Cancel Order</button>
-                <% } else if (order.orderStatus === 'Delivered') { %>
-                    <button class="btn-return-order" onclick="promptReturnOrder('<%= order._id %>')">Return Order</button>
+
+                <% if (order.orderStatus === 'Delivered') { %>
                     <a href="/order/invoice/<%= order._id %>" class="btn-download-invoice">
                         <i class="fas fa-file-pdf"></i> Download Invoice
                     </a>
@@ -446,10 +492,10 @@
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-function promptCancelOrder(orderId) {
+function promptCancelItem(orderId, itemId) {
     Swal.fire({
-        title: 'Cancel Order',
-        text: 'Please select a reason for cancellation:',
+        title: 'CANCEL ITEM',
+        text: 'PLEASE SELECT A REASON FOR CANCELLATION:',
         input: 'select',
         inputOptions: {
             'Changed my mind': 'Changed my mind',
@@ -458,10 +504,10 @@ function promptCancelOrder(orderId) {
             'Delivery takes too long': 'Delivery takes too long',
             'Other': 'Other'
         },
-        inputPlaceholder: 'Select a reason',
+        inputPlaceholder: 'SELECT A REASON',
         showCancelButton: true,
-        confirmButtonText: 'Confirm Cancellation',
-        cancelButtonText: 'Keep Order',
+        confirmButtonText: 'CONFIRM CANCELLATION',
+        cancelButtonText: 'KEEP ITEM',
         confirmButtonColor: '#000',
         cancelButtonColor: '#999',
         inputValidator: (value) => {
@@ -469,20 +515,20 @@ function promptCancelOrder(orderId) {
                 if (value) {
                     resolve();
                 } else {
-                    resolve('You need to select a reason');
+                    resolve('YOU NEED TO SELECT A REASON');
                 }
             });
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            cancelOrderRequest(orderId, result.value);
+            cancelItemRequest(orderId, itemId, result.value);
         }
     });
 }
 
-async function cancelOrderRequest(orderId, reason) {
+async function cancelItemRequest(orderId, itemId, reason) {
     try {
-        const res = await fetch(`/order/cancel/${orderId}`, {
+        const res = await fetch(`/order/cancel/${orderId}/${itemId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ reason })
@@ -490,26 +536,39 @@ async function cancelOrderRequest(orderId, reason) {
         const data = await res.json();
         
         if (data.success) {
-            Swal.fire({
-                title: 'Cancelled',
-                text: 'Your order has been cancelled.',
-                icon: 'success',
-                confirmButtonColor: '#000'
-            }).then(() => {
-                location.reload();
-            });
+            Toastify({
+                text: "ITEM HAS BEEN CANCELLED",
+                duration: 2000,
+                gravity: "top",
+                position: "center",
+                style: { background: "#000", borderRadius: "0px" }
+            }).showToast();
+            setTimeout(() => { location.reload(); }, 2000);
         } else {
-            Swal.fire('Error', data.message || 'Something went wrong', 'error');
+            Toastify({
+                text: (data.message || "SOMETHING WENT WRONG").toUpperCase(),
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                style: { background: "#ff0000", borderRadius: "0px" }
+            }).showToast();
         }
     } catch(err) {
         console.error(err);
-        Swal.fire('Error', 'Server error. Please try again later.', 'error');
+        Toastify({
+            text: "SERVER ERROR. PLEASE TRY AGAIN LATER",
+            duration: 3000,
+            gravity: "top",
+            position: "center",
+            style: { background: "#ff0000", borderRadius: "0px" }
+        }).showToast();
     }
 }
-function promptReturnOrder(orderId) {
+
+function promptReturnItem(orderId, itemId) {
     Swal.fire({
-        title: 'Return Order',
-        text: 'Please select a reason for return:',
+        title: 'RETURN ITEM',
+        text: 'PLEASE SELECT A REASON FOR RETURN:',
         input: 'select',
         inputOptions: {
             'Defective product': 'Defective product',
@@ -518,31 +577,31 @@ function promptReturnOrder(orderId) {
             'Quality issues': 'Quality issues',
             'Other': 'Other'
         },
-        inputPlaceholder: 'Select a reason',
+        inputPlaceholder: 'SELECT A REASON',
         showCancelButton: true,
-        confirmButtonText: 'Submit Request',
-        cancelButtonText: 'Cancel',
-        confirmButtonColor: '#ff8f00',
+        confirmButtonText: 'SUBMIT REQUEST',
+        cancelButtonText: 'CANCEL',
+        confirmButtonColor: '#000',
         cancelButtonColor: '#999',
         inputValidator: (value) => {
             return new Promise((resolve) => {
                 if (value) {
                     resolve();
                 } else {
-                    resolve('You need to select a reason');
+                    resolve('YOU NEED TO SELECT A REASON');
                 }
             });
         }
     }).then((result) => {
         if (result.isConfirmed) {
-            returnOrderRequest(orderId, result.value);
+            returnItemRequest(orderId, itemId, result.value);
         }
     });
 }
 
-async function returnOrderRequest(orderId, reason) {
+async function returnItemRequest(orderId, itemId, reason) {
     try {
-        const res = await fetch(`/order/return/${orderId}`, {
+        const res = await fetch(`/order/return/${orderId}/${itemId}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ reason })
@@ -550,20 +609,32 @@ async function returnOrderRequest(orderId, reason) {
         const data = await res.json();
         
         if (data.success) {
-            Swal.fire({
-                title: 'Requested',
-                text: 'Your return request has been submitted.',
-                icon: 'success',
-                confirmButtonColor: '#000'
-            }).then(() => {
-                location.reload();
-            });
+            Toastify({
+                text: "RETURN REQUEST SUBMITTED",
+                duration: 2000,
+                gravity: "top",
+                position: "center",
+                style: { background: "#000", borderRadius: "0px" }
+            }).showToast();
+            setTimeout(() => { location.reload(); }, 2000);
         } else {
-            Swal.fire('Error', data.message || 'Something went wrong', 'error');
+            Toastify({
+                text: (data.message || "SOMETHING WENT WRONG").toUpperCase(),
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                style: { background: "#ff0000", borderRadius: "0px" }
+            }).showToast();
         }
     } catch(err) {
         console.error(err);
-        Swal.fire('Error', 'Server error. Please try again later.', 'error');
+        Toastify({
+            text: "SERVER ERROR. PLEASE TRY AGAIN LATER",
+            duration: 3000,
+            gravity: "top",
+            position: "center",
+            style: { background: "#ff0000", borderRadius: "0px" }
+        }).showToast();
     }
 }
 </script>

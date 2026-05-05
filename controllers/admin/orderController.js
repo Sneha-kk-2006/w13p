@@ -1,6 +1,8 @@
 const Order = require("../../models/orderSchema");
 const User = require("../../models/userSchema");
 const Product = require("../../models/productSchema");
+const walletService = require("../../services/walletService");
+
 
 const loadOrders = async (req, res) => {
   try {
@@ -82,9 +84,27 @@ const updateOrderStatus = async (req, res) => {
           await product.save();
         }
       }
+      
+      // Refund for full order return
+      if (order.paymentStatus === "Paid" || order.paymentMethod === "Wallet") {
+        await walletService.credit(
+          order.userId,
+          order.totalPrice,
+          `Refund for returned order ${order.orderId}`,
+          { type: 'refund_return', orderId: order._id, orderRef: order.orderId, idempotencyKey: `return_full_${order._id}` }
+        );
+      }
     }
 
+
     order.orderStatus = status;
+    
+    order.orderItems.forEach(item => {
+      if (!['Cancelled', 'Returned', 'Return Requested'].includes(item.status)) {
+        item.status = status;
+      }
+    });
+
     await order.save();
 
     res.json({ success: true, message: "Order status updated successfully" });
@@ -110,8 +130,68 @@ const viewOrderDetail = async (req, res) => {
   }
 };
 
+const updateItemStatus = async (req, res) => {
+  try {
+    const { orderId, itemId, status } = req.body;
+    
+    const order = await Order.findOne({ orderId });
+    if (!order) return res.status(404).json({ success: false, message: "Order not found" });
+
+    const item = order.orderItems.id(itemId);
+    if (!item) return res.status(404).json({ success: false, message: "Item not found" });
+
+    // Handle Stock Restoration and Price Reduction
+    const isNewCancellation = status === "Cancelled" && item.status !== "Cancelled";
+    const isNewReturn = status === "Returned" && item.status !== "Returned";
+
+    if (isNewCancellation || isNewReturn) {
+      // Restore stock
+      const product = await Product.findById(item.product);
+      if (product) {
+        if (item.variantId && product.variants && product.variants.length > 0) {
+          const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+          if (variant) variant.stock += item.quantity;
+        } else {
+          product.stock += item.quantity;
+        }
+        await product.save();
+      }
+
+      if (status === "Cancelled") {
+        order.totalPrice = Math.max(0, order.totalPrice - (item.price * item.quantity));
+      }
+
+      // Refund for item return
+      if (isNewReturn && (order.paymentStatus === "Paid" || order.paymentMethod === "Wallet")) {
+        await walletService.refundForReturn(
+          order.userId,
+          item.price * item.quantity,
+          order._id,
+          order.orderId,
+          item._id.toString()
+        );
+      }
+    }
+
+
+    item.status = status;
+    const allCancelled = order.orderItems.every(i => i.status === "Cancelled");
+    const allReturned = order.orderItems.every(i => i.status === "Returned" || i.status === "Cancelled");
+    
+    if (allCancelled) order.orderStatus = "Cancelled";
+    else if (allReturned) order.orderStatus = "Returned";
+
+    await order.save();
+    res.json({ success: true, message: "Item status updated" });
+  } catch (error) {
+    console.error("Error updating item status:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 module.exports = {
   loadOrders,
   updateOrderStatus,
-  viewOrderDetail
+  viewOrderDetail,
+  updateItemStatus
 };

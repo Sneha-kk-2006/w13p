@@ -6,6 +6,8 @@
     <title>SNOVA | Customer Directory</title>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
         .admin-main {
             flex: 1;
@@ -204,29 +206,35 @@
 
     <script>
         function showToast(msg) {
-            Swal.fire({
-                text: msg,
-                toast: true,
-                position: 'top',
-                showConfirmButton: false,
-                timer: 3000,
-                customClass: { popup: 'zara-toast' },
-                showClass: { popup: 'animate__animated animate__fadeInDown' }
-            });
+            Toastify({
+                text: (msg || "").toUpperCase(),
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                style: { 
+                    background: "#000", 
+                    borderRadius: "0px",
+                    fontSize: "0.7rem",
+                    letterSpacing: "1.5px",
+                    fontWeight: "500",
+                    fontFamily: "'Inter', sans-serif",
+                    padding: "15px 40px"
+                }
+            }).showToast();
         }
 
         function blockUser(userId) {
             Swal.fire({
                 title: 'SUSPEND ACCESS?',
-                text: "IDENTITY WILL BE RESTRICTED IMMEDIATELY.",
+                text: "IDENTITY WILL BE RESTRICTED IMMEDIATELY",
                 showCancelButton: true,
                 confirmButtonColor: '#000',
-                cancelButtonColor: '#fff',
+                cancelButtonColor: '#999',
                 confirmButtonText: 'SUSPEND',
+                cancelButtonText: 'CANCEL',
                 customClass: {
-                    popup: 'zara-toast',
-                    confirmButton: 'btn-minimal',
-                    cancelButton: 'btn-minimal'
+                    title: 'font-serif uppercase',
+                    popup: 'rounded-none'
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -238,13 +246,15 @@
         function unblockUser(userId) {
             Swal.fire({
                 title: 'RESTORE ACCESS?',
+                text: "RESTORE IDENTITY AUTHORIZATION",
                 showCancelButton: true,
                 confirmButtonColor: '#000',
+                cancelButtonColor: '#999',
                 confirmButtonText: 'RESTORE',
+                cancelButtonText: 'CANCEL',
                 customClass: {
-                    popup: 'zara-toast',
-                    confirmButton: 'btn-minimal',
-                    cancelButton: 'btn-minimal'
+                    title: 'font-serif uppercase',
+                    popup: 'rounded-none'
                 }
             }).then((result) => {
                 if (result.isConfirmed) {

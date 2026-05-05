@@ -140,10 +140,30 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transition: 0.6s;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease;
         }
 
-        .p-card:hover .p-img { transform: scale(1.05); }
+        .p-img-secondary {
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease;
+        }
+
+        .p-card:hover .p-img {
+            transform: scale(1.05);
+            opacity: 0;
+        }
+
+        .p-card:hover .p-img-secondary {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
 
         .p-info {
             font-size: 0.75rem;
@@ -255,7 +275,12 @@
 
             <div class="flex flex-wrap mb-10">
                 <% if (search) { %><span class="tag-minimal">Search: <%= search %> <i class="fa-solid fa-xmark ml-1 cursor-pointer" onclick="clearSearch()"></i></span><% } %>
-                <% if (categoryId) { %><span class="tag-minimal">Category Filtered <i class="fa-solid fa-xmark ml-1 cursor-pointer" onclick="location.href='/category'"></i></span><% } %>
+                <% if (categoryId) { %>
+                    <span class="tag-minimal">
+                        Category Filtered 
+                        <i class="fa-solid fa-xmark ml-1 cursor-pointer" onclick="location.href='/category'"></i>
+                    </span>
+                <% } %>
             </div>
 
             <div class="p-grid">
@@ -267,12 +292,40 @@
                     <div class="p-card">
                         <a href="/product/<%= product._id %>">
                             <div class="p-img-box">
-                                <img src="<%= product.images && product.images[0] ? product.images[0] : '/images/placeholder.jpg' %>" alt="<%= product.name %>" class="p-img">
+                                <% 
+                                  let primaryImg = '';
+                                  let secondaryImg = '';
+                                  const checkPath = (p) => p && typeof p === 'string' && p.trim() !== '' && p !== 'undefined' && p !== 'null';
+                                  
+                                  if (checkPath(product.images && product.images[0])) {
+                                      primaryImg = product.images[0];
+                                      secondaryImg = checkPath(product.images[1]) ? product.images[1] : primaryImg;
+                                  }
+                                  
+                                  if ((!secondaryImg || secondaryImg === primaryImg) && product.variants && product.variants.length > 0) {
+                                      const varWithImg = product.variants.find(v => checkPath(v.images && v.images[0]) && v.images[0] !== primaryImg);
+                                      if (varWithImg) {
+                                          secondaryImg = varWithImg.images[0];
+                                      } else if (!checkPath(primaryImg)) {
+                                          const firstVarImg = product.variants.find(v => checkPath(v.images && v.images[0]));
+                                          if (firstVarImg) primaryImg = firstVarImg.images[0];
+                                      }
+                                  }
+                                  
+                                  if(!checkPath(primaryImg)) primaryImg = '/images/placeholder.jpg';
+                                  if(!checkPath(secondaryImg)) secondaryImg = primaryImg;
+
+                                  const getFmt = (img) => (img && !img.startsWith('http') && !img.startsWith('/images/')) ? (img.startsWith('/') ? img : '/uploads/products/' + img) : img;
+                                %>
+                                <img src="<%= getFmt(primaryImg) %>" alt="<%= product.name %>" class="p-img">
+                                <img src="<%= getFmt(secondaryImg) %>" alt="<%= product.name %>" class="p-img-secondary">
+                                
                                 <% if(product.discount) { %>
-                                    <span style="position:absolute; bottom:10px; left:10px; background:#000; color:#fff; font-size:8px; padding:2px 6px; letter-spacing:1px; text-transform:uppercase;">Sale</span>
+                                    <span style="position:absolute; bottom:10px; left:10px; background:#000; color:#fff; font-size:8px; padding:2px 6px; letter-spacing:1px; text-transform:uppercase; z-index:2;">Sale</span>
                                 <% } %>
                             </div>
                         </a>
+
                         <div class="p-info">
                             <a href="/product/<%= product._id %>" class="p-name"><%= product.name %></a>
                             <div class="p-price">₹<%= product.price.toLocaleString('en-IN') %></div>
@@ -308,8 +361,26 @@
             const sort = document.getElementById('sortSelect').value;
             const minPrice = document.getElementById('minPrice').value;
             const maxPrice = document.getElementById('maxPrice').value;
-            const checkedCat = document.querySelector('.category-filter:checked');
-            const category = checkedCat ? checkedCat.value : '';
+            
+            // Single selection logic
+            const allCheckboxes = document.querySelectorAll('.category-filter');
+            let category = '';
+            
+            // The one that was just changed will be the only one considered
+            const eventTarget = event ? event.target : null;
+            if (eventTarget && eventTarget.classList.contains('category-filter')) {
+                if (eventTarget.checked) {
+                    category = eventTarget.value;
+                    // Uncheck others visually before reload for better UX
+                    allCheckboxes.forEach(cb => {
+                        if (cb !== eventTarget) cb.checked = false;
+                    });
+                }
+            } else {
+                // If triggered by something else (like price filter), find the currently checked one
+                const checked = document.querySelector('.category-filter:checked');
+                category = checked ? checked.value : '';
+            }
 
             const params = new URLSearchParams();
             if (search) params.set('search', search);

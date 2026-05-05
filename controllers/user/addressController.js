@@ -57,7 +57,36 @@ const addAddress = async (req, res) => {
 const deleteAddress = async (req, res) => {
   try {
     const addressId = req.query.id;
-    await Address.findByIdAndDelete(addressId);
+    const userId = req.session.user._id;
+    
+    // Verify ownership before deletion
+    const result = await Address.findOneAndDelete({ _id: addressId, userId });
+    
+    if (!result) {
+        console.warn(`User ${userId} attempted to delete unauthorized address ${addressId}`);
+    }
+
+    res.redirect('/address');
+  } catch (error) {
+    console.log(error);
+    res.redirect('/address');
+  }
+};
+
+const setDefaultAddress = async (req, res) => {
+  try {
+    const addressId = req.query.id;
+    const userId = req.session.user._id;
+
+    // Reset all addresses for this user
+    await Address.updateMany({ userId }, { $set: { isDefault: false } });
+    
+    // Set default only if it belongs to this user
+    await Address.findOneAndUpdate(
+        { _id: addressId, userId }, 
+        { $set: { isDefault: true } }
+    );
+
     res.redirect('/address');
   } catch (error) {
     console.log(error);
@@ -123,21 +152,6 @@ const editAddress = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.redirect("/address");
-  }
-};
-
-const setDefaultAddress = async (req, res) => {
-  try {
-    const addressId = req.query.id;
-    const userId = req.session.user._id;
-
-    await Address.updateMany({ userId }, { $set: { isDefault: false } });
-    await Address.findByIdAndUpdate(addressId, { $set: { isDefault: true } });
-
-    res.redirect('/address');
-  } catch (error) {
-    console.log(error);
-    res.redirect('/address');
   }
 };
 

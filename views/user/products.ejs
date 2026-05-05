@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   
   <style>
     :root {
@@ -80,11 +82,28 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease;
+    }
+
+    .product-img-secondary {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s ease;
     }
 
     .product-card:hover .product-img {
       transform: scale(1.05);
+      opacity: 0;
+    }
+
+    .product-card:hover .product-img-secondary {
+      transform: scale(1.05);
+      opacity: 1;
     }
 
     .wishlist-btn {
@@ -256,26 +275,43 @@
           </button>
 
           <a href="/product/<%= product._id %>">
-            <div class="img-box" style="background-color: #f0f0f0; min-height: 350px; display: flex; align-items: center; justify-content: center; overflow: hidden;">
+            <div class="img-box" style="background-color: #f0f0f0; min-height: 350px; display: flex; align-items: center; justify-content: center; position: relative;">
               <% 
-                let displayImg = '';
+                let primaryImg = '';
+                let secondaryImg = '';
                 const checkPath = (p) => p && typeof p === 'string' && p.trim() !== '' && p !== 'undefined' && p !== 'null';
                 
                 if (checkPath(product.images && product.images[0])) {
-                    displayImg = product.images[0];
-                } else if (product.variants && product.variants.length > 0) {
-                    const varWithImg = product.variants.find(v => checkPath(v.images && v.images[0]));
-                    if (varWithImg) displayImg = varWithImg.images[0];
+                    primaryImg = product.images[0];
+                    secondaryImg = checkPath(product.images[1]) ? product.images[1] : primaryImg;
                 }
                 
-                if(!checkPath(displayImg)) displayImg = 'https://picsum.photos/seed/snova' + product._id + '/600/800';
+                // If secondary is still empty or same as primary, try variants
+                if ((!secondaryImg || secondaryImg === primaryImg) && product.variants && product.variants.length > 0) {
+                    const varWithImg = product.variants.find(v => checkPath(v.images && v.images[0]) && v.images[0] !== primaryImg);
+                    if (varWithImg) {
+                        secondaryImg = varWithImg.images[0];
+                    } else if (!checkPath(primaryImg)) {
+                        const firstVarImg = product.variants.find(v => checkPath(v.images && v.images[0]));
+                        if (firstVarImg) primaryImg = firstVarImg.images[0];
+                    }
+                }
+                
+                if(!checkPath(primaryImg)) primaryImg = 'https://picsum.photos/seed/snova' + product._id + '/600/800';
+                if(!checkPath(secondaryImg)) secondaryImg = primaryImg;
+
+                const getFmt = (img) => (img && !img.startsWith('http')) ? (img.startsWith('/') ? img : '/uploads/products/' + img) : img;
               %>
-              <img src="<%= displayImg %>" 
+              <img src="<%= getFmt(primaryImg) %>" 
                    alt="<%= product.name %>" 
                    class="product-img" 
-                   style="width: 100%; height: 100%; object-fit: cover; display: block;"
+                   onerror="this.onerror=null;this.src='https://picsum.photos/600/800?grayscale';">
+              <img src="<%= getFmt(secondaryImg) %>" 
+                   alt="<%= product.name %>" 
+                   class="product-img-secondary" 
                    onerror="this.onerror=null;this.src='https://picsum.photos/600/800?grayscale';">
             </div>
+
           </a>
 
           <div class="product-info">
@@ -323,15 +359,21 @@
 
   <script>
     function showToast(msg) {
-      Swal.fire({
-        text: msg,
-        toast: true,
-        position: 'top',
-        showConfirmButton: false,
-        timer: 3000,
-        customClass: { popup: 'zara-toast' },
-        showClass: { popup: 'animate__animated animate__fadeInDown' }
-      });
+      Toastify({
+        text: (msg || "").toUpperCase(),
+        duration: 3000,
+        gravity: "top",
+        position: "center",
+        style: { 
+          background: "#000", 
+          borderRadius: "0px",
+          fontSize: "0.7rem",
+          letterSpacing: "1.5px",
+          fontWeight: "500",
+          fontFamily: "'Inter', sans-serif",
+          padding: "15px 40px"
+        }
+      }).showToast();
     }
 
     async function addToCart(productId) {
@@ -344,9 +386,13 @@
         const data = await res.json();
         if (data.success) {
           showToast('Added to bag');
+          if (typeof updateCartBadge === 'function') {
+            updateCartBadge(data.cartCount);
+          }
         } else {
           showToast(data.msg || 'Could not add to cart');
         }
+
       } catch (err) {
         showToast('Something went wrong');
       }
@@ -378,8 +424,12 @@
             icon.classList.replace('fa-regular', 'fa-solid');
             btn.classList.add('active');
           }
+          if (typeof updateWishlistBadge === 'function') {
+            updateWishlistBadge(data.wishlistCount);
+          }
           showToast(data.msg);
         }
+
       } catch (err) {
         console.error(err);
       }

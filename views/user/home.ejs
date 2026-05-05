@@ -1,367 +1,1167 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SNOVA | New In</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{--k:#0a0a0a;--w:#fff;--g:#f3f3f3;--gm:#ddd;--gt:#999;--f:'Inter',sans-serif}
-body{font-family:var(--f);background:var(--w);color:var(--k);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SNOVA | New In</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
 
-/* scroll progress */
-#prog{position:fixed;top:0;left:0;height:2px;background:var(--k);z-index:9999;width:0;transition:width .05s}
+    :root {
+      --k: #0a0a0a;
+      --w: #fff;
+      --g: #f3f3f3;
+      --gm: #ddd;
+      --gt: #999;
+      --f: 'Inter', sans-serif
+    }
 
-/* reveal */
-.rv{opacity:0;transform:translateY(36px);transition:opacity .85s ease,transform .85s ease}
-.rv.on{opacity:1;transform:none}
+    body {
+      font-family: var(--f);
+      background: var(--w);
+      color: var(--k);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden
+    }
 
-/* ─── HERO ─── */
-.hero{position:relative;width:100%;height:100vh;overflow:hidden;background:#000}
-.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center center}
-.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;animation: zoomIn 12s ease-in-out infinite alternate}
-@keyframes zoomIn{from{transform:scale(1)}to{transform:scale(1.08)}}
-.hero__veil{position:absolute;inset:0;background:linear-gradient(170deg,rgba(0,0,0,.5) 0%,rgba(0,0,0,.08) 50%,rgba(0,0,0,.6) 100%)}
-.hero__body{position:absolute;bottom:0;left:0;right:0;padding:0 56px 60px;display:flex;align-items:flex-end;justify-content:space-between}
-.hero__left{display:flex;flex-direction:column;gap:14px}
-.hero__tag{font-size:.52rem;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,.55)}
-.hero__h1{font-size:clamp(4rem,12vw,11rem);font-weight:300;letter-spacing:-4px;line-height:.85;text-transform:uppercase;color:var(--w)}
-.hero__actions{display:flex;align-items:center;gap:18px;margin-top:4px}
-.btn-white{display:inline-block;padding:14px 38px;border:1px solid rgba(255,255,255,.85);color:var(--w);font-size:.57rem;letter-spacing:3.5px;text-transform:uppercase;text-decoration:none;transition:background .28s,color .28s}
-.btn-white:hover{background:var(--w);color:var(--k)}
-.mute-btn{width:46px;height:46px;border-radius:50%;border:1px solid rgba(255,255,255,.3);background:rgba(255,255,255,.1);color:var(--w);display:flex;align-items:center;justify-content:center;cursor:pointer;backdrop-filter:blur(10px);font-size:.8rem;transition:background .2s;flex-shrink:0}
-.mute-btn:hover{background:rgba(255,255,255,.22)}
-.hero__right{display:flex;flex-direction:column;align-items:flex-end;gap:10px;padding-bottom:4px}
-.hero__scroll{font-size:.48rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.45);writing-mode:vertical-rl;transform:rotate(180deg)}
+    /* scroll progress */
+    #prog {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--k);
+      z-index: 9999;
+      width: 0;
+      transition: width .05s
+    }
 
-/* ─── TICKER ─── */
-.ticker{overflow:hidden;border-top:1px solid var(--gm);border-bottom:1px solid var(--gm);padding:12px 0;background:var(--w)}
-.ticker__t{display:flex;gap:48px;animation:tick 22s linear infinite;white-space:nowrap}
-.ticker__t span{font-size:.56rem;letter-spacing:3px;text-transform:uppercase;flex-shrink:0}
-.ticker__t .dot{color:var(--gt)}
-@keyframes tick{to{transform:translateX(-50%)}}
+    /* reveal */
+    .rv {
+      opacity: 0;
+      transform: translateY(36px);
+      transition: opacity .85s ease, transform .85s ease
+    }
 
-/* ─── SECTION HEADER ─── */
-.sh{padding:58px 48px 26px;display:flex;align-items:baseline;justify-content:space-between}
-.sh__t{font-size:.58rem;letter-spacing:3.5px;text-transform:uppercase;font-weight:500}
-.sh__a{font-size:.56rem;letter-spacing:2px;text-transform:uppercase;color:var(--k);text-decoration:none;border-bottom:1px solid var(--k);padding-bottom:1px}
+    .rv.on {
+      opacity: 1;
+      transform: none
+    }
 
-/* ─── EDITORIAL SPLIT ─── */
-.esplit{display:grid;grid-template-columns:1fr 1fr;height:88vh}
-.ep{position:relative;overflow:hidden}
-.ep img, .ep video{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
-.ep:hover img, .ep:hover video{transform:scale(1.05)}
-.ep__lbl{position:absolute;bottom:32px;left:28px;z-index:2}
-.ep__lbl p{font-size:.49rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.9);margin-bottom:8px;text-shadow:0 2px 4px rgba(0,0,0,0.5)}
-.ep__lbl a{font-size:.6rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.5);padding-bottom:2px;text-shadow:0 2px 4px rgba(0,0,0,0.5)}
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 88vh;
+      overflow: hidden;
+      background: #000
+    }
 
-/* ─── PRODUCT GRID ─── */
-.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:0 48px 72px}
-.pc{text-decoration:none;color:var(--k)}
-.pc__box{aspect-ratio:3/4;overflow:hidden;background:var(--g);position:relative;margin-bottom:10px}
-.pc__box img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .7s cubic-bezier(.25,.46,.45,.94)}
-.pc:hover .pc__box img{transform:scale(1.06)}
-.pc__badge{position:absolute;top:12px;left:12px;font-size:.46rem;letter-spacing:2px;text-transform:uppercase;background:var(--w);padding:3px 8px;font-weight:500}
-.pc__n{font-size:.67rem;letter-spacing:.5px;text-transform:uppercase;margin-bottom:3px}
-.pc__p{font-size:.67rem;color:var(--gt)}
+    .hero video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center center
+    }
 
-/* ─── FULL STORY ─── */
-.story{position:relative;height:92vh;overflow:hidden}
-.story img{width:100%;height:100%;object-fit:cover;object-position:center;animation:kb 14s ease-in-out infinite alternate}
-@keyframes kb{from{transform:scale(1)}to{transform:scale(1.07)}}
-.story__veil{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,.65) 0%,transparent 55%)}
-.story__body{position:absolute;bottom:56px;left:56px}
-.story__tag{font-size:.49rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.55);margin-bottom:12px}
-.story__h{font-size:clamp(2.5rem,6vw,6rem);font-weight:300;letter-spacing:-1.5px;line-height:.95;text-transform:uppercase;color:var(--w);margin-bottom:26px}
-.story__a{font-size:.57rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.55);padding-bottom:2px}
+    .hero img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      animation: zoomIn 12s ease-in-out infinite alternate
+    }
 
-/* ─── DARK SPLIT ─── */
-.dsplit{display:grid;grid-template-columns:1fr 1.45fr;min-height:88vh;background:#060606}
-.ds__txt{display:flex;flex-direction:column;justify-content:flex-end;padding:64px 52px;gap:20px}
-.ds__eye{font-size:.49rem;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,.35)}
-.ds__h{font-size:clamp(2rem,4.5vw,5.5rem);font-weight:300;letter-spacing:-1px;line-height:.95;text-transform:uppercase;color:var(--w)}
-.ds__p{font-size:.67rem;line-height:1.9;color:rgba(255,255,255,.4);max-width:270px;font-weight:300}
-.ds__btn{display:inline-block;padding:14px 32px;border:1px solid rgba(255,255,255,.25);font-size:.56rem;letter-spacing:3px;text-transform:uppercase;color:var(--w);text-decoration:none;width:fit-content;transition:background .25s,border-color .25s}
-.ds__btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.6)}
-.ds__img{position:relative;overflow:hidden}
-.ds__img img{width:100%;height:100%;object-fit:cover;object-position:center top;filter:brightness(.86);transition:transform 1s cubic-bezier(.25,.46,.45,.94)}
-.dsplit:hover .ds__img img{transform:scale(1.04)}
-.ds__img::after{content:'';position:absolute;inset:0;background:linear-gradient(to right,#060606 0%,transparent 22%);pointer-events:none}
+    @keyframes zoomIn {
+      from {
+        transform: scale(1)
+      }
 
-/* ─── 3 COL ─── */
-.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:0 6px 64px}
-.ti{position:relative;overflow:hidden;aspect-ratio:2/3}
-.ti img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
-.ti:hover img{transform:scale(1.05)}
-.ti__lbl{position:absolute;bottom:22px;left:22px}
-.ti__lbl span{display:block;font-size:.48rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:5px}
-.ti__lbl a{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.44);padding-bottom:2px}
+      to {
+        transform: scale(1.08)
+      }
+    }
 
-/* ─── LOOKBOOK ─── */
-.lb{padding:0 48px 72px}
-.lb__grid{display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:6px;height:88vh}
-.li{overflow:hidden}
-.li.tall{grid-row:1/3}
-.li img{width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
-.li:hover img{transform:scale(1.05)}
+    .hero__veil {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(170deg, rgba(0, 0, 0, .5) 0%, rgba(0, 0, 0, .08) 50%, rgba(0, 0, 0, .6) 100%)
+    }
 
-/* ─── BANNER ROW ─── */
-.brow{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 6px 72px}
-.bi{position:relative;overflow:hidden;aspect-ratio:3/4}
-.bi img{width:100%;height:100%;object-fit:cover;object-position:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94)}
-.bi:hover img{transform:scale(1.05)}
-.bi__info{position:absolute;bottom:28px;left:24px}
-.bi__info p{font-size:.48rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:6px}
-.bi__info a{font-size:.6rem;letter-spacing:2px;text-transform:uppercase;color:var(--w);text-decoration:none;border-bottom:1px solid rgba(255,255,255,.44);padding-bottom:2px}
+    .hero__body {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 0 56px 60px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between
+    }
 
-/* ─── NEWSLETTER ─── */
-.nl{background:var(--g);padding:90px 48px;text-align:center;border-top:1px solid var(--gm)}
-.nl p{font-size:.5rem;letter-spacing:3px;text-transform:uppercase;color:var(--gt);margin-bottom:12px}
-.nl h3{font-size:1rem;font-weight:300;letter-spacing:1px;text-transform:uppercase;margin-bottom:32px}
-.nl form{display:flex;max-width:400px;margin:0 auto;border-bottom:1px solid var(--k)}
-.nl input{flex:1;border:none;background:transparent;padding:13px 0;font-size:.66rem;outline:none;font-family:var(--f)}
-.nl input::placeholder{color:var(--gt);font-size:.59rem;text-transform:uppercase}
-.nl button{background:none;border:none;font-size:.53rem;letter-spacing:2px;text-transform:uppercase;cursor:pointer;font-family:var(--f);font-weight:500}
+    .hero__left {
+      display: flex;
+      flex-direction: column;
+      gap: 14px
+    }
 
-/* ─── RESPONSIVE ─── */
-@media(max-width:1024px){.pgrid{grid-template-columns:repeat(2,1fr)}.tg{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:768px){
-  .esplit{grid-template-columns:1fr}.ep{height:55vw}
-  .dsplit{grid-template-columns:1fr}.ds__txt{order:2;padding:36px 24px 52px}.ds__img{order:1;min-height:55vw}
-  .hero__body{padding:0 24px 44px}.hero__h1{font-size:3.5rem;letter-spacing:-2px}
-  .hero__right{display:none}
-  .pgrid{grid-template-columns:repeat(2,1fr);padding:0 16px 52px}
-  .sh{padding:44px 20px 18px}
-  .lb__grid{height:auto;grid-template-columns:1fr 1fr;grid-template-rows:auto}.li.tall{grid-row:auto}
-  .lb{padding:0 16px 52px}
-  .brow{grid-template-columns:1fr}.story__body{left:24px;bottom:32px}
-  .nl{padding:60px 24px}
-}
-@media(max-width:480px){.tg{grid-template-columns:1fr}}
-</style>
+    .hero__tag {
+      font-size: .52rem;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .55)
+    }
+
+    .hero__h1 {
+      font-size: clamp(4rem, 12vw, 11rem);
+      font-weight: 300;
+      letter-spacing: -4px;
+      line-height: .85;
+      text-transform: uppercase;
+      color: var(--w)
+    }
+
+    .hero__actions {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-top: 4px
+    }
+
+    .btn-white {
+      display: inline-block;
+      padding: 14px 38px;
+      border: 1px solid rgba(255, 255, 255, .85);
+      color: var(--w);
+      font-size: .57rem;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background .28s, color .28s
+    }
+
+    .btn-white:hover {
+      background: var(--w);
+      color: var(--k)
+    }
+
+    .mute-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, .3);
+      background: rgba(255, 255, 255, .1);
+      color: var(--w);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      font-size: .8rem;
+      transition: background .2s;
+      flex-shrink: 0
+    }
+
+    .mute-btn:hover {
+      background: rgba(255, 255, 255, .22)
+    }
+
+    .hero__right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      padding-bottom: 4px
+    }
+
+    .hero__scroll {
+      font-size: .48rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .45);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg)
+    }
+
+    /* ─── TICKER ─── */
+    .ticker {
+      overflow: hidden;
+      border-top: 1px solid var(--gm);
+      border-bottom: 1px solid var(--gm);
+      padding: 12px 0;
+      background: var(--w)
+    }
+
+    .ticker__t {
+      display: flex;
+      gap: 48px;
+      animation: tick 22s linear infinite;
+      white-space: nowrap
+    }
+
+    .ticker__t span {
+      font-size: .56rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      flex-shrink: 0
+    }
+
+    .ticker__t .dot {
+      color: var(--gt)
+    }
+
+    @keyframes tick {
+      to {
+        transform: translateX(-50%)
+      }
+    }
+
+    /* ─── SECTION HEADER ─── */
+    .sh {
+      padding: 58px 48px 26px;
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between
+    }
+
+    .sh__t {
+      font-size: .58rem;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+      font-weight: 500
+    }
+
+    .sh__a {
+      font-size: .56rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--k);
+      text-decoration: none;
+      border-bottom: 1px solid var(--k);
+      padding-bottom: 1px
+    }
+
+    /* ─── EDITORIAL SPLIT ─── */
+    .esplit {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      padding: 0 4px
+    }
+
+    .ep {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4;
+      background: #f5f5f5
+    }
+
+    .ep img,
+    .ep video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      transition: transform .8s cubic-bezier(.25, .46, .45, .94)
+    }
+
+    .ep:hover img,
+    .ep:hover video {
+      transform: scale(1.03)
+    }
+
+    .ep__lbl {
+      position: absolute;
+      bottom: 32px;
+      left: 28px;
+      z-index: 2
+    }
+
+    .ep__lbl p {
+      font-size: .49rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .9);
+      margin-bottom: 8px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
+    }
+
+    .ep__lbl a {
+      font-size: .6rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--w);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, .5);
+      padding-bottom: 2px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5)
+    }
+
+    /* ─── PRODUCT GRID ─── */
+    .pgrid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      padding: 0 48px 72px
+    }
+
+    .pc {
+      text-decoration: none;
+      color: var(--k)
+    }
+
+    .pc__box {
+      aspect-ratio: 3/4;
+      overflow: hidden;
+      background: var(--g);
+      position: relative;
+      margin-bottom: 10px
+    }
+
+    .pc__box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: transform .7s cubic-bezier(.25, .46, .45, .94), opacity 0.5s ease
+    }
+
+    .pc__img--secondary {
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0
+    }
+
+    .pc:hover .pc__img--primary {
+      opacity: 0
+    }
+
+    .pc:hover .pc__img--secondary {
+      opacity: 1
+    }
+
+    .pc:hover .pc__box img {
+      transform: scale(1.06)
+    }
+
+    .pc__badge {
+      position: absolute;
+      top: 12px;
+      left: 12px;
+      font-size: .46rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      background: var(--w);
+      padding: 3px 8px;
+      font-weight: 500;
+      z-index: 2
+    }
+
+    .pc__n {
+      font-size: .67rem;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      margin-bottom: 3px
+    }
+
+    .pc__p {
+      font-size: .67rem;
+      color: var(--gt)
+    }
+
+    /* ─── FULL STORY ─── */
+    .story {
+      position: relative;
+      width: 100%;
+      height: 85vh;
+      overflow: hidden;
+      background: #000;
+      margin-top: 4px
+    }
+
+    .story img,
+    .story video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      animation: kb 14s ease-in-out infinite alternate
+    }
+
+    @keyframes kb {
+      from {
+        transform: scale(1)
+      }
+
+      to {
+        transform: scale(1.04)
+      }
+    }
+
+    .story__veil {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, .65) 0%, transparent 55%)
+    }
+
+    .story__body {
+      position: absolute;
+      bottom: 56px;
+      left: 56px
+    }
+
+    .story__tag {
+      font-size: .49rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .55);
+      margin-bottom: 12px
+    }
+
+    .story__h {
+      font-size: clamp(2.5rem, 6vw, 6rem);
+      font-weight: 300;
+      letter-spacing: -1.5px;
+      line-height: .95;
+      text-transform: uppercase;
+      color: var(--w);
+      margin-bottom: 26px
+    }
+
+    .story__a {
+      font-size: .57rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--w);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, .55);
+      padding-bottom: 2px
+    }
+
+    /* ─── DARK SPLIT ─── */
+    .dsplit {
+      display: grid;
+      grid-template-columns: 1fr 1.45fr;
+      background: #060606;
+      align-items: stretch;
+      transition: background 0.8s cubic-bezier(.25, .46, .45, .94);
+    }
+
+    .dsplit:hover {
+      background: #111;
+    }
+
+    .ds__txt {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 64px 52px;
+      gap: 20px;
+      position: relative;
+    }
+
+    .ds__txt::before {
+      content: '';
+      position: absolute;
+      left: 32px;
+      bottom: 64px;
+      width: 1px;
+      height: 0;
+      background: rgba(255, 255, 255, 0.4);
+      transition: height 0.8s cubic-bezier(.25, .46, .45, .94);
+    }
+
+    .dsplit:hover .ds__txt::before {
+      height: calc(100% - 128px);
+    }
+
+    .ds__txt > * {
+      transition: transform 0.8s cubic-bezier(.25, .46, .45, .94);
+    }
+
+    .dsplit:hover .ds__txt > * {
+      transform: translateX(16px);
+    }
+
+    .ds__eye {
+      font-size: .49rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .35)
+    }
+
+    .ds__h {
+      font-size: clamp(2rem, 4.5vw, 5.5rem);
+      font-weight: 300;
+      letter-spacing: -1px;
+      line-height: .95;
+      text-transform: uppercase;
+      color: var(--w)
+    }
+
+    .ds__p {
+      font-size: .67rem;
+      line-height: 1.9;
+      color: rgba(255, 255, 255, .4);
+      max-width: 270px;
+      font-weight: 300
+    }
+
+    .ds__btn {
+      display: inline-block;
+      padding: 14px 32px;
+      border: 1px solid rgba(255, 255, 255, .25);
+      font-size: .56rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--w);
+      text-decoration: none;
+      width: fit-content;
+      transition: background .25s, border-color .25s
+    }
+
+    .ds__btn:hover {
+      background: rgba(255, 255, 255, .08);
+      border-color: rgba(255, 255, 255, .6)
+    }
+
+    .ds__img {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      background: #060606;
+    }
+
+    .ds__img img,
+    .ds__img video {
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      transition: transform 1s cubic-bezier(.25, .46, .45, .94)
+    }
+
+    .dsplit:hover .ds__img img,
+    .dsplit:hover .ds__img video {
+      transform: scale(1.04)
+    }
+
+    .ds__img::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      /* Subtle blend at the very edge to remove the harsh line */
+      background: linear-gradient(to right, #060606 0%, rgba(6, 6, 6, 0.7) 5%, transparent 20%);
+      pointer-events: none;
+      transition: opacity 0.8s ease;
+    }
+
+    .dsplit:hover .ds__img::after {
+      opacity: 0.4;
+    }
+
+
+    /* ─── 3 COL ─── */
+    .tg {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      padding: 0 6px 64px
+    }
+
+    .ti {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 2/3
+    }
+
+    .ti img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: transform .8s cubic-bezier(.25, .46, .45, .94)
+    }
+
+    .ti:hover img {
+      transform: scale(1.05)
+    }
+
+    .ti__lbl {
+      position: absolute;
+      bottom: 22px;
+      left: 22px
+    }
+
+    .ti__lbl span {
+      display: block;
+      font-size: .48rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .6);
+      margin-bottom: 5px
+    }
+
+    .ti__lbl a {
+      font-size: .6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--w);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, .44);
+      padding-bottom: 2px
+    }
+
+    /* ─── LOOKBOOK ─── */
+    .lb {
+      padding: 0 48px 72px
+    }
+
+    .lb__grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 6px;
+      height: 88vh
+    }
+
+    .li {
+      overflow: hidden
+    }
+
+    .li.tall {
+      grid-row: 1/3
+    }
+
+    .li img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .8s cubic-bezier(.25, .46, .45, .94)
+    }
+
+    .li:hover img {
+      transform: scale(1.05)
+    }
+
+    /* ─── BANNER ROW ─── */
+    .brow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      padding: 0 6px 72px
+    }
+
+    .bi {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 3/4
+    }
+
+    .bi img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center top;
+      transition: transform .8s cubic-bezier(.25, .46, .45, .94)
+    }
+
+    .bi:hover img {
+      transform: scale(1.05)
+    }
+
+    .bi__info {
+      position: absolute;
+      bottom: 28px;
+      left: 24px
+    }
+
+    .bi__info p {
+      font-size: .48rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .6);
+      margin-bottom: 6px
+    }
+
+    .bi__info a {
+      font-size: .6rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--w);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(255, 255, 255, .44);
+      padding-bottom: 2px
+    }
+
+    /* ─── NEWSLETTER ─── */
+    .nl {
+      background: var(--g);
+      padding: 90px 48px;
+      text-align: center;
+      border-top: 1px solid var(--gm)
+    }
+
+    .nl p {
+      font-size: .5rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--gt);
+      margin-bottom: 12px
+    }
+
+    .nl h3 {
+      font-size: 1rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 32px
+    }
+
+    .nl form {
+      display: flex;
+      max-width: 400px;
+      margin: 0 auto;
+      border-bottom: 1px solid var(--k)
+    }
+
+    .nl input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      padding: 13px 0;
+      font-size: .66rem;
+      outline: none;
+      font-family: var(--f)
+    }
+
+    .nl input::placeholder {
+      color: var(--gt);
+      font-size: .59rem;
+      text-transform: uppercase
+    }
+
+    .nl button {
+      background: none;
+      border: none;
+      font-size: .53rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      font-family: var(--f);
+      font-weight: 500
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media(max-width:1024px) {
+      .pgrid {
+        grid-template-columns: repeat(2, 1fr)
+      }
+
+      .tg {
+        grid-template-columns: repeat(2, 1fr)
+      }
+    }
+
+    @media(max-width:768px) {
+      .esplit {
+        grid-template-columns: 1fr
+      }
+
+      .ep {
+        height: 55vw
+      }
+
+      .dsplit {
+        grid-template-columns: 1fr
+      }
+
+      .ds__txt {
+        order: 2;
+        padding: 36px 24px 52px
+      }
+
+      .ds__img {
+        order: 1;
+        min-height: 55vw
+      }
+
+      .hero__body {
+        padding: 0 24px 44px
+      }
+
+      .hero__h1 {
+        font-size: 3.5rem;
+        letter-spacing: -2px
+      }
+
+      .hero__right {
+        display: none
+      }
+
+      .pgrid {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 0 16px 52px
+      }
+
+      .sh {
+        padding: 44px 20px 18px
+      }
+
+      .lb__grid {
+        height: auto;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto
+      }
+
+      .li.tall {
+        grid-row: auto
+      }
+
+      .lb {
+        padding: 0 16px 52px
+      }
+
+      .brow {
+        grid-template-columns: 1fr
+      }
+
+      .story__body {
+        left: 24px;
+        bottom: 32px
+      }
+
+      .nl {
+        padding: 60px 24px
+      }
+    }
+
+    @media(max-width:480px) {
+      .tg {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="prog"></div>
-<%- include('../partials/user/header') %>
+  <div id="prog"></div>
+  <%- include('../partials/user/header') %>
 
-<% 
-// Helper to get product image safely by cycling through available products
-function getProductImg(index, fallbackUrl) {
-  if (typeof products !== 'undefined' && products.length > 0) {
-    const safeIndex = index % products.length;
-    const p = products[safeIndex];
-    let img = '';
-    if (p.images && p.images[0]) img = p.images[0];
-    else if (p.variants && p.variants.length > 0 && p.variants[0].images && p.variants[0].images[0]) img = p.variants[0].images[0];
-    
-    if (img) return img.startsWith('/') ? img : '/uploads/products/' + img;
-  }
-  return fallbackUrl;
-}
-%>
+    <% 
+      /* Helper to get product image safely by cycling through available products */
+      function getProductImg(index, fallbackUrl) { 
+        if (typeof products !== 'undefined' && products.length > 0) {
+          const safeIndex = index % products.length;
+          const p = products[safeIndex];
+          let img = '';
+          if (p.images && p.images[0]) img = p.images[0];
+          else if (p.variants && p.variants.length > 0 && p.variants[0].images && p.variants[0].images[0]) img = p.variants[0].images[0];
 
-<!-- HERO IMAGE -->
-<section class="hero">
-  <img src="<%= getProductImg(0, '/images/hero-poster.png') %>" alt="Hero Image" loading="eager">
-  <div class="hero__veil"></div>
-  <div class="hero__body">
-    <div class="hero__left">
-      <p class="hero__tag">Spring · Summer 2025</p>
-      <h1 class="hero__h1">New<br>In</h1>
-      <div class="hero__actions">
-        <a href="/products" class="btn-white">Shop Now</a>
+          if (img) return img.startsWith('/') ? img : '/uploads/products/' + img;
+        }
+        return fallbackUrl;
+      }
+    %>
+
+      <!-- HERO VIDEO -->
+      <section class="hero">
+        <video autoplay muted loop playsinline id="vid">
+          <source
+            src="/videos/SaveClip.App_AQOkDaEqSZXpIxu9U0J7ydyosNFWrlec4QV-Y74SXcPRgbiQdo-MLAxs8lVf9y2KgASs_Du33MHMEl62dqGaWEhkF-8Bd-v0Y2hBXDM.mp4"
+            type="video/mp4">
+        </video>
+        <div class="hero__veil"></div>
+        <div class="hero__body">
+          <div class="hero__left">
+            <p class="hero__tag">Spring · Summer 2025</p>
+            <h1 class="hero__h1">New<br>In</h1>
+            <div class="hero__actions">
+              <a href="/products" class="btn-white">Shop Now</a>
+              <button class="mute-btn" onclick="toggleMute()" aria-label="Toggle Mute">
+                <i id="muteIco" class="fa fa-volume-xmark"></i>
+              </button>
+            </div>
+          </div>
+          <div class="hero__right">
+            <span class="hero__scroll">Scroll Down</span>
+            <i class="fa fa-arrow-down" style="color:rgba(255,255,255,.4);font-size:.7rem"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- TICKER -->
+      <div class="ticker" aria-hidden="true">
+        <div class="ticker__t">
+          <span>New In Woman</span><span class="dot">·</span><span>New In Man</span><span class="dot">·</span>
+          <span>Dresses</span><span class="dot">·</span><span>Blazers</span><span class="dot">·</span>
+          <span>Knitwear</span><span class="dot">·</span><span>Trousers</span><span class="dot">·</span>
+          <span>Outerwear</span><span class="dot">·</span><span>Shoes</span><span
+            class="dot">·</span><span>Accessories</span><span class="dot">·</span>
+          <span>New In Woman</span><span class="dot">·</span><span>New In Man</span><span class="dot">·</span>
+          <span>Dresses</span><span class="dot">·</span><span>Blazers</span><span class="dot">·</span>
+          <span>Knitwear</span><span class="dot">·</span><span>Trousers</span><span class="dot">·</span>
+          <span>Outerwear</span><span class="dot">·</span><span>Shoes</span><span
+            class="dot">·</span><span>Accessories</span><span class="dot">·</span>
+        </div>
       </div>
-    </div>
-    <div class="hero__right">
-      <span class="hero__scroll">Scroll Down</span>
-      <i class="fa fa-arrow-down" style="color:rgba(255,255,255,.4);font-size:.7rem"></i>
-    </div>
-  </div>
-</section>
 
-<!-- TICKER -->
-<div class="ticker" aria-hidden="true">
-  <div class="ticker__t">
-    <span>New In Woman</span><span class="dot">·</span><span>New In Man</span><span class="dot">·</span>
-    <span>Dresses</span><span class="dot">·</span><span>Blazers</span><span class="dot">·</span>
-    <span>Knitwear</span><span class="dot">·</span><span>Trousers</span><span class="dot">·</span>
-    <span>Outerwear</span><span class="dot">·</span><span>Shoes</span><span class="dot">·</span><span>Accessories</span><span class="dot">·</span>
-    <span>New In Woman</span><span class="dot">·</span><span>New In Man</span><span class="dot">·</span>
-    <span>Dresses</span><span class="dot">·</span><span>Blazers</span><span class="dot">·</span>
-    <span>Knitwear</span><span class="dot">·</span><span>Trousers</span><span class="dot">·</span>
-    <span>Outerwear</span><span class="dot">·</span><span>Shoes</span><span class="dot">·</span><span>Accessories</span><span class="dot">·</span>
-  </div>
-</div>
-
-<!-- EDITORIAL SPLIT -->
-<section class="esplit">
-  <div class="ep rv">
-    <img src="<%= getProductImg(1, '/images/ep1.jpg') %>" alt="Editorial 1" loading="lazy">
-    <div class="ep__lbl">
-      <p>Essentials</p>
-      <a href="/products">Shop The Look</a>
-    </div>
-  </div>
-  <div class="ep rv">
-    <video autoplay muted loop playsinline>
-      <source src="/videos/SaveClip.App_AQMHiw9BGiTFwdijmmB1kCnR3D8fTSAW0Sz0H-poZUO6XFYaN8RoCUTd3U680WcZqcNugS5fNHZqVhXBY4hELisecjSJA4gxsFrDrzc.mp4" type="video/mp4">
-    </video>
-    <div class="ep__lbl">
-      <p>Campaign</p>
-      <a href="/products">Watch & Shop</a>
-    </div>
-  </div>
-</section>
-
-<!-- NEW ARRIVALS -->
-<div class="sh rv"><span class="sh__t">New Arrivals</span><a href="/products" class="sh__a">View All</a></div>
-<div class="pgrid rv">
-  <% if (typeof products !== 'undefined' && products.length > 0) { %>
-    <% products.slice(0, 4).forEach(product => { %>
-      <a href="/product/<%= product._id %>" class="pc">
-        <div class="pc__box">
-          <% 
-            let displayImg = '';
-            if (product.images && product.images[0]) {
-              displayImg = product.images[0];
-            } else if (product.variants && product.variants.length > 0 && product.variants[0].images && product.variants[0].images[0]) {
-              displayImg = product.variants[0].images[0];
-            }
-            let finalImg = displayImg ? (displayImg.startsWith('/') ? displayImg : '/uploads/products/' + displayImg) : '';
-          %>
-          <img src="<%= finalImg %>" onerror="this.src='<%= finalImg %>'" alt="<%= product.name %>" loading="lazy">
-          <% if (product.discount > 0) { %>
-            <span class="pc__badge">Sale</span>
-          <% } else { %>
-            <span class="pc__badge">New</span>
-          <% } %>
+      <!-- EDITORIAL SPLIT -->
+      <section class="esplit">
+        <div class="ep rv">
+          <video autoplay muted loop playsinline>
+            <source src="/videos/c50bf8ef7710ea1edf4eac9c3a6bd9ca.mp4" type="video/mp4">
+          </video>
+          <div class="ep__lbl">
+            <p>Essentials</p>
+            <a href="/products">Shop The Look</a>
+          </div>
         </div>
-        <div class="pc__n"><%= product.name %></div>
-        <div class="pc__p">₹<%= product.price %></div>
-      </a>
-    <% }) %>
-  <% } else { %>
-    <p style="grid-column: 1/-1; text-align:center; color:#999; font-size:0.8rem; padding: 20px;">No products found</p>
-  <% } %>
-</div>
-
-<!-- STORY BLOCK -->
-<section class="story rv">
-  <img src="<%= getProductImg(10, 'https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1800&q=85') %>" alt="Studio Collection" loading="lazy">
-  <div class="story__veil"></div>
-  <div class="story__body">
-    <p class="story__tag">Exclusive Edit</p>
-    <h2 class="story__h">The Studio<br>Collection</h2>
-    <a href="/products" class="story__a">Discover</a>
-  </div>
-</section>
-
-<!-- DARK SPLIT -->
-<section class="dsplit rv">
-  <div class="ds__txt">
-    <p class="ds__eye">Exclusive &middot; After Dark</p>
-    <h2 class="ds__h">City<br>Nights</h2>
-    <p class="ds__p">Draped silhouettes for the after-hours. Minimal design meets the glow of the skyline.</p>
-    <a href="/products" class="ds__btn">Shop The Edit</a>
-  </div>
-  <div class="ds__img">
-    <img src="<%= getProductImg(11, 'https://images.unsplash.com/photo-1554568218-0f1715e72254?auto=format&fit=crop&w=1000&q=85') %>" alt="Night editorial" loading="lazy">
-  </div>
-</section>
-
-<!-- CATEGORIES -->
-<div class="sh rv"><span class="sh__t">Shop By Category</span><a href="/products" class="sh__a">All Categories</a></div>
-<div class="tg rv">
-  <div class="ti"><img src="<%= getProductImg(12, 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=700&q=80') %>" alt="Dresses" loading="lazy"><div class="ti__lbl"><span>Category</span><a href="/products">Dresses</a></div></div>
-  <div class="ti"><img src="<%= getProductImg(13, 'https://images.unsplash.com/photo-1583846717393-dc2412c95ed7?auto=format&fit=crop&w=700&q=80') %>" alt="Knitwear" loading="lazy"><div class="ti__lbl"><span>Category</span><a href="/products">Knitwear</a></div></div>
-  <div class="ti"><img src="<%= getProductImg(14, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=700&q=80') %>" alt="Outerwear" loading="lazy"><div class="ti__lbl"><span>Category</span><a href="/products">Outerwear</a></div></div>
-</div>
-
-<!-- MORE PRODUCTS -->
-<div class="sh rv"><span class="sh__t">Trending Now</span><a href="/products" class="sh__a">View All</a></div>
-<div class="pgrid rv">
-  <% if (typeof products !== 'undefined' && products.length > 4) { %>
-    <% products.slice(4, 8).forEach(product => { %>
-      <a href="/product/<%= product._id %>" class="pc">
-        <div class="pc__box">
-          <% 
-            let displayImg = '';
-            if (product.images && product.images[0]) {
-              displayImg = product.images[0];
-            } else if (product.variants && product.variants.length > 0 && product.variants[0].images && product.variants[0].images[0]) {
-              displayImg = product.variants[0].images[0];
-            }
-            let finalImg = displayImg ? (displayImg.startsWith('/') ? displayImg : '/uploads/products/' + displayImg) : '';
-          %>
-          <img src="<%= finalImg %>" onerror="this.src='<%= finalImg %>'" alt="<%= product.name %>" loading="lazy">
-          <span class="pc__badge">Trending</span>
+        <div class="ep rv">
+          <video autoplay muted loop playsinline>
+            <source
+              src="/videos/SaveClip.App_AQMHiw9BGiTFwdijmmB1kCnR3D8fTSAW0Sz0H-poZUO6XFYaN8RoCUTd3U680WcZqcNugS5fNHZqVhXBY4hELisecjSJA4gxsFrDrzc.mp4"
+              type="video/mp4">
+          </video>
+          <div class="ep__lbl">
+            <p>Campaign</p>
+            <a href="/products">Watch & Shop</a>
+          </div>
         </div>
-        <div class="pc__n"><%= product.name %></div>
-        <div class="pc__p">₹<%= product.price %></div>
-      </a>
-    <% }) %>
-  <% } else { %>
-    <p style="grid-column: 1/-1; text-align:center; color:#999; font-size:0.8rem; padding: 20px;">More items coming soon</p>
-  <% } %>
-</div>
+      </section>
 
-<!-- LOOKBOOK -->
-<div class="sh rv"><span class="sh__t">The Lookbook</span><a href="/products" class="sh__a">View Looks</a></div>
-<div class="lb rv">
-  <div class="lb__grid">
-    <div class="li tall"><img src="<%= getProductImg(15, 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=900&q=80') %>" alt="" loading="lazy"></div>
-    <div class="li"><img src="<%= getProductImg(16, 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80') %>" alt="" loading="lazy"></div>
-    <div class="li"><img src="<%= getProductImg(17, 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80') %>" alt="" loading="lazy"></div>
-    <div class="li"><img src="<%= getProductImg(18, 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=600&q=80') %>" alt="" loading="lazy"></div>
-    <div class="li"><img src="<%= getProductImg(19, 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=600&q=80') %>" alt="" loading="lazy"></div>
-  </div>
-</div>
+      <!-- NEW ARRIVALS -->
+      <div class="sh rv"><span class="sh__t">New Arrivals</span><a href="/products" class="sh__a">View All</a></div>
+      <div class="pgrid rv">
+        <% if (typeof products !=='undefined' && products.length> 0) { %>
+          <% products.slice(0, 4).forEach(product=> { %>
+            <a href="/product/<%= product._id %>" class="pc">
+              <div class="pc__box">
+                <% 
+                  let primaryImg = '';
+                  let secondaryImg = '';
+                  if (product.images && product.images[0]) {
+                    primaryImg = product.images[0];
+                    secondaryImg = product.images[1] || product.images[0];
+                  }
+                  
+                  /* If secondary is still empty or same as primary, try variants */
+                  if ((!secondaryImg || secondaryImg === primaryImg) && product.variants && product.variants.length > 0) {
+                    const variantWithImg = product.variants.find(v => v.images && v.images[0] && v.images[0] !== primaryImg);
+                    if (variantWithImg) {
+                      secondaryImg = variantWithImg.images[0];
+                    } else if (!primaryImg && product.variants[0].images && product.variants[0].images[0]) {
+                      primaryImg = product.variants[0].images[0];
+                      secondaryImg = (product.variants[0].images[1]) || (product.variants[1] && product.variants[1].images && product.variants[1].images[0]) || primaryImg;
+                    }
+                  }
 
-<!-- BANNER ROW -->
-<div class="brow rv">
-  <div class="bi"><img src="<%= getProductImg(11, 'https://images.unsplash.com/photo-1554568218-0f1715e72254?auto=format&fit=crop&w=800&q=80') %>" alt="" loading="lazy"><div class="bi__info"><p>The Edit</p><a href="/products">Evening Essentials</a></div></div>
-  <div class="bi"><img src="<%= getProductImg(12, 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80') %>" alt="" loading="lazy"><div class="bi__info"><p>The Edit</p><a href="/products">Weekend Casual</a></div></div>
-</div>
+                  const getFmt = (img) => img ? (img.startsWith('/') ? img : '/uploads/products/' + img) : '';
+                  let finalPrimary = getFmt(primaryImg);
+                  let finalSecondary = getFmt(secondaryImg);
+                %>
+                  <img src="<%= finalPrimary %>" alt="<%= product.name %>" class="pc__img--primary" loading="lazy">
+                  <img src="<%= finalSecondary %>" alt="<%= product.name %>" class="pc__img--secondary" loading="lazy">
 
-<!-- NEWSLETTER -->
-<section class="nl rv">
-  <p>Stay Connected</p>
-  <h3>Join the SNOVA Community</h3>
-  <form onsubmit="return false;">
-    <input type="email" placeholder="Your email address">
-    <button type="submit">Subscribe →</button>
-  </form>
-</section>
+                  <% if (product.discount> 0) { %>
+                    <span class="pc__badge">Sale</span>
+                    <% } else { %>
+                      <span class="pc__badge">New</span>
+                      <% } %>
+              </div>
 
-<%- include('../partials/user/footer') %>
+              <div class="pc__n">
+                <%= product.name %>
+              </div>
+              <div class="pc__p">₹<%= product.price %>
+              </div>
+            </a>
+            <% }) %>
+              <% } else { %>
+                <p style="grid-column: 1/-1; text-align:center; color:#999; font-size:0.8rem; padding: 20px;">No
+                  products found</p>
+                <% } %>
+      </div>
 
-<script>
-// Progress bar
-const prog=document.getElementById('prog');
-window.addEventListener('scroll',()=>{
-  const pct=document.documentElement.scrollTop/(document.documentElement.scrollHeight-window.innerHeight)*100;
-  prog.style.width=pct+'%';
-});
 
-// Mute toggle
-function toggleMute(){
-  const v=document.getElementById('vid');
-  const i=document.getElementById('muteIco');
-  v.muted=!v.muted;
-  i.className=v.muted?'fa fa-volume-xmark':'fa fa-volume-high';
-}
 
-// Scroll reveal
-new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('on') });
-},{threshold:.08}).observe.bind(null);
+      <!-- DARK SPLIT -->
+      <section class="dsplit rv">
+        <div class="ds__txt">
+          <p class="ds__eye">Exclusive &middot; Minimal</p>
+          <h2 class="ds__h">Modern<br>Classics</h2>
+          <p class="ds__p">Elevate your everyday wardrobe with our curated selection of timeless silhouettes.</p>
+          <a href="/products" class="ds__btn">Discover More</a>
+        </div>
+        <div class="ds__img">
+          <video autoplay muted loop playsinline>
+            <source src="/videos/f194432b0dee8fe4e85110b7eab199e3.mp4" type="video/mp4">
+          </video>
+        </div>
+      </section>
 
-const obs=new IntersectionObserver((entries)=>{
-  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('on') });
-},{threshold:.08});
-document.querySelectorAll('.rv').forEach(el=>obs.observe(el));
-</script>
+      <!-- CATEGORIES -->
+      <div class="sh rv"><span class="sh__t">Shop By Category</span><a href="/products" class="sh__a">All Categories</a>
+      </div>
+      <div class="tg rv">
+        <div class="ti"><img
+            src="<%= getProductImg(12, 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=700&q=80') %>"
+            alt="Dresses" loading="lazy">
+          <div class="ti__lbl"><span>Category</span><a href="/products">Dresses</a></div>
+        </div>
+        <div class="ti"><img
+            src="<%= getProductImg(13, 'https://images.unsplash.com/photo-1583846717393-dc2412c95ed7?auto=format&fit=crop&w=700&q=80') %>"
+            alt="Knitwear" loading="lazy">
+          <div class="ti__lbl"><span>Category</span><a href="/products">Knitwear</a></div>
+        </div>
+        <div class="ti"><img
+            src="<%= getProductImg(14, 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=700&q=80') %>"
+            alt="Outerwear" loading="lazy">
+          <div class="ti__lbl"><span>Category</span><a href="/products">Outerwear</a></div>
+        </div>
+      </div>
+
+      <!-- MORE PRODUCTS -->
+      <div class="sh rv"><span class="sh__t">Trending Now</span><a href="/products" class="sh__a">View All</a></div>
+      <div class="pgrid rv">
+        <% if (typeof products !=='undefined' && products.length> 4) { %>
+          <% products.slice(4, 8).forEach(product=> { %>
+            <a href="/product/<%= product._id %>" class="pc">
+              <div class="pc__box">
+                <% 
+                  let primaryImg = '';
+                  let secondaryImg = '';
+                  if (product.images && product.images[0]) {
+                    primaryImg = product.images[0];
+                    secondaryImg = product.images[1] || product.images[0];
+                  }
+                  
+                  /* If secondary is still empty or same as primary, try variants */
+                  if ((!secondaryImg || secondaryImg === primaryImg) && product.variants && product.variants.length > 0) {
+                    const variantWithImg = product.variants.find(v => v.images && v.images[0] && v.images[0] !== primaryImg);
+                    if (variantWithImg) {
+                      secondaryImg = variantWithImg.images[0];
+                    } else if (!primaryImg && product.variants[0].images && product.variants[0].images[0]) {
+                      primaryImg = product.variants[0].images[0];
+                      secondaryImg = (product.variants[0].images[1]) || (product.variants[1] && product.variants[1].images && product.variants[1].images[0]) || primaryImg;
+                    }
+                  }
+
+                  const getFmt = (img) => img ? (img.startsWith('/') ? img : '/uploads/products/' + img) : '';
+                  let finalPrimary = getFmt(primaryImg);
+                  let finalSecondary = getFmt(secondaryImg);
+                %>
+                  <img src="<%= finalPrimary %>" alt="<%= product.name %>" class="pc__img--primary" loading="lazy">
+                  <img src="<%= finalSecondary %>" alt="<%= product.name %>" class="pc__img--secondary" loading="lazy">
+                  <span class="pc__badge">Trending</span>
+              </div>
+
+              <div class="pc__n">
+                <%= product.name %>
+              </div>
+              <div class="pc__p">₹<%= product.price %>
+              </div>
+            </a>
+            <% }) %>
+              <% } else { %>
+                <p style="grid-column: 1/-1; text-align:center; color:#999; font-size:0.8rem; padding: 20px;">More items
+                  coming soon</p>
+                <% } %>
+      </div>
+
+      <!-- LOOKBOOK -->
+      <div class="sh rv"><span class="sh__t">The Lookbook</span><a href="/products" class="sh__a">View Looks</a></div>
+      <div class="lb rv">
+        <div class="lb__grid">
+          <div class="li tall"><img
+              src="<%= getProductImg(15, 'https://images.unsplash.com/photo-1487222477894-8943e31ef7b2?auto=format&fit=crop&w=900&q=80') %>"
+              alt="" loading="lazy"></div>
+          <div class="li"><img
+              src="<%= getProductImg(16, 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=600&q=80') %>"
+              alt="" loading="lazy"></div>
+          <div class="li"><img
+              src="<%= getProductImg(17, 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=600&q=80') %>"
+              alt="" loading="lazy"></div>
+          <div class="li"><img
+              src="<%= getProductImg(18, 'https://images.unsplash.com/photo-1558618047-3c8c76ca7d13?auto=format&fit=crop&w=600&q=80') %>"
+              alt="" loading="lazy"></div>
+          <div class="li"><img
+              src="<%= getProductImg(19, 'https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=600&q=80') %>"
+              alt="" loading="lazy"></div>
+        </div>
+      </div>
+
+      <!-- BANNER ROW -->
+      <div class="brow rv">
+        <div class="bi"><img
+            src="<%= getProductImg(11, 'https://images.unsplash.com/photo-1554568218-0f1715e72254?auto=format&fit=crop&w=800&q=80') %>"
+            alt="" loading="lazy">
+          <div class="bi__info">
+            <p>The Edit</p><a href="/products">Evening Essentials</a>
+          </div>
+        </div>
+        <div class="bi"><img
+            src="<%= getProductImg(12, 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=800&q=80') %>"
+            alt="" loading="lazy">
+          <div class="bi__info">
+            <p>The Edit</p><a href="/products">Weekend Casual</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEWSLETTER -->
+      <section class="nl rv">
+        <p>Stay Connected</p>
+        <h3>Join the SNOVA Community</h3>
+        <form onsubmit="return false;">
+          <input type="email" placeholder="Your email address">
+          <button type="submit">Subscribe →</button>
+        </form>
+      </section>
+
+      <%- include('../partials/user/footer') %>
+
+        <script>
+          // Progress bar
+          const prog = document.getElementById('prog');
+          window.addEventListener('scroll', () => {
+            const pct = document.documentElement.scrollTop / (document.documentElement.scrollHeight - window.innerHeight) * 100;
+            prog.style.width = pct + '%';
+          });
+
+          // Mute toggle
+          function toggleMute() {
+            const v = document.getElementById('vid');
+            const i = document.getElementById('muteIco');
+            v.muted = !v.muted;
+            i.className = v.muted ? 'fa fa-volume-xmark' : 'fa fa-volume-high';
+          }
+
+          // Scroll reveal
+          new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on') });
+          }, { threshold: .08 }).observe.bind(null);
+
+          const obs = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('on') });
+          }, { threshold: .08 });
+          document.querySelectorAll('.rv').forEach(el => obs.observe(el));
+        </script>
 </body>
+
 </html>

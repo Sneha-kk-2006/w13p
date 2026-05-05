@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
         :root {
             --primary-black: #000;
@@ -292,19 +293,62 @@
             document.getElementById("removeProfileImage").value = "true";
         }
 
-        function SubmitEditProfile() {
+        async function SubmitEditProfile() {
             const phone = document.getElementById("phone").value.trim();
             const name = document.getElementById("name").value.trim();
+            const form = document.getElementById("editProfileForm");
             
+            // Clear previous errors
+            document.getElementById("numberError").textContent = "";
+            document.getElementById("nameError").textContent = "";
+
             if (phone && phone.length !== 10) {
                 document.getElementById("numberError").textContent = "Must be 10 digits";
                 return;
             }
-            if (name.length < 2) {
-                document.getElementById("nameError").textContent = "Name too short";
+            if (name.length < 3) {
+                document.getElementById("nameError").textContent = "Name must be at least 3 characters";
                 return;
             }
-            document.getElementById("editProfileForm").submit();
+
+            const formData = new FormData(form);
+            
+            try {
+                const response = await fetch('/editProfile', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    Toastify({
+                        text: "Profile updated successfully",
+                        duration: 2000,
+                        gravity: "top",
+                        position: "center",
+                        style: { background: "#000", borderRadius: "0px" }
+                    }).showToast();
+                    setTimeout(() => { window.location.href = data.redirect || '/profile'; }, 2000);
+                } else {
+                    Toastify({
+                        text: data.message || "Update failed",
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        style: { background: "#ff0000", borderRadius: "0px" }
+                    }).showToast();
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                Toastify({
+                    text: "An unexpected error occurred",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    style: { background: "#ff0000", borderRadius: "0px" }
+                }).showToast();
+            }
         }
     </script>
 </body>

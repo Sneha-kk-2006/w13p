@@ -11,6 +11,7 @@ const ERRORS = {
   INVALID_OTP: "Invalid OTP",
   INVALID_REQUEST: "Invalid request",
   PASSWORD_LENGTH: "Password must be at least 6 characters",
+  INVALID_NAME: "Name should contain only letters (min 3 chars)",
   OTP_RESENT: "OTP resent successfully"
 };
 
@@ -20,4 +21,4 @@ const SUCCESS = {
   PASSWORD_RESET: "Password updated successfully"
 };
 
-module.exports = { ERRORS, SUCCESS };     
+module.exports = { ERRORS, SUCCESS };

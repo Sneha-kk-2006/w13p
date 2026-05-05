@@ -9,6 +9,8 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
 
     <style>
         :root {
@@ -429,15 +431,21 @@
         }
 
         function showToast(msg) {
-            Swal.fire({
-                text: msg,
-                toast: true,
-                position: 'top',
-                showConfirmButton: false,
-                timer: 3000,
-                customClass: { popup: 'zara-toast' },
-                showClass: { popup: 'animate__animated animate__fadeInDown' }
-            });
+            Toastify({
+                text: (msg || "").toUpperCase(),
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                style: { 
+                    background: "#000", 
+                    borderRadius: "0px",
+                    fontSize: "0.7rem",
+                    letterSpacing: "1.5px",
+                    fontWeight: "500",
+                    fontFamily: "'Inter', sans-serif",
+                    padding: "15px 40px"
+                }
+            }).showToast();
         }
 
         const variants = <%- JSON.stringify(product.variants || []) %>;
@@ -499,11 +507,25 @@
                 const data = await res.json();
                 if (data.success) {
                     showToast('Added to bag');
+                    updateCartBadge(data.cartCount);
                 } else {
                     showToast(data.msg || 'Error');
                 }
             } catch (err) { console.error(err); }
         }
+
+        function updateCartBadge(count) {
+            const badge = document.getElementById('cartCountBadge');
+            if (badge) {
+                if (count > 0) {
+                    badge.textContent = count > 99 ? '99+' : count;
+                    badge.style.display = 'flex';
+                } else {
+                    badge.style.display = 'none';
+                }
+            }
+        }
+
 
         async function toggleWishlist(productId) {
             try {
@@ -515,7 +537,11 @@
                 const data = await res.json();
                 if (data.success) {
                     showToast('Wishlist updated');
+                    if (typeof updateWishlistBadge === 'function') {
+                        updateWishlistBadge(data.wishlistCount);
+                    }
                 }
+
             } catch (err) { console.error(err); }
         }
 
@@ -528,11 +554,17 @@
                     body: JSON.stringify({ productId, variantId: null })
                 });
                 const data = await res.json();
-                showToast(data.success ? 'Added to bag ✓' : (data.msg || 'Please select a variant on product page'));
+                if (data.success) {
+                    showToast('Added to bag ✓');
+                    updateCartBadge(data.cartCount);
+                } else {
+                    showToast(data.msg || 'Please select a variant on product page');
+                }
             } catch (err) {
                 showToast('Something went wrong');
             }
         }
+
          
 
        function handleZoom(e, box) {

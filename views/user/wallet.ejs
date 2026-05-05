@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | My Wallet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-black: #000;
+            --off-white: #fff;
+            --text-gray: #666;
+            --border-light: #eee;
+            --success-green: #2ecc71;
+            --error-red: #e74c3c;
+            --accent-gold: #d4af37;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--off-white);
+            color: var(--primary-black);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 60px 5%;
+            background-color: #fbfbfb;
+        }
+
+        .page-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            margin-bottom: 40px;
+        }
+
+        /* Wallet Card */
+        .wallet-card {
+            background: var(--primary-black);
+            color: var(--off-white);
+            padding: 40px;
+            border-radius: 2px;
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wallet-card::after {
+            content: 'SNOVA';
+            position: absolute;
+            right: -20px;
+            bottom: -20px;
+            font-family: 'Playfair Display', serif;
+            font-size: 8rem;
+            opacity: 0.05;
+            font-style: italic;
+        }
+
+        .balance-info h3 {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            opacity: 0.6;
+            margin-bottom: 10px;
+        }
+
+        .balance-amount {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+        }
+
+        .currency {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-right: 5px;
+        }
+
+        /* Transaction History */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .section-header h2 {
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .transactions-list {
+            background: var(--off-white);
+            border: 1px solid var(--border-light);
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px;
+            border-bottom: 1px solid var(--border-light);
+            transition: background 0.3s;
+        }
+
+        .transaction-item:last-child {
+            border-bottom: none;
+        }
+
+        .transaction-item:hover {
+            background: #fafafa;
+        }
+
+        .tx-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .tx-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .icon-credit { background: #e8f8f0; color: var(--success-green); }
+        .icon-debit { background: #fdf2f2; color: var(--error-red); }
+
+        .tx-details h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .tx-details p {
+            font-size: 0.7rem;
+            color: var(--text-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tx-right {
+            text-align: right;
+        }
+
+        .tx-amount {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .tx-amount.credit { color: var(--success-green); }
+        .tx-amount.debit { color: var(--primary-black); }
+
+        .tx-date {
+            font-size: 0.65rem;
+            color: #999;
+            text-transform: uppercase;
+        }
+
+        .empty-state {
+            padding: 80px;
+            text-align: center;
+            color: #999;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            opacity: 0.2;
+        }
+
+        .empty-state p {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-add-money {
+            background: var(--off-white);
+            color: var(--primary-black);
+            padding: 12px 24px;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            border: 1px solid var(--primary-black);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .btn-add-money:hover {
+            background: #eee;
+            border-color: #eee;
+        }
+
+        .btn-add-money:active {
+            transform: scale(0.95);
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-box {
+            background: var(--off-white);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .amount-input-group {
+            border-bottom: 1px solid #000;
+            display: flex;
+            align-items: center;
+            padding: 10px 0;
+            margin-bottom: 10px;
+        }
+
+        .error-text {
+            color: var(--error-red);
+            font-size: 0.75rem;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        .amount-input-group span {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .amount-input {
+            border: none;
+            outline: none;
+            font-size: 1.5rem;
+            font-weight: 700;
+            width: 100%;
+        }
+
+        .btn-confirm {
+            width: 100%;
+            background: #000;
+            color: #fff;
+            padding: 18px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+        }
+
+        .toastify {
+            z-index: 99999 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <%- include('../partials/user/header') %>
+
+    <div class="dashboard-container">
+        <%- include('../partials/user/sidebar', { activePage: 'wallet' }) %>
+
+        <main class="main-content">
+            <h1 class="page-title">Digital Wallet</h1>
+
+            <div class="wallet-card">
+                <div class="balance-info">
+                    <h3>Available Balance</h3>
+                    <div class="balance-amount">
+                        <span class="currency">₹</span><%= wallet ? wallet.balance.toLocaleString('en-IN') : '0' %>
+                    </div>
+                    <button class="btn-add-money" onclick="openAddMoneyModal()">Add Money</button>
+                </div>
+
+                <div class="wallet-status">
+                    <div style="font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.6;">Account Status</div>
+                    <div style="font-weight: 700; text-transform: uppercase; margin-top: 5px;">Verified Member</div>
+                </div>
+            </div>
+
+            <div class="section-header">
+                <h2>Transaction History</h2>
+            </div>
+
+            <div class="transactions-list">
+                <% if (wallet && wallet.transactions && wallet.transactions.length > 0) { %>
+                    <% wallet.transactions.forEach(tx => { %>
+                        <div class="transaction-item">
+                            <div class="tx-left">
+                                <div class="tx-icon <%= (tx.type === 'credit' || tx.type.startsWith('refund')) ? 'icon-credit' : 'icon-debit' %>">
+                                    <% if (tx.type === 'credit' || tx.type.startsWith('refund')) { %>
+                                        <i class="fa-solid fa-arrow-down"></i>
+                                    <% } else { %>
+                                        <i class="fa-solid fa-arrow-up"></i>
+                                    <% } %>
+                                </div>
+                                <div class="tx-details">
+                                    <h4><%= tx.description || (tx.type.replace('_', ' ')) %></h4>
+                                    <p><%= tx.orderRef ? 'Ref: ' + tx.orderRef : 'System Transaction' %></p>
+                                </div>
+                            </div>
+                            <div class="tx-right">
+                                <div class="tx-amount <%= (tx.type === 'credit' || tx.type.startsWith('refund')) ? 'credit' : 'debit' %>">
+                                    <%= (tx.type === 'credit' || tx.type.startsWith('refund')) ? '+' : '-' %> ₹<%= tx.amount.toLocaleString('en-IN') %>
+                                </div>
+                                <div class="tx-date">
+                                    <%= new Date(tx.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) %>
+                                </div>
+                            </div>
+                        </div>
+                    <% }); %>
+                <% } else { %>
+                    <div class="empty-state">
+                        <i class="fa-solid fa-wallet"></i>
+                        <p>No transactions to display yet.</p>
+                    </div>
+                <% } %>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Money Modal -->
+    <div class="modal-overlay" id="addMoneyModal">
+        <div class="modal-box">
+            <span class="modal-close" onclick="closeAddMoneyModal()">&times;</span>
+            <h3 class="modal-title">Add Funds</h3>
+            <div class="amount-input-group">
+                <span>₹</span>
+                <input type="number" id="addAmount" class="amount-input" placeholder="0.00" min="1" oninput="document.getElementById('addMoneyError').style.display='none'">
+            </div>
+            <div id="addMoneyError" class="error-text"></div>
+            <button class="btn-confirm" onclick="processAddMoney()">Add to Wallet</button>
+        </div>
+    </div>
+
+    <%- include('../partials/user/footer') %>
+
+<script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    function openAddMoneyModal() {
+        document.getElementById('addMoneyModal').style.display = 'flex';
+    }
+
+    function closeAddMoneyModal() {
+        document.getElementById('addMoneyModal').style.display = 'none';
+        document.getElementById('addAmount').value = '';
+        document.getElementById('addMoneyError').style.display = 'none';
+    }
+
+    async function processAddMoney() {
+        const amountInput = document.getElementById('addAmount').value;
+        const amount = parseFloat(amountInput);
+        const errorElement = document.getElementById('addMoneyError');
+
+        if (!amountInput || isNaN(amount) || amount <= 0) {
+            errorElement.textContent = 'Please enter a valid positive amount.';
+            errorElement.style.display = 'block';
+            return;
+        }
+
+        try {
+            // Step 1: Create Razorpay order
+            const orderRes = await fetch('/wallet/createOrder', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount })
+            });
+
+            const orderData = await orderRes.json();
+
+            if (!orderData.success) {
+                showToast(orderData.message || 'Failed to initiate payment', 'error');
+                return;
+            }
+
+            closeAddMoneyModal();
+
+            // Step 2: Open Razorpay checkout
+            const options = {
+                key: orderData.keyId,                  // Pass key from backend
+                amount: orderData.order.amount,         // In paise
+                currency: orderData.order.currency,
+                name: 'My App',
+                description: 'Wallet Top-up',
+                order_id: orderData.order.id,
+
+                // Step 3: On payment success → verify on backend
+                handler: async function (response) {
+                    try {
+                        const verifyRes = await fetch('/wallet/add-money', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_signature: response.razorpay_signature,
+                                amount
+                            })
+                        });
+
+                        const verifyData = await verifyRes.json();
+
+                        if (verifyData.success) {
+                            showToast('Money added successfully');
+                            setTimeout(() => location.reload(), 1500);
+                        } else {
+                            showToast(verifyData.message || 'Payment verification failed', 'error');
+                        }
+                    } catch (err) {
+                        console.error('Verification error:', err);
+                        showToast('Verification failed. Contact support.', 'error');
+                    }
+                },
+
+                modal: {
+                    ondismiss: function () {
+                        showToast('Payment cancelled', 'error');
+                    }
+                },
+
+                theme: { color: '#000000' }
+            };
+
+            const rzp = new Razorpay(options);
+
+            rzp.on('payment.failed', function (response) {
+                showToast(response.error.description || 'Payment failed', 'error');
+            });
+
+            rzp.open();
+
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('An unexpected error occurred', 'error');
+        }
+    }
+
+    function showToast(msg, type = 'success') {
+        Toastify({
+            text: msg.toUpperCase(),
+            duration: 3000,
+            gravity: "top",
+            position: "center",
+            style: {
+                background: type === 'success' ? "#000" : "#ff0000",
+                borderRadius: "0px",
+                fontSize: "0.7rem",
+                letterSpacing: "1.5px",
+                fontWeight: "500",
+                fontFamily: "'Inter', sans-serif",
+                padding: "15px 40px"
+            }
+        }).showToast();
+    }
+</script>
+
+</body>
+</html>
+

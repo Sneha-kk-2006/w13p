@@ -32,10 +32,9 @@ const loadcat = async (req, res) => {
         
         if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
             // Check if specified category is active
-            if (!activeCategoryIds.includes(categoryId.toString())) {
-                return res.redirect('/category'); // or wherever you want to redirect
+            if (activeCategoryIds.includes(categoryId.toString())) {
+                query.category = new mongoose.Types.ObjectId(categoryId);
             }
-            query.category = new mongoose.Types.ObjectId(categoryId);
         }
         if (minPrice || maxPrice) {
             query.price = {};

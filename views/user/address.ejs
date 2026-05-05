@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <style>
         :root {
             --primary-black: #000;
@@ -305,44 +306,58 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    Swal.fire({
-                        text: result.message || 'ADDRESS SAVED',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 2000,
-                        background: '#000',
-                        color: '#fff',
-                        customClass: { popup: 'zara-toast' }
-                    }).then(() => {
-                        window.location.reload();
-                    });
+                    Toastify({
+                        text: (result.message || 'ADDRESS SAVED').toUpperCase(),
+                        duration: 2000,
+                        gravity: "top",
+                        position: "center",
+                        style: { 
+                            background: "#000", 
+                            borderRadius: "0px",
+                            fontSize: "0.7rem",
+                            letterSpacing: "1.5px",
+                            fontWeight: "500",
+                            fontFamily: "'Inter', sans-serif",
+                            padding: "15px 40px"
+                        }
+                    }).showToast();
+                    setTimeout(() => { window.location.reload(); }, 2000);
                 } else {
-                    Swal.fire({
-                        text: result.message || 'FAILED TO SAVE ADDRESS',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        background: '#000',
-                        color: '#fff',
-                        customClass: { popup: 'zara-toast' }
-                    });
+                    Toastify({
+                        text: (result.message || 'FAILED TO SAVE ADDRESS').toUpperCase(),
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        style: { 
+                            background: "#ff0000", 
+                            borderRadius: "0px",
+                            fontSize: "0.7rem",
+                            letterSpacing: "1.5px",
+                            fontWeight: "500",
+                            fontFamily: "'Inter', sans-serif",
+                            padding: "15px 40px"
+                        }
+                    }).showToast();
                     btn.disabled = false;
                     btn.innerText = "SAVE ADDRESS";
                 }
             } catch (error) {
                 console.error("Error:", error);
-                Swal.fire({
+                Toastify({
                     text: 'AN UNEXPECTED ERROR OCCURRED',
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    background: '#000',
-                    color: '#fff',
-                    customClass: { popup: 'zara-toast' }
-                });
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    style: { 
+                        background: "#ff0000", 
+                        borderRadius: "0px",
+                        fontSize: "0.7rem",
+                        letterSpacing: "1.5px",
+                        fontWeight: "500",
+                        fontFamily: "'Inter', sans-serif",
+                        padding: "15px 40px"
+                    }
+                }).showToast();
                 btn.disabled = false;
                 btn.innerText = "SAVE ADDRESS";
             }
@@ -350,11 +365,17 @@
 
         function deleteAddress(id) {
             Swal.fire({
-                title: 'Delete this address?',
-                icon: 'warning',
+                title: 'DELETE THIS ADDRESS?',
+                text: 'THIS ACTION CANNOT BE UNDONE',
                 showCancelButton: true,
                 confirmButtonColor: '#000',
-                confirmButtonText: 'Delete'
+                cancelButtonColor: '#999',
+                confirmButtonText: 'DELETE',
+                cancelButtonText: 'CANCEL',
+                customClass: {
+                    title: 'font-serif uppercase',
+                    popup: 'rounded-none'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     window.location.href = "/deleteAddress?id=" + id;

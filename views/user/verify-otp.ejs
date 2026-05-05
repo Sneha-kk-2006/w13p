@@ -112,9 +112,29 @@
                     inputs[index + 1].focus();
                 }
             });
+
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Backspace' && !e.target.value && index > 0) {
                     inputs[index - 1].focus();
+                }
+            });
+
+            // Handle Paste functionality
+            input.addEventListener('paste', (e) => {
+                e.preventDefault();
+                const pasteData = e.clipboardData.getData('text').replace(/[^0-9]/g, '').split('');
+                
+                let currentIdx = index;
+                for (let i = 0; i < pasteData.length && currentIdx < inputs.length; i++) {
+                    inputs[currentIdx].value = pasteData[i];
+                    currentIdx++;
+                }
+
+                // Focus the next empty field or the last one filled
+                if (currentIdx < inputs.length) {
+                    inputs[currentIdx].focus();
+                } else {
+                    inputs[inputs.length - 1].focus();
                 }
             });
         });
@@ -151,17 +171,20 @@
 
         function showToast(msg, bg) {
             Toastify({
-                text: msg.toUpperCase(),
+                text: (msg || "").toUpperCase(),
                 duration: 3000,
                 gravity: "top",
                 position: "center",
                 style: {
-                    background: "#000",
+                    background: bg === '#000' ? "#000" : "#ff0000",
                     color: "#fff",
-                    borderRadius: "0",
-                    fontSize: "10px",
-                    letterSpacing: "1px",
-                    fontFamily: "Inter"
+                    borderRadius: "0px",
+                    fontSize: "0.7rem",
+                    letterSpacing: "1.5px",
+                    fontWeight: "500",
+                    fontFamily: "'Inter', sans-serif",
+                    padding: "15px 40px",
+                    textTransform: "uppercase"
                 }
             }).showToast();
         }

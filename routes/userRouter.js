@@ -12,6 +12,8 @@ const productController = require('../controllers/user/productController')
 const cartController = require('../controllers/user/cartController')
 const wishlistController = require('../controllers/user/wishlistController')
 const orderController = require('../controllers/user/orderController');
+const walletController = require('../controllers/user/walletController');
+
 
 
 
@@ -64,27 +66,33 @@ router.post('/logout', profileController.logout);
 
 
 
-router.get('/cart', cartController.getcart)
-router.post('/cart/add', cartController.addToCart)
-router.post('/cart/updateQty', cartController.updateCartQty)
-router.post('/cart/remove', cartController.remove)
-router.post('/cart/clearCart', cartController.clearCart)
+router.get('/cart', userAuth, cartController.getcart)
+router.post('/cart/add', userAuth, cartController.addToCart)
+router.post('/cart/updateQty', userAuth, cartController.updateCartQty)
+router.post('/cart/remove', userAuth, cartController.remove)
+router.post('/cart/clearCart', userAuth, cartController.clearCart)
 
 
-router.get('/wishlist', wishlistController.getWishlist)
-router.post('/wishlist/add', wishlistController.addToWishlist)
-router.post('/wishlist/remove', wishlistController.removeFromWishlist)
+router.get('/wishlist', userAuth, wishlistController.getWishlist)
+router.post('/wishlist/add', userAuth, wishlistController.addToWishlist)
+router.post('/wishlist/remove', userAuth, wishlistController.removeFromWishlist)
 
 
 router.get('/checkout', userAuth, orderController.loadCheckout);
 router.post('/checkout/place-order', userAuth, orderController.placeOrder);
+router.post('/checkout/razorpayOrder',userAuth,orderController.createRazorpayOrder)
+router.post('/checkout/verifyPayment',userAuth,orderController.verifyRazorpayPayment)
 router.get('/checkout/success/:id', userAuth, orderController.loadOrderSuccess);
 router.get('/order-details/:id', userAuth, orderController.loadOrderDetails);
 router.get('/orders', userAuth, orderController.loadOrders);
-router.post('/order/cancel/:orderId', userAuth, orderController.cancelOrder);
-router.post('/order/return/:orderId', userAuth, orderController.returnOrder);
+router.post('/order/cancel/:orderId/:itemId', userAuth, orderController.cancelOrderItem);
+router.post('/order/return/:orderId/:itemId', userAuth, orderController.returnOrderItem);
 router.get('/order/invoice/:orderId', userAuth, orderController.downloadInvoice);
 router.delete('/orders/clear', userAuth, orderController.clearAllOrders);
+
+router.get('/wallet', userAuth, walletController.loadWallet);
+router.post('/wallet/add-money', userAuth, walletController.addMoney);
+router.post('/wallet/createOrder',walletController.createRazorpayOrder);
 
 
 

@@ -146,12 +146,21 @@
 
     <a href="/wishlist" style="position:relative; color:#000; text-decoration:none;" title="Wishlist">
       <i class="fa-regular fa-heart" style="font-size: 18px;"></i>
-      <% if(typeof wishlistCount !=='undefined' && wishlistCount> 0) { %>
-        <span class="cart-count-badge">
-          <%= wishlistCount %>
-        </span>
-        <% } %>
+      <span id="wishlistCountBadge" class="cart-count-badge" style="<%= (typeof wishlistCount === 'undefined' || wishlistCount === 0) ? 'display: none;' : '' %>">
+        <%= (typeof wishlistCount !== 'undefined') ? wishlistCount : '' %>
+      </span>
     </a>
+
+
+    <div style="position:relative;">
+      <a href="/cart" style="color:#000; text-decoration:none;">
+        <i class="fa-solid fa-bag-shopping" style="font-size: 20px;"></i>
+      </a>
+      <span id="cartCountBadge" class="cart-count-badge" style="<%= (typeof cartCount === 'undefined' || cartCount === 0) ? 'display: none;' : '' %>">
+        <%= (typeof cartCount !== 'undefined') ? (cartCount > 99 ? '99+' : cartCount) : '' %>
+      </span>
+
+    </div>
 
     <div class="auth-group">
       <% if (user) { %>
@@ -181,15 +190,31 @@
           <% } %>
     </div>
 
-    <div style="position:relative;">
-      <a href="/cart" style="color:#000; text-decoration:none;">
-        <i class="fa-solid fa-bag-shopping" style="font-size: 20px;"></i>
-      </a>
-      <% if(typeof cartCount !=='undefined' && cartCount> 0) { %>
-        <span class="cart-count-badge">
-          <%= cartCount> 99 ? '99+' : cartCount %>
-        </span>
-        <% } %>
-    </div>
   </div>
 </header>
+
+<script>
+  function updateCartBadge(count) {
+    const badge = document.getElementById('cartCountBadge');
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count > 99 ? '99+' : count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+
+  function updateWishlistBadge(count) {
+    const badge = document.getElementById('wishlistCountBadge');
+    if (badge) {
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'flex';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+</script>

@@ -12,6 +12,8 @@
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "cloudinary": "^2.10.0",
+    "crypto": "^1.0.1",
     "easyinvoice": "^3.0.47",
     "ejs": "^5.0.1",
     "express": "^5.2.1",
@@ -26,6 +28,7 @@
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
     "pdfkit": "^0.18.0",
-    "pdfkit-table": "^0.1.99"
+    "pdfkit-table": "^0.1.99",
+    "razorpay": "^2.9.6"
   }
 }

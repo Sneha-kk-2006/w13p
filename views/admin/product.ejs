@@ -589,17 +589,21 @@
             const currentPageProducts = <%- JSON.stringify(products) %>;
 
             function showToast(msg, color = '#000') {
-                Swal.fire({
-                    text: msg,
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    background: color === 'red' ? '#c62828' : color === 'green' ? '#2e7d32' : '#000',
-                    color: '#fff',
-                    customClass: { popup: 'zara-toast' },
-                    showClass: { popup: 'animate__animated animate__fadeInDown' }
-                });
+                Toastify({
+                    text: (msg || "").toUpperCase(),
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    style: { 
+                        background: color === 'red' ? '#ff0000' : '#000', 
+                        borderRadius: "0px",
+                        fontSize: "0.7rem",
+                        letterSpacing: "1.5px",
+                        fontWeight: "500",
+                        fontFamily: "'Inter', sans-serif",
+                        padding: "15px 40px"
+                    }
+                }).showToast();
             }
 
             function openEditModalByIndex(index) {
@@ -1216,17 +1220,32 @@
             }
 
             async function confirmDeleteVariant(productId, variantId) {
-                if (!confirm('Are you sure you want to delete this variant?')) return;
-                try {
-                    const res = await fetch(`/admin/product/deleteVariant/${productId}/${variantId}`, { method: 'DELETE' });
-                    const data = await res.json();
-                    if (data.success) {
-                        showToast('Variant deleted!', 'green');
-                        location.reload();
-                    } else {
-                        showToast(data.message || 'Failed to delete variant', 'red');
+                Swal.fire({
+                    title: 'DELETE VARIANT?',
+                    text: "THIS ACTION CANNOT BE UNDONE",
+                    showCancelButton: true,
+                    confirmButtonColor: '#000',
+                    cancelButtonColor: '#999',
+                    confirmButtonText: 'DELETE',
+                    cancelButtonText: 'CANCEL',
+                    customClass: {
+                        title: 'font-serif uppercase',
+                        popup: 'rounded-none'
                     }
-                } catch { showToast('Server error', 'red'); }
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        try {
+                            const res = await fetch(`/admin/product/deleteVariant/${productId}/${variantId}`, { method: 'DELETE' });
+                            const data = await res.json();
+                            if (data.success) {
+                                showToast('Variant deleted!', 'green');
+                                location.reload();
+                            } else {
+                                showToast(data.message || 'Failed to delete variant', 'red');
+                            }
+                        } catch { showToast('Server error', 'red'); }
+                    }
+                });
             }
 
             async function setPrimaryImage(productId, src) {

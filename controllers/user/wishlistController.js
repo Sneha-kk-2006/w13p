@@ -14,7 +14,12 @@ const getWishlist = async (req, res) => {
             wishlist = new Wishlist({ userId, products: [] });
             await wishlist.save();
         }
-        let sortedWishlist=wishlist.products.sort((a,b)=>b.productId._id.getTimestamp()-a.productId._id.getTimestamp());
+        // Filter out any products that were deleted from the database
+        wishlist.products = wishlist.products.filter(p => p.productId != null);
+        
+        let sortedWishlist = wishlist.products.sort((a,b) => {
+            return b.productId._id.getTimestamp() - a.productId._id.getTimestamp();
+        });
 
         res.render('user/wishlist', { 
             wishlist:sortedWishlist,
@@ -49,7 +54,12 @@ const addToWishlist = async (req, res) => {
         wishlist.products.push({ productId });
         await wishlist.save();
 
-        res.json({ success: true, msg: 'Product added to wishlist' });
+        res.json({ 
+            success: true, 
+            msg: 'Product added to wishlist',
+            wishlistCount: wishlist.products.length
+        });
+
 
     } catch (err) {
         console.error('addToWishlist error:', err);
@@ -74,7 +84,12 @@ const removeFromWishlist = async (req, res) => {
         wishlist.products = wishlist.products.filter(p => p.productId.toString() !== productId);
         await wishlist.save();
 
-        res.json({ success: true, msg: 'Product removed from wishlist' });
+        res.json({ 
+            success: true, 
+            msg: 'Product removed from wishlist',
+            wishlistCount: wishlist.products.length
+        });
+
 
     } catch (err) {
         console.error('removeFromWishlist error:', err);

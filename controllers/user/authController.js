@@ -73,6 +73,7 @@ const signup = async (req, res) => {
 const verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
+    console.log("--- DEBUG: RECEIVED OTP FOR VERIFICATION: ", otp, " ---");
     const result = await authService.verifyOtpService(otp, req.session, req.session.user?._id);
 
     if (!result.success) {

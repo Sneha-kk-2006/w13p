@@ -11,15 +11,25 @@ const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const signupWithOtp = async (data, session) => {
   const { name, email, password, confirmpassword, role } = data;
 
-  if (!name || !email || !password || !confirmpassword) {
-    return { success: false, message: ERRORS.REQUIRED_FIELDS };
+  const trimmedName = name.trim();
+  const nameRegex = /^[a-zA-Z\s]{3,50}$/;
+
+  if (!trimmedName || !nameRegex.test(trimmedName)) {
+    return { success: false, message: ERRORS.INVALID_NAME };
+  }
+
+  if (password.length < 6) {
+    return { success: false, message: ERRORS.PASSWORD_LENGTH };
   }
 
   if (password !== confirmpassword) {
     return { success: false, message: ERRORS.PASSWORD_MISMATCH };
   }
 
-  if (!emailPattern.test(email)) {
+  const [localPart] = email.split('@');
+  const repetitiveRegex = /^(.)\1+$/;
+
+  if (!emailPattern.test(email) || repetitiveRegex.test(localPart) || localPart.length < 2) {
     return { success: false, message: ERRORS.INVALID_EMAIL };
   }
 
@@ -41,7 +51,7 @@ const signupWithOtp = async (data, session) => {
     name,
     password,
     type: "signup",
-    role: role || "user", 
+    role: role || "user",
     expiredAt: Date.now() + 5 * 60 * 1000
   };
 

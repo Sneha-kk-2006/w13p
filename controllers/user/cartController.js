@@ -229,6 +229,7 @@
             const { itemId, change } = req.body;
 
             let cart = await Cart.findOne({ userId }).populate("items.productId");
+            if (!cart) return res.json({ success: false, msg: "Cart not found" });
 
             const item = cart.items.id(itemId);
             if (!item) return res.json({ success: false, msg: "Item not found" });
@@ -245,7 +246,7 @@
                     targetPrice = variant.price || targetPrice;
                 }
             }
-            let  MAX_QTY=10
+            let  MAX_QTY=5
 
             let newQty = item.quantity + change;
           

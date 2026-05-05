@@ -5,8 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SNOVA | Order Management</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
         .admin-main {
             flex: 1;
@@ -311,23 +313,28 @@
                                 </td>
                                 <td style="font-weight: 600;">₹<%= order.totalPrice.toLocaleString() %></td>
                                 <td>
-                                    <select class="status-select" onchange="updateStatus('<%= order.orderId %>', this.value)">
-                                        <option value="Pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Pending</option>
-                                        <option value="Shipped" <%= order.orderStatus === 'Shipped' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Shipped</option>
-                                        <option value="Out for Delivery" <%= order.orderStatus === 'Out for Delivery' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Out for Delivery</option>
-                                        <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : '' %> <%= ['Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Delivered</option>
-                                        <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : '' %> <%= ['Delivered', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Cancelled</option>
-                                        
-                                        <% if (order.orderStatus === 'Return Requested') { %>
-                                            <option value="Return Requested" selected disabled>Return Requested</option>
-                                            <option value="Returned">Approve Return</option>
-                                            <option value="Return Rejected">Reject Return</option>
-                                        <% } else if (order.orderStatus === 'Returned') { %>
-                                            <option value="Returned" selected disabled>Returned</option>
-                                        <% } else if (order.orderStatus === 'Return Rejected') { %>
-                                            <option value="Return Rejected" selected disabled>Return Rejected</option>
+                                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                                        <select class="status-select" onchange="updateStatus('<%= order.orderId %>', this.value)">
+                                            <option value="Pending" <%= order.orderStatus === 'Pending' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Pending</option>
+                                            <option value="Shipped" <%= order.orderStatus === 'Shipped' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Shipped</option>
+                                            <option value="Out for Delivery" <%= order.orderStatus === 'Out for Delivery' ? 'selected' : '' %> <%= ['Delivered', 'Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Out for Delivery</option>
+                                            <option value="Delivered" <%= order.orderStatus === 'Delivered' ? 'selected' : '' %> <%= ['Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Delivered</option>
+                                            <option value="Cancelled" <%= order.orderStatus === 'Cancelled' ? 'selected' : '' %> <%= ['Delivered', 'Returned', 'Return Requested', 'Return Rejected'].includes(order.orderStatus) ? 'disabled' : '' %>>Cancelled</option>
+                                            
+                                            <% if (order.orderStatus === 'Return Requested') { %>
+                                                <option value="Return Requested" selected disabled>Return Requested</option>
+                                                <option value="Returned">Approve Return</option>
+                                                <option value="Return Rejected">Reject Return</option>
+                                            <% } else if (order.orderStatus === 'Returned') { %>
+                                                <option value="Returned" selected disabled>Returned</option>
+                                            <% } else if (order.orderStatus === 'Return Rejected') { %>
+                                                <option value="Return Rejected" selected disabled>Return Rejected</option>
+                                            <% } %>
+                                        </select>
+                                        <% if (order.orderItems.some(item => item.status === 'Return Requested')) { %>
+                                            <span style="font-size: 0.55rem; color: #dd6b20; font-weight: 700; text-transform: uppercase;">● Item Return Requested</span>
                                         <% } %>
-                                    </select>
+                                    </div>
                                 </td>
                                 <td>
                                     <a href="/admin/orders/detail/<%= order.orderId %>" class="btn-view">Details</a>
@@ -367,53 +374,63 @@
             try {
                 const response = await fetch('/admin/orders/updateStatus', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ orderId, status: newStatus })
                 });
 
                 const data = await response.json();
 
                 if (data.success) {
-                    Swal.fire({
-                        text: 'Order status updated',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        background: '#000',
-                        color: '#fff',
-                        customClass: { popup: 'zara-toast' },
-                        showClass: { popup: 'animate__animated animate__fadeInDown' }
-                    });
+                    Toastify({
+                        text: 'ORDER STATUS UPDATED',
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        style: { 
+                            background: "#000", 
+                            borderRadius: "0px",
+                            fontSize: "0.7rem",
+                            letterSpacing: "1.5px",
+                            fontWeight: "500",
+                            fontFamily: "'Inter', sans-serif",
+                            padding: "15px 40px"
+                        }
+                    }).showToast();
                 } else {
-                    Swal.fire({
-                        text: data.message || 'Something went wrong',
-                        toast: true,
-                        position: 'top',
-                        showConfirmButton: false,
-                        timer: 3000,
-                        background: '#c62828',
-                        color: '#fff',
-                        customClass: { popup: 'zara-toast' },
-                        showClass: { popup: 'animate__animated animate__fadeInDown' },
-                        didClose: () => { location.reload(); }
-                    });
+                    Toastify({
+                        text: (data.message || 'Something went wrong').toUpperCase(),
+                        duration: 3000,
+                        gravity: "top",
+                        position: "center",
+                        style: { 
+                            background: "#ff0000", 
+                            borderRadius: "0px",
+                            fontSize: "0.7rem",
+                            letterSpacing: "1.5px",
+                            fontWeight: "500",
+                            fontFamily: "'Inter', sans-serif",
+                            padding: "15px 40px"
+                        },
+                        callback: () => { location.reload(); }
+                    }).showToast();
                 }
             } catch (error) {
                 console.error('Error:', error);
-                Swal.fire({
-                    text: 'An unexpected error occurred',
-                    toast: true,
-                    position: 'top',
-                    showConfirmButton: false,
-                    timer: 3000,
-                    background: '#c62828',
-                    color: '#fff',
-                    customClass: { popup: 'zara-toast' },
-                    showClass: { popup: 'animate__animated animate__fadeInDown' }
-                });
+                Toastify({
+                    text: 'AN UNEXPECTED ERROR OCCURRED',
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    style: { 
+                        background: "#ff0000", 
+                        borderRadius: "0px",
+                        fontSize: "0.7rem",
+                        letterSpacing: "1.5px",
+                        fontWeight: "500",
+                        fontFamily: "'Inter', sans-serif",
+                        padding: "15px 40px"
+                    }
+                }).showToast();
             }
         }
     </script>

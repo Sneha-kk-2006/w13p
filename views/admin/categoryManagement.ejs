@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <style>
         .admin-main { flex: 1; padding: 60px 40px; }
         .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 50px; }
@@ -138,15 +140,21 @@
         function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
         function showToast(msg) {
-            Swal.fire({
-                text: msg,
-                toast: true,
-                position: 'top',
-                showConfirmButton: false,
-                timer: 3000,
-                customClass: { popup: 'zara-toast' },
-                showClass: { popup: 'animate__animated animate__fadeInDown' }
-            });
+            Toastify({
+                text: msg.toUpperCase(),
+                duration: 3000,
+                gravity: "top",
+                position: "center",
+                style: { 
+                    background: "#000", 
+                    borderRadius: "0px",
+                    fontSize: "0.7rem",
+                    letterSpacing: "1.5px",
+                    fontWeight: "500",
+                    fontFamily: "'Inter', sans-serif",
+                    padding: "15px 40px"
+                }
+            }).showToast();
         }
 
         function openEditModal(id, name) {
@@ -212,12 +220,17 @@
 
         function confirmDelete(id) {
             Swal.fire({
-                title: 'Delete Category?',
-                text: "All associated data will be removed.",
-                icon: 'warning',
+                title: 'DELETE CATEGORY?',
+                text: "ALL ASSOCIATED DATA WILL BE REMOVED",
                 showCancelButton: true,
                 confirmButtonColor: '#000',
-                confirmButtonText: 'Delete'
+                cancelButtonColor: '#999',
+                confirmButtonText: 'DELETE',
+                cancelButtonText: 'CANCEL',
+                customClass: {
+                    title: 'font-serif uppercase',
+                    popup: 'rounded-none'
+                }
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     const res = await fetch(`/admin/category/delete/${id}`, { method: "PATCH" });

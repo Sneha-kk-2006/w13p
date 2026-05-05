@@ -171,7 +171,7 @@ const toggleProductStatus = async (req, res) => {
 const addVariant = async (req, res) => {
     try {
         const { id } = req.params;
-        const { size, color, stock, price, fabrics } = req.body;
+        const { size, color, stock, price} = req.body;
         console.log(req.body)
         const images = req.files?.map(file => '/uploads/products/' + file.filename) || [];
 
@@ -181,13 +181,13 @@ const addVariant = async (req, res) => {
         const sizes = Array.isArray(size) ? size : [size];
         const stockVal = parseInt(stock) || 0;
         const priceVal = parseFloat(price) || 0;
-        if (!fabrics) {
-            return res.status(404).json({ success: false, message: 'fabrics not found' })
-        }
+        // if (!fabrics) {
+        //     return res.status(404).json({ success: false, message: 'fabrics not found' })
+        // }
         sizes.forEach(s => {
             if (s) {
 
-                const vIdx = prod.variants.findIndex(v => v.size === s && v.color === color && v.fabrics === fabrics);
+                const vIdx = prod.variants.findIndex(v => v.size === s && v.color === color);
 
                 if (vIdx !== -1) {
 
@@ -199,7 +199,7 @@ const addVariant = async (req, res) => {
                     prod.variants.push({
                         size: s,
                         color,
-                        fabrics: fabrics,
+                        
                         stock: stockVal,
                         price: priceVal || prod.price,
                         images: images.length > 0 ? images : prod.images

@@ -4,8 +4,11 @@ const adminController = require('../controllers/admin/adminController');
 const categoryController=require('../controllers/admin/categoryController')
 const productController=require('../controllers/admin/productController')
 const orderController = require('../controllers/admin/orderController');
+const couponController = require('../controllers/admin/couponController');
 const { userAuth, adminAuth } = require("../middlewares/auth");
 const uploads=require('../config/multer')
+const offerController=require('../controllers/admin/offerController');
+
 
 
 
@@ -58,6 +61,21 @@ router.get('/inventory', adminAuth, productController.loadInventory);
 // Order Management
 router.get('/orders', adminAuth, orderController.loadOrders);
 router.post('/orders/updateStatus', adminAuth, orderController.updateOrderStatus);
+router.post('/orders/updateItemStatus', adminAuth, orderController.updateItemStatus);
 router.get('/orders/detail/:id', adminAuth, orderController.viewOrderDetail);
+
+// Coupon Management
+router.get('/coupons', adminAuth, couponController.loadCoupons);
+router.post('/coupons/add', adminAuth, couponController.addCoupon);
+router.delete('/coupons/delete/:id', adminAuth, couponController.deleteCoupon);
+
+
+
+
+
+router.get('/offers', adminAuth, offerController.loadoffers);
+router.post('/offers/add', adminAuth, offerController.addOffer);
+router.patch('/offers/toggle/:id', adminAuth, offerController.toggleOfferStatus);
+router.delete('/offers/delete/:id', adminAuth, offerController.deleteOffer);
 
 module.exports = router;

@@ -13,6 +13,8 @@ const nocache = require("nocache");
 const categoryRoutes = require('./routes/adminRouter')
 const attachCartCount = require('./middlewares/cartCount')
 const attachWishlistCount = require('./middlewares/wishlistCount')
+const Razorpay = require("razorpay");
+require("dotenv").config();
 
 
 db();
@@ -60,7 +62,10 @@ app.use(async (req, res, next) => {
   next();
 });
 
-
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
 
 
 app.use(attachCartCount)

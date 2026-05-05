@@ -44,10 +44,32 @@ const updateProfileService = async (req) => {
 
   const user = await userRepository.findById(userId);
   const { name, email, phone } = req.body;
+  const nameRegex = /^[a-zA-Z\s.']{3,50}$/;
+  const phoneRegex = /^[6-9]\d{9}$/;
+  const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+  const trimmedName = name ? name.trim() : "";
+
+  if (!trimmedName || !nameRegex.test(trimmedName)) {
+    console.log("Profile Validation Failed: Invalid Name", { trimmedName });
+    return { success: false, message: ERRORS.INVALID_NAME };
+  }
+  const [localPart] = email.split('@');
+  const repetitiveRegex = /^(.)\1+$/;
+
+  if (!emailPattern.test(email) || repetitiveRegex.test(localPart) || localPart.length < 2) {
+    console.log("Profile Validation Failed: Invalid Email", { email });
+    return { success: false, message: ERRORS.INVALID_EMAIL };
+  }
+  if (!phone || !phoneRegex.test(phone)) {
+    console.log("Profile Validation Failed: Invalid Phone", { phone });
+    return { success: false, message: "Invalid phone number (10 digits starting with 6-9)" };
+  }
 
   // ================== Handle Email Change ==================
   if (email && email !== user.email) {
     const otp = Math.floor(100000 + Math.random() * 900000);
+    console.log("--- DEBUG: NEW EMAIL OTP IS: ", otp, " ---");
     req.session.auth = { otp, email, type: "emailUpdate", expiredAt: Date.now() + 5 * 60 * 1000 };
 
     // send OTP to both old and new email
@@ -65,31 +87,31 @@ const updateProfileService = async (req) => {
     updateData.profileImage = null;
   }
 
-if (req.file) {
-  const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
-  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+  if (req.file) {
+    const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
+    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
-  const filePath = path.join(__dirname, "../../public/uploads", req.file.filename);
+    const filePath = path.join(__dirname, "../../public/uploads", req.file.filename);
 
 
-  if (!ALLOWED_IMAGE_TYPES.includes(req.file.mimetype)) {
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    return { success: false, message: "Only image files are allowed (jpeg, jpg, png, webp)" };
+    if (!ALLOWED_IMAGE_TYPES.includes(req.file.mimetype)) {
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      return { success: false, message: "Only image files are allowed (jpeg, jpg, png, webp)" };
+    }
+
+    if (req.file.size > MAX_FILE_SIZE) {
+      if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      return { success: false, message: "Image size must be under 2MB" };
+    }
+
+
+    if (user.profileImage) {
+      const oldPath = path.join(__dirname, "../../public", user.profileImage.replace(/^\/+/, ""));
+      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    }
+
+    updateData.profileImage = "/uploads/" + req.file.filename;
   }
-
-  if (req.file.size > MAX_FILE_SIZE) {
-    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-    return { success: false, message: "Image size must be under 2MB" };
-  }
-
-
-  if (user.profileImage) {
-    const oldPath = path.join(__dirname, "../../public", user.profileImage.replace(/^\/+/, ""));
-    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-  }
-
-  updateData.profileImage = "/uploads/" + req.file.filename;
-}
   await userRepository.updateUser(userId, updateData);
 
   return { success: true, redirect: "/profile", message: SUCCESS.PROFILE_UPDATED };

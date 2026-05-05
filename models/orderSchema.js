@@ -31,12 +31,28 @@ const orderSchema = new Schema(
           type: Number,
           required: true,
         },
+        status: {
+          type: String,
+          enum: ["Pending", "Shipped", "Out for Delivery", "Delivered", "Cancelled", "Return Requested", "Returned", "Return Rejected"],
+          default: "Pending",
+        },
+        cancellationReason: String,
+        returnReason: String,
       },
     ],
     totalPrice: {
       type: Number,
       required: true,
     },
+    discount: {
+      type: Number,
+      default: 0,
+    },
+    gst: {
+      type: Number,
+      default: 0,
+    },
+
     shippingAddress: {
       fullName: String,
       addressline1: String,

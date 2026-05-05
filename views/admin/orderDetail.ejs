@@ -216,13 +216,30 @@
                 <div class="card">
                     <h2 class="card-title">Order Manifest</h2>
                     <% order.orderItems.forEach(item => { %>
-                        <div class="item-row">
-                            <img src="<%= (item.product && item.product.images && item.product.images.length > 0) ? item.product.images[0] : 'https://via.placeholder.com/70' %>" class="item-image">
-                            <div class="item-details">
-                                <div class="item-name"><%= item.product ? item.product.name : 'Unknown Product' %></div>
-                                <div class="item-meta">Quantity: <%= item.quantity %></div>
+                        <div class="item-row" style="display: flex; align-items: center; justify-content: space-between;">
+                            <div style="display: flex; align-items: center; gap: 20px; flex: 1;">
+                                <img src="<%= (item.product && item.product.images && item.product.images.length > 0) ? item.product.images[0] : 'https://via.placeholder.com/70' %>" class="item-image">
+                                <div class="item-details">
+                                    <div class="item-name"><%= item.product ? item.product.name : 'Unknown Product' %></div>
+                                    <div class="item-meta">Quantity: <%= item.quantity %></div>
+                                    <div class="item-meta" style="margin-top: 5px;">
+                                        <span class="status-pill" style="font-size: 0.55rem; padding: 4px 8px; background: #f5f5f5;">
+                                            <%= item.status || 'Pending' %>
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="item-price">₹<%= (item.price * item.quantity).toLocaleString() %></div>
+                            
+                            <div class="item-pricing-actions" style="text-align: right; min-width: 200px;">
+                                <div class="item-price" style="margin-bottom: 10px;">₹<%= (item.price * item.quantity).toLocaleString() %></div>
+                                
+                                <% if (item.status === 'Return Requested') { %>
+                                    <div class="action-buttons" style="display: flex; gap: 10px; justify-content: flex-end;">
+                                        <button onclick="updateItemStatus('<%= order.orderId %>', '<%= item._id %>', 'Returned')" style="background: #000; color: #fff; border: none; padding: 5px 10px; font-size: 0.6rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Approve</button>
+                                        <button onclick="updateItemStatus('<%= order.orderId %>', '<%= item._id %>', 'Return Rejected')" style="background: #fff; color: #cc0000; border: 1px solid #cc0000; padding: 5px 10px; font-size: 0.6rem; font-weight: 700; cursor: pointer; text-transform: uppercase;">Reject</button>
+                                    </div>
+                                <% } %>
+                            </div>
                         </div>
                     <% }) %>
                 </div>
@@ -278,6 +295,34 @@
     </main>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        async function updateItemStatus(orderId, itemId, newStatus) {
+            try {
+                const response = await fetch('/admin/orders/updateItemStatus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orderId, itemId, status: newStatus })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    Swal.fire({
+                        text: 'Item status updated',
+                        toast: true,
+                        position: 'top',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        background: '#000',
+                        color: '#fff'
+                    }).then(() => { location.reload(); });
+                } else {
+                    Swal.fire({ text: data.message || 'Error', icon: 'error' });
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                Swal.fire({ text: 'Unexpected error', icon: 'error' });
+            }
+        }
+
         async function updateStatus(orderId, newStatus) {
             try {
                 const response = await fetch('/admin/orders/updateStatus', {

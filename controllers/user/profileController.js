@@ -37,10 +37,10 @@ const updateProfile = async (req, res) => {
       role: updatedUser.role
     }; 
     
-    return res.redirect(result.redirect);
+    return res.json({ success: true, message: "Profile updated", redirect: result.redirect });
   } catch (error) {
     console.error("Error updating profile:", error);
-    return res.redirect("/profile");
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
