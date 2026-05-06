@@ -84,7 +84,7 @@
                             <td><%= offer.offerType %></td>
                             <td>
                                 <% if(offer.offerType === 'product' && offer.product) { %>
-                                    <%= offer.product.productName %>
+                                    <%= offer.product.name %>
                                 <% } else if(offer.offerType === 'category' && offer.category) { %>
                                     <%= offer.category.name %>
                                 <% } else { %>
@@ -175,7 +175,7 @@
             select.innerHTML = '<option value="">SELECT ITEM</option>';
             
             if(type === 'product') {
-                products.forEach(p => select.innerHTML += `<option value="${p._id}">${p.productName}</option>`);
+                products.forEach(p => select.innerHTML += `<option value="${p._id}">${p.name}</option>`);
                 container.style.display = 'block';
                 select.required = true;
             } else if(type === 'category') {

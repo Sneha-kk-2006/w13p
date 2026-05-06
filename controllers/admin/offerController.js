@@ -5,11 +5,16 @@ const Category = require('../../models/categorySchema');
 const loadoffers = async (req, res) => {
     try {
         const offers = await Offer.find()
-            .populate('product', 'productName')
+            .populate('product', 'name')
             .populate('category', 'name')
             .sort({ createdAt: -1 });
-        const products = await Product.find({ isBlocked: false }, 'productName');
-        const categories = await Category.find({ isListed: true }, 'name');
+        
+        // Product schema has `isListed: true` and `isDeleted: false` instead of `isBlocked`
+        const products = await Product.find({ isListed: true, isDeleted: false }, 'name');
+        
+        // Category schema has `status: 'Active'` and `isDeleted: false` instead of `isListed`
+        const categories = await Category.find({ status: 'Active', isDeleted: false }, 'name');
+        
         res.render('admin/offers', { offers, products, categories });
     } catch (error) {
         console.log("error loading offers", error);
@@ -32,8 +37,8 @@ const addOffer = async (req, res) => {
         await offer.save();
         res.json({ success: true, message: "Offer added successfully" });
     } catch (error) {
-        console.log("error adding offer", error);
-        res.status(500).json({ success: false, message: "Error adding offer" });
+        console.error("error adding offer:", error);
+        res.status(500).json({ success: false, message: error.message || "Error adding offer" });
     }
 };
 

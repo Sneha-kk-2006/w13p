@@ -78,9 +78,6 @@
 
         /* Zara Style Notifications */
         .zara-toast { background: #000 !important; color: #fff !important; border-radius: 0 !important; font-family: 'Inter', sans-serif !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 2px !important; padding: 15px 40px !important; width: 100% !important; max-width: 600px !important; margin-top: 20px !important; box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; }
-        
-        transition: transform 0.3s ease-out;
-        }
 
         /* Details Section */
         .details-col {
@@ -282,14 +279,59 @@
                 <span class="p-category"><%= product.category.name %></span>
                 <h1 class="p-name"><%= product.name %></h1>
                 
-                <div class="p-price-box">
-                    <% if (product.discount > 0) { %>
-                        <span class="cur-price">₹<%= Math.round(product.price - (product.price * product.discount / 100)).toLocaleString('en-IN') %></span>
-                        <span class="old-price">₹<%= product.price.toLocaleString('en-IN') %></span>
-                    <% } else { %>
-                        <span class="cur-price">₹<%= product.price.toLocaleString('en-IN') %></span>
-                    <% } %>
-                </div>
+               <div class="p-price-box">
+    <% if (offerPrice) { %>
+        <!-- Offer price takes priority -->
+        <span class="cur-price" style="color:#e53935;">
+            ₹<%= offerPrice.toLocaleString('en-IN') %>
+        </span>
+        <span class="old-price">
+            ₹<%= product.price.toLocaleString('en-IN') %>
+        </span>
+        <span style="
+            display: inline-block;
+            background: #e53935;
+            color: #fff;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            padding: 4px 10px;
+            margin-left: 10px;
+            vertical-align: middle;
+        ">
+            <%= discountPercent %>% OFF
+        </span>
+
+        <!-- Offer label box -->
+        <div style="
+            border: 1px dashed #e53935;
+            padding: 10px 14px;
+            margin-top: 16px;
+            font-size: 0.68rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #e53935;
+        ">
+            🏷️ <strong><%= offer.name %></strong> —
+            Valid till <%= new Date(offer.endDate).toLocaleDateString('en-IN') %>
+        </div>
+
+    <% } else if (product.discount > 0) { %>
+        <!-- Fallback: product's own discount field -->
+        <span class="cur-price">
+            ₹<%= Math.round(product.price - (product.price * product.discount / 100)).toLocaleString('en-IN') %>
+        </span>
+        <span class="old-price">
+            ₹<%= product.price.toLocaleString('en-IN') %>
+        </span>
+
+    <% } else { %>
+        <!-- No offer, no discount -->
+        <span class="cur-price">
+            ₹<%= product.price.toLocaleString('en-IN') %>
+        </span>
+    <% } %>
+</div>
 
                 <% if (product.variants && product.variants.length > 0) { %>
                     <%
@@ -403,9 +445,18 @@
                                      style="width: 100%; height: 100%; object-fit: cover; transition: transform 0.6s ease; display: block;">
                             </div>
                             <div style="padding: 0 2px;">
-                                <p style="font-size: 0.7rem; font-weight: 500; color: #333; margin-bottom: 4px;">
-                                    ₹ <%= item.price.toLocaleString('en-IN') %>
-                                </p>
+                            <p style="font-size: 0.7rem; font-weight: 500; color: #333; margin-bottom: 4px;">
+    <% if (item.offerPrice) { %>
+        <span style="color:#e53935; font-weight:700;">
+            ₹<%= item.offerPrice.toLocaleString('en-IN') %>
+        </span>
+        <span style="text-decoration:line-through; color:#aaa; font-size:0.6rem; margin-left:4px;">
+            ₹<%= item.price.toLocaleString('en-IN') %>
+        </span>
+    <% } else { %>
+        ₹<%= item.price.toLocaleString('en-IN') %>
+    <% } %>
+</p>
                                 <p style="font-size: 0.6rem; font-weight: 400; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     <%= item.name %>
                                 </p>
