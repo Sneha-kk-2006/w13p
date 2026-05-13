@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -97,8 +98,15 @@
             font-weight: 600;
         }
 
-        .badge-active { color: #2ecc71; border: 1px solid #2ecc71; }
-        .badge-blocked { color: #e74c3c; border: 1px solid #e74c3c; }
+        .badge-active {
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+        }
+
+        .badge-blocked {
+            color: #e74c3c;
+            border: 1px solid #e74c3c;
+        }
 
         .action-link {
             font-size: 0.65rem;
@@ -133,135 +141,168 @@
         }
 
         /* Zara Style Notifications */
-        .zara-toast { background: #000 !important; color: #fff !important; border-radius: 0 !important; font-family: 'Inter', sans-serif !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 2px !important; padding: 15px 40px !important; width: 100% !important; max-width: 600px !important; margin-top: 20px !important; box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; z-index: 9999 !important; }
+        .zara-toast {
+            background: #000 !important;
+            color: #fff !important;
+            border-radius: 0 !important;
+            font-family: 'Inter', sans-serif !important;
+            font-size: 0.65rem !important;
+            text-transform: uppercase !important;
+            letter-spacing: 2px !important;
+            padding: 15px 40px !important;
+            width: 100% !important;
+            max-width: 600px !important;
+            margin-top: 20px !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2) !important;
+            z-index: 9999 !important;
+        }
     </style>
 </head>
+
 <body>
 
     <%- include('../partials/admin/header', { activePage: 'customers' }) %>
 
-    <main class="admin-main">
-        <header class="page-header">
-            <h1 class="page-title">Customer Directory</h1>
-            <div class="search-area">
-                <form action="/admin/usermanagement" method="GET" style="display: flex; gap: 10px;">
-                    <input type="text" name="search" value="<%= search || '' %>" placeholder="Find Customer..." class="search-input">
-                    <button type="submit" class="btn-minimal">Search</button>
-                    <% if(search) { %>
-                        <a href="/admin/usermanagement" class="btn-minimal" style="display: flex; align-items: center; text-decoration: none; color: inherit;">Clear</a>
-                    <% } %>
-                </form>
-            </div>
-        </header>
+        <main class="admin-main">
+            <header class="page-header">
+                <h1 class="page-title">Customer Directory</h1>
+                <div class="search-area">
+                    <form action="/admin/usermanagement" method="GET" style="display: flex; gap: 10px;">
+                        <input type="text" name="search" value="<%= search || '' %>" placeholder="Find Customer..."
+                            class="search-input">
+                        <button type="submit" class="btn-minimal">Search</button>
+                        <% if(search) { %>
+                            <a href="/admin/usermanagement" class="btn-minimal"
+                                style="display: flex; align-items: center; text-decoration: none; color: inherit;">Clear</a>
+                            <% } %>
+                    </form>
+                </div>
+            </header>
 
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Identity</th>
-                    <th>Full Name</th>
-                    <th>Email Contact</th>
-                    <th>Status</th>
-                    <th>Registration Date</th>
-                    <th style="text-align: right;">Authorization</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% users.forEach((user, index) => { %>
+            <table class="data-table">
+                <thead>
                     <tr>
-                        <td style="color: #999;">#<%= user._id.toString().slice(-6).toUpperCase() %></td>
-                        <td style="font-weight: 600;"><%= user.name %></td>
-                        <td class="lowercase" style="letter-spacing: 0;"><%= user.email %></td>
-                        <td>
-                            <% if(user.isBlocked) { %>
-                                <span class="badge badge-blocked">Suspended</span>
-                            <% } else { %>
-                                <span class="badge badge-active">Active</span>
-                            <% } %>
-                        </td>
-                        <td><%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB') : "N/A" %></td>
-                        <td style="text-align: right;">
-                            <% if(!user.isBlocked) { %>
-                                <button class="action-link" style="color: #e74c3c" onclick="blockUser('<%= user._id %>')">Suspend Access</button>
-                            <% } else { %>
-                                <button class="action-link" onclick="unblockUser('<%= user._id %>')">Restore Access</button>
-                            <% } %>
-                        </td>
+                        <th>Sl.No</th>
+                        <th>Full Name</th>
+                        <th>Email Contact</th>
+                        <th>Status</th>
+                        <th>Registration Date</th>
+                        <th style="text-align: right;">Authorization</th>
                     </tr>
-                <% }) %>
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    <% users.forEach((user, index)=> { %>
+                        <tr>
+                            <td style="color: #999;">
+                                <%= (currentPage - 1) * 5 + index + 1 %>
+                            </td>
+                            <td style="font-weight: 600;">
+                                <%= user.name %>
+                            </td>
+                            <td class="lowercase" style="letter-spacing: 0;">
+                                <%= user.email %>
+                            </td>
+                            <td>
+                                <% if(user.isBlocked) { %>
+                                    <span class="badge badge-blocked">Suspended</span>
+                                    <% } else { %>
+                                        <span class="badge badge-active">Active</span>
+                                        <% } %>
+                            </td>
+                            <td>
+                                <%= user.createdAt ? new Date(user.createdAt).toLocaleDateString('en-GB') : "N/A" %>
+                            </td>
+                            <td style="text-align: right;">
+                                <% if(!user.isBlocked) { %>
+                                    <button class="action-link" style="color: #e74c3c"
+                                        onclick="blockUser('<%= user._id %>')">Suspend Access</button>
+                                    <% } else { %>
+                                        <button class="action-link" onclick="unblockUser('<%= user._id %>')">Restore
+                                            Access</button>
+                                        <% } %>
+                            </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
 
-        <div class="pagination">
-            <% if(currentPage > 1) { %>
-                <a href="/admin/usermanagement?page=<%= currentPage-1 %>&search=<%= search %>" class="page-link">Prev</a>
-            <% } %>
-            <% for(let i=1; i<=totalPages; i++) { %>
-                <a href="/admin/usermanagement?page=<%= i %>&search=<%= search %>" class="page-link <%= currentPage === i ? 'active' : '' %>"><%= i %></a>
-            <% } %>
-            <% if(currentPage < totalPages) { %>
-                <a href="/admin/usermanagement?page=<%= currentPage+1 %>&search=<%= search %>" class="page-link">Next</a>
-            <% } %>
-        </div>
-    </main>
+            <div class="pagination">
+                <% if(currentPage> 1) { %>
+                    <a href="/admin/usermanagement?page=<%= currentPage-1 %>&search=<%= search %>"
+                        class="page-link">Prev</a>
+                    <% } %>
+                        <% for(let i=1; i<=totalPages; i++) { %>
+                            <a href="/admin/usermanagement?page=<%= i %>&search=<%= search %>"
+                                class="page-link <%= currentPage === i ? 'active' : '' %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+                                <% if(currentPage < totalPages) { %>
+                                    <a href="/admin/usermanagement?page=<%= currentPage+1 %>&search=<%= search %>"
+                                        class="page-link">Next</a>
+                                    <% } %>
+            </div>
+        </main>
 
-    <script>
-        function showToast(msg) {
-            Toastify({
-                text: (msg || "").toUpperCase(),
-                duration: 3000,
-                gravity: "top",
-                position: "center",
-                style: { 
-                    background: "#000", 
-                    borderRadius: "0px",
-                    fontSize: "0.7rem",
-                    letterSpacing: "1.5px",
-                    fontWeight: "500",
-                    fontFamily: "'Inter', sans-serif",
-                    padding: "15px 40px"
-                }
-            }).showToast();
-        }
+        <script>
+            function showToast(msg) {
+                Toastify({
+                    text: (msg || "").toUpperCase(),
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    style: {
+                        background: "#000",
+                        borderRadius: "0px",
+                        fontSize: "0.7rem",
+                        letterSpacing: "1.5px",
+                        fontWeight: "500",
+                        fontFamily: "'Inter', sans-serif",
+                        padding: "15px 40px"
+                    }
+                }).showToast();
+            }
 
-        function blockUser(userId) {
-            Swal.fire({
-                title: 'SUSPEND ACCESS?',
-                text: "IDENTITY WILL BE RESTRICTED IMMEDIATELY",
-                showCancelButton: true,
-                confirmButtonColor: '#000',
-                cancelButtonColor: '#999',
-                confirmButtonText: 'SUSPEND',
-                cancelButtonText: 'CANCEL',
-                customClass: {
-                    title: 'font-serif uppercase',
-                    popup: 'rounded-none'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "/admin/blockUser?id=" + userId;
-                }
-            });
-        }
+            function blockUser(userId) {
+                Swal.fire({
+                    title: 'SUSPEND ACCESS?',
+                    text: "IDENTITY WILL BE RESTRICTED IMMEDIATELY",
+                    showCancelButton: true,
+                    confirmButtonColor: '#000',
+                    cancelButtonColor: '#999',
+                    confirmButtonText: 'SUSPEND',
+                    cancelButtonText: 'CANCEL',
+                    customClass: {
+                        title: 'font-serif uppercase',
+                        popup: 'rounded-none'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/admin/blockUser?id=" + userId;
+                    }
+                });
+            }
 
-        function unblockUser(userId) {
-            Swal.fire({
-                title: 'RESTORE ACCESS?',
-                text: "RESTORE IDENTITY AUTHORIZATION",
-                showCancelButton: true,
-                confirmButtonColor: '#000',
-                cancelButtonColor: '#999',
-                confirmButtonText: 'RESTORE',
-                cancelButtonText: 'CANCEL',
-                customClass: {
-                    title: 'font-serif uppercase',
-                    popup: 'rounded-none'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = "/admin/unblockUser?id=" + userId;
-                }
-            });
-        }
-    </script>
+            function unblockUser(userId) {
+                Swal.fire({
+                    title: 'RESTORE ACCESS?',
+                    text: "RESTORE IDENTITY AUTHORIZATION",
+                    showCancelButton: true,
+                    confirmButtonColor: '#000',
+                    cancelButtonColor: '#999',
+                    confirmButtonText: 'RESTORE',
+                    cancelButtonText: 'CANCEL',
+                    customClass: {
+                        title: 'font-serif uppercase',
+                        popup: 'rounded-none'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = "/admin/unblockUser?id=" + userId;
+                    }
+                });
+            }
+        </script>
 </body>
+
 </html>

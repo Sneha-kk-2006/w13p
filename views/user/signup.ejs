@@ -249,6 +249,21 @@
                         </div>
                     </div>
 
+                     <div class="form-group">
+  <label>Referral Code <span>(optional)</span></label>
+  <input
+    type="text"
+    id="referralCode"
+    name="referralCode"
+    placeholder="Enter referral code (optional)"
+    maxlength="20"
+    style="text-transform:uppercase;"
+    oninput="this.value = this.value.toUpperCase()"
+  />
+  <!-- Live feedback message -->
+  <span id="referralMsg" style="font-size:12px;"></span>
+</div>
+
                     <button type="submit" class="btn-register">Create Account</button>
                 </form>
 
@@ -289,12 +304,13 @@
             const email = document.getElementById("email").value.trim();
             const password = document.getElementById("pass").value.trim();
             const confirmpassword = document.getElementById("confirm-pass").value.trim();
+            const referralCode = document.getElementById("referralCode").value.trim();
 
             try {
                 const response = await fetch("/signup", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ name, email, password, confirmpassword })
+                    body: JSON.stringify({ name, email, password, confirmpassword, referralCode })
                 });
 
                 const data = await response.json();
@@ -385,6 +401,70 @@
             const p = passwordValidn();
             return n && e && p;
         }
+
+
+
+
+         const referralInput = document.getElementById('referralCode');
+  const referralMsg   = document.getElementById('referralMsg');
+
+  // ── Live format check as user types ──────────────────────────────
+  referralInput.addEventListener('input', () => {
+    const value = referralInput.value.trim();
+
+    if (value === '') {
+      referralMsg.textContent = '';
+      return;
+    }
+
+    // Must be 6–20 alphanumeric characters
+    const validFormat = /^[A-Z0-9]{6,20}$/.test(value);
+    if (!validFormat) {
+      referralMsg.textContent = '⚠️ Invalid format — letters and numbers only';
+      referralMsg.style.color = 'red';
+    } else {
+      referralMsg.textContent = '✓ Format looks good';
+      referralMsg.style.color = 'green';
+    }
+  });
+
+  // ── Validate on blur (when user leaves the field) ─────────────────
+  referralInput.addEventListener('blur', async () => {
+    const value = referralInput.value.trim();
+    if (value === '') return;
+
+    const validFormat = /^[A-Z0-9]{6,20}$/.test(value);
+    if (!validFormat) return; // format error already shown
+
+    try {
+      // Live check against backend
+      const res  = await fetch(`/validate-referral?code=${value}`);
+      const data = await res.json();
+
+      if (data.valid) {
+        referralMsg.textContent = '✅ Valid referral code!';
+        referralMsg.style.color = 'green';
+      } else {
+        referralMsg.textContent = '❌ Referral code not found';
+        referralMsg.style.color = 'red';
+      }
+    } catch (err) {
+      console.error('Referral check failed', err);
+    }
+  });
+
+  // ── Block form submit if code entered but invalid ─────────────────
+  document.querySelector('form').addEventListener('submit', (e) => {
+    const value = referralInput.value.trim();
+    if (value === '') return; // optional field — skip if empty
+
+    const validFormat = /^[A-Z0-9]{6,20}$/.test(value);
+    if (!validFormat) {
+      e.preventDefault();
+      referralMsg.textContent = '❌ Fix referral code before submitting';
+      referralMsg.style.color = 'red';
+    }
+  });
     </script>
 </body>
 </html>

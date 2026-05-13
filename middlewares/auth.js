@@ -24,12 +24,15 @@ const userAuth = async (req, res, next) => {
 
 const adminAuth = async (req, res, next) => {
   try {
+    console.log("adminAuth - Session admin ID:", req.session.admin);
     if (req.session.admin) {
       const userData = await User.findById(req.session.admin);
+      console.log("adminAuth - User found:", userData ? userData.email : "null", "Role:", userData ? userData.role : "n/a");
       if (userData && userData.role === "admin") {
         return next();
       }
     }
+    console.log("adminAuth - Access denied, redirecting to login");
     res.redirect("/admin/login");
   } catch (error) {
     console.log("error in admin auth middleware", error);

@@ -1,6 +1,7 @@
     const Cart = require('../../models/cartSchema');
     const Product = require('../../models/productSchema');
     const Wishlist = require('../../models/wishlistSchema');
+    const { getBestOffer } = require('./productController');
 
     const MAX_QTY = 5;
 
@@ -144,7 +145,7 @@
         let discount = 0;
         let hasSoldOutitem=false;
 
-        const mappedItems = cartData.items.map(item => {
+        const mappedItems = await Promise.all(cartData.items.map(async (item) => {
             const product = item.productId;
             let targetPrice = product.price || 0;
             let targetColor = product.color || 'N/A';
@@ -175,7 +176,9 @@
                 }
             }
 
-            const discountPct = product.discount || 0;
+            const itmOffer = await getBestOffer(product._id, product.category?._id);
+            const discountPct = itmOffer ? itmOffer.discount : (product.discount || 0);
+
             const salePrice = Math.round(targetPrice * (1 - discountPct / 100));
 
             const itemSubtotal = targetPrice * item.quantity;
@@ -183,8 +186,6 @@
 
             subtotal += itemSubtotal;
             discount += itemDiscount;
-
-
 
             return {
                 _id:          item._id,
@@ -199,9 +200,9 @@
                 totalPrice:   item.quantity * salePrice,
                 stock:        targetStock,
                 isSoldOut,
-            
+                offerName:    itmOffer ? itmOffer.name : null
             };
-        });
+        })); // Note: Changed to Promise.all below
 
         const total = subtotal - discount;
         
@@ -277,7 +278,7 @@
             let finalSubtotal = 0;
             let finalDiscount = 0;
             
-            updatedCart.items.forEach(itm => {
+            await Promise.all(updatedCart.items.map(async (itm) => {
                 const p = itm.productId;
                 if (!p) return;
                 let prc = p.price || 0;
@@ -285,13 +286,16 @@
                     const v = p.variants.find(v => v._id.toString() === itm.variantId.toString());
                     if (v && v.price) prc = v.price;
                 }
-                const dsc = p.discount || 0;
+                const itmOffer = await getBestOffer(p._id, p.category?._id);
+                const dsc = itmOffer ? itmOffer.discount : (p.discount || 0);
                 finalSubtotal += (prc * itm.quantity);
                 finalDiscount += (prc * (dsc / 100) * itm.quantity);
-            });
+            }));
 
+            const itmOffer = await getBestOffer(product._id, product.category?._id);
+            const discountPct = itmOffer ? itmOffer.discount : (product.discount || 0);
             const total = finalSubtotal - finalDiscount;
-            const salePrice = Math.round(targetPrice * (1 - (product.discount || 0) / 100));
+            const salePrice = Math.round(targetPrice * (1 - discountPct / 100));
             const itemTotal = item.quantity * salePrice;
 
             return res.json({ 

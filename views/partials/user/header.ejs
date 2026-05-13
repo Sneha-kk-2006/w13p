@@ -128,6 +128,58 @@
     top: -8px;
     right: -8px;
   }
+
+  /* Profile Dropdown Styles */
+  .profile-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 100%;
+    background-color: #fff;
+    min-width: 180px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border: 0.5px solid #eee;
+    z-index: 1100;
+    margin-top: 15px;
+    padding: 10px 0;
+  }
+
+  .dropdown-menu a, .dropdown-menu button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 12px 20px;
+    text-decoration: none;
+    color: #000;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+
+  .dropdown-menu a:hover, .dropdown-menu button:hover {
+    background: #f9f9f9;
+    text-decoration: none;
+  }
+
+  .dropdown-divider {
+    height: 0.5px;
+    background: #eee;
+    margin: 5px 0;
+  }
+
+  .show {
+    display: block;
+  }
 </style>
 
 <header class="navbar">
@@ -164,27 +216,37 @@
 
     <div class="auth-group">
       <% if (user) { %>
-        <a href="/profile" class="profile-box">
-          <% 
-            let profileSrc = user.profileImage;
-            if (profileSrc && profileSrc !== 'undefined' && profileSrc !== 'null' && profileSrc.trim() !== '') {
-              if (!profileSrc.startsWith('/') && !profileSrc.startsWith('http')) {
-                profileSrc = '/uploads/' + profileSrc;
+        <div class="profile-container">
+          <div class="profile-box" onclick="toggleDropdown(event)" style="cursor: pointer;">
+            <% 
+              let profileSrc = user.profileImage;
+              if (profileSrc && profileSrc !== 'undefined' && profileSrc !== 'null' && profileSrc.trim() !== '') {
+                if (!profileSrc.startsWith('/') && !profileSrc.startsWith('http')) {
+                  profileSrc = '/uploads/' + profileSrc;
+                }
+              } else {
+                profileSrc = null;
               }
-            } else {
-              profileSrc = null;
-            }
-          %>
-          <img
-            src="<%= profileSrc ? profileSrc : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || '') %>"
-            class="nav-profile-img" 
-            alt="Profile" 
-            data-path="<%= profileSrc %>"
-            onerror="this.onerror=null; console.log('Profile image failed to load:', this.src); this.src='https://ui-avatars.com/api/?name=' + encodeURIComponent('<%= (user.name || "").replace(/'/g, "\\'") %>')"/>
-          <span class="nav-username">
-            <%= user.name %>
-          </span>
-        </a>
+            %>
+            <img
+              src="<%= profileSrc ? profileSrc : 'https://ui-avatars.com/api/?name=' + encodeURIComponent(user.name || '') %>"
+              class="nav-profile-img" 
+              alt="Profile" />
+            <span class="nav-username">
+              <%= user.name %> <i class="fa-solid fa-chevron-down" style="font-size: 8px; margin-left: 5px;"></i>
+            </span>
+          </div>
+          
+          <div id="profileDropdown" class="dropdown-menu">
+            <a href="/profile"><i class="fa-regular fa-user" style="margin-right: 10px;"></i> My Profile</a>
+            <a href="/orders"><i class="fa-solid fa-box" style="margin-right: 10px;"></i> My Orders</a>
+            <a href="/wallet"><i class="fa-solid fa-wallet" style="margin-right: 10px;"></i> Wallet</a>
+            <div class="dropdown-divider"></div>
+            <form action="/logout" method="POST" style="margin: 0;">
+              <button type="submit" style="color: #d32f2f;"><i class="fa-solid fa-arrow-right-from-bracket" style="margin-right: 10px;"></i> Sign Out</button>
+            </form>
+          </div>
+        </div>
         <% } else { %>
           <a href="/login" class="login-link-btn">Login</a>
           <% } %>
@@ -217,4 +279,20 @@
       }
     }
   }
+
+  function toggleDropdown(event) {
+    event.stopPropagation();
+    const dropdown = document.getElementById('profileDropdown');
+    dropdown.classList.toggle('show');
+  }
+
+  // Close dropdown when clicking outside
+  window.addEventListener('click', function(event) {
+    const dropdown = document.getElementById('profileDropdown');
+    if (dropdown && dropdown.classList.contains('show')) {
+      if (!event.target.closest('.profile-container')) {
+        dropdown.classList.remove('show');
+      }
+    }
+  });
 </script>

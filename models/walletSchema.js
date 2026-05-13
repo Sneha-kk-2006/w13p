@@ -25,7 +25,7 @@ const transactionSchema = new Schema(
     // Human-readable order reference string (e.g. "ORD123456")
     orderRef: { type: String, default: '' },
     // Idempotency key – prevents duplicate refunds for the same logical event
-    idempotencyKey: { type: String, unique: true, sparse: true },
+    idempotencyKey: { type: String },
     // Running balance AFTER this transaction
     balanceAfter: { type: Number, required: true },
   },

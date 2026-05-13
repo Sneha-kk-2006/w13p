@@ -1,6 +1,5 @@
 const Wallet = require('../models/walletSchema');
- 
-// ── Create wallet if it doesn't exist ────────────────────────────
+
 async function getOrCreate(userId) {
   let wallet = await Wallet.findOne({ user: userId });
   if (!wallet) {
@@ -9,7 +8,6 @@ async function getOrCreate(userId) {
   return wallet;
 }
  
-// ── Get balance ───────────────────────────────────────────────────
 async function getBalance(userId) {
   const wallet = await Wallet.findOne({ user: userId }).select('balance');
   return wallet ? wallet.balance : 0;
@@ -29,14 +27,14 @@ async function credit(userId, amount, description, opts = {}) {
     orderRef = '',
     idempotencyKey = null,
     type = 'credit',
+    session = null,
   } = opts;
- 
-  // Idempotency check — prevent double credit
+
   if (idempotencyKey) {
     const existing = await Wallet.findOne({
       user: userId,
       'transactions.idempotencyKey': idempotencyKey,
-    });
+    }).session(session);
     if (existing) {
       const tx = existing.transactions.find(t => t.idempotencyKey === idempotencyKey);
       return { wallet: existing, transaction: tx, duplicate: true };
@@ -48,6 +46,7 @@ async function credit(userId, amount, description, opts = {}) {
   const wallet = await Wallet.findOne({ user: userId });
   const newBalance = wallet.balance + amount;
  
+  //transaction records
   const tx = {
     type,
     amount,
@@ -65,7 +64,7 @@ async function credit(userId, amount, description, opts = {}) {
       $inc: { balance: amount },
       $push: { transactions: { $each: [tx], $position: 0 } },
     },
-    { new: true }
+    { new: true, session }
   );
  
   return { wallet: updated, transaction: updated.transactions[0], duplicate: false };
@@ -75,10 +74,10 @@ async function credit(userId, amount, description, opts = {}) {
 async function debit(userId, amount, description, opts = {}) {
   if (!amount || amount <= 0) throw new Error('Debit amount must be positive');
  
-  const { orderId = null, orderRef = '' } = opts;
+  const { orderId = null, orderRef = '', session = null } = opts;
  
   // Check balance first
-  const wallet = await Wallet.findOne({ user: userId });
+  const wallet = await Wallet.findOne({ user: userId }).session(session);
   if (!wallet || wallet.balance < amount) {
     throw new Error('Insufficient wallet balance');
   }
@@ -101,7 +100,7 @@ async function debit(userId, amount, description, opts = {}) {
       $inc: { balance: -amount },
       $push: { transactions: { $each: [tx], $position: 0 } },
     },
-    { new: true }
+    { new: true, session }
   );
  
   if (!updated) {

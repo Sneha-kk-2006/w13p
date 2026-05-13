@@ -101,12 +101,19 @@
 
                             <td><%= new Date(coupon.expiryDate).toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase() %></td>
                             <td>
-                                <% const isExpired = new Date(coupon.expiryDate) < new Date(); %>
-                                <span class="status-badge <%= isExpired ? 'expired' : '' %>">
-                                    <%= isExpired ? 'Expired' : 'Active' %>
+                                <% 
+                                    const isExpired = new Date(coupon.expiryDate) < new Date(); 
+                                    const statusText = isExpired ? 'Expired' : (coupon.isActive ? 'Active' : 'Inactive');
+                                    const statusClass = isExpired ? 'expired' : (coupon.isActive ? '' : 'expired');
+                                %>
+                                <span class="status-badge <%= statusClass %>">
+                                    <%= statusText %>
                                 </span>
                             </td>
                             <td style="text-align: right;">
+                                <button class="action-icon" style="color: <%= coupon.isActive ? '#999' : '#000' %>" onclick="toggleStatus('<%= coupon._id %>')">
+                                    <%= coupon.isActive ? 'Deactivate' : 'Activate' %>
+                                </button>
                                 <button class="action-icon" style="color: #e74c3c" onclick="confirmDelete('<%= coupon._id %>')">Delete</button>
                             </td>
                         </tr>
@@ -296,6 +303,21 @@
                     }
                 }
             });
+        }
+        
+        async function toggleStatus(id) {
+            try {
+                const res = await fetch(`/admin/coupons/toggle/${id}`, { method: "PATCH" });
+                const data = await res.json();
+                if (data.success) {
+                    showToast(data.msg.toUpperCase());
+                    setTimeout(() => location.reload(), 800);
+                } else {
+                    showToast(data.msg || "ERROR TOGGLING STATUS", 'error');
+                }
+            } catch (err) {
+                showToast("SERVER ERROR", 'error');
+            }
         }
     </script>
 </body>

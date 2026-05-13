@@ -988,7 +988,16 @@
               <div class="pc__n">
                 <%= product.name %>
               </div>
-              <div class="pc__p">₹<%= product.price %>
+              <div class="pc__p">
+                <% if (product.offerPrice) { %>
+                  <span style="color:#e53935; font-weight:600;">₹<%= product.offerPrice.toLocaleString('en-IN') %></span>
+                  <span style="text-decoration:line-through; color:#aaa; font-size:0.6rem; margin-left:4px;">₹<%= product.price.toLocaleString('en-IN') %></span>
+                <% } else if (product.discount > 0) { %>
+                  <span style="color:#e53935; font-weight:600;">₹<%= Math.round(product.price - (product.price * product.discount / 100)).toLocaleString('en-IN') %></span>
+                  <span style="text-decoration:line-through; color:#aaa; font-size:0.6rem; margin-left:4px;">₹<%= product.price.toLocaleString('en-IN') %></span>
+                <% } else { %>
+                  ₹<%= product.price.toLocaleString('en-IN') %>
+                <% } %>
               </div>
             </a>
             <% }) %>
@@ -1074,7 +1083,16 @@
               <div class="pc__n">
                 <%= product.name %>
               </div>
-              <div class="pc__p">₹<%= product.price %>
+              <div class="pc__p">
+                <% if (product.offerPrice) { %>
+                  <span style="color:#e53935; font-weight:600;">₹<%= product.offerPrice.toLocaleString('en-IN') %></span>
+                  <span style="text-decoration:line-through; color:#aaa; font-size:0.6rem; margin-left:4px;">₹<%= product.price.toLocaleString('en-IN') %></span>
+                <% } else if (product.discount > 0) { %>
+                  <span style="color:#e53935; font-weight:600;">₹<%= Math.round(product.price - (product.price * product.discount / 100)).toLocaleString('en-IN') %></span>
+                  <span style="text-decoration:line-through; color:#aaa; font-size:0.6rem; margin-left:4px;">₹<%= product.price.toLocaleString('en-IN') %></span>
+                <% } else { %>
+                  ₹<%= product.price.toLocaleString('en-IN') %>
+                <% } %>
               </div>
             </a>
             <% }) %>

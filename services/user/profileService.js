@@ -16,6 +16,10 @@ const changeUserPassword = async (userId, currentPassword, newPassword, confirmP
     return { success: false, message: ERRORS.PASSWORD_MISMATCH };
   }
 
+  if (newPassword.length < 6) {
+    return { success: false, message: ERRORS.PASSWORD_LENGTH };
+  }
+
   const user = await User.findById(userId).select("+password");
   if (!user) {
     return { success: false, message: ERRORS.USER_NOT_FOUND };

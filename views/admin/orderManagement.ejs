@@ -295,6 +295,7 @@
                         <th>Date</th>
                         <th>Customer</th>
                         <th>Total</th>
+                        <th>Payment</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
@@ -312,6 +313,16 @@
                                     </div>
                                 </td>
                                 <td style="font-weight: 600;">₹<%= order.totalPrice.toLocaleString() %></td>
+                                <td>
+                                    <% if (order.paymentStatus === 'Paid') { %>
+                                        <span class="status-badge" style="background: #e6fffa; color: #2c7a7b;">PAID</span>
+                                    <% } else if (order.paymentStatus === 'Failed') { %>
+                                        <span class="status-badge" style="background: #fff5f5; color: #c53030;">FAILED</span>
+                                    <% } else { %>
+                                        <span class="status-badge" style="background: #ebf8ff; color: #2b6cb0;">PENDING</span>
+                                    <% } %>
+                                    <div style="font-size: 0.55rem; color: #999; margin-top: 4px; text-transform: uppercase;"><%= order.paymentMethod %></div>
+                                </td>
                                 <td>
                                     <div style="display: flex; flex-direction: column; gap: 5px;">
                                         <select class="status-select" onchange="updateStatus('<%= order.orderId %>', this.value)">

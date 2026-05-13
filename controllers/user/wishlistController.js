@@ -1,5 +1,7 @@
 const Wishlist = require('../../models/wishlistSchema');
 const Product = require('../../models/productSchema');
+const { attachOffers } = require('./productController');
+
 
 const getWishlist = async (req, res) => {
     try {
@@ -21,8 +23,18 @@ const getWishlist = async (req, res) => {
             return b.productId._id.getTimestamp() - a.productId._id.getTimestamp();
         });
 
+        // Extract products for offer attachment
+        const rawProducts = sortedWishlist.map(item => item.productId);
+        const productsWithOffers = await attachOffers(rawProducts);
+
+   
+        const wishlistWithOffers = sortedWishlist.map((item, idx) => ({
+            ...item.toObject(),
+            productId: productsWithOffers[idx]
+        }));
+
         res.render('user/wishlist', { 
-            wishlist:sortedWishlist,
+            wishlist: wishlistWithOffers,
             pageTitle: 'My Wishlist'
         });
 

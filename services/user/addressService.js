@@ -42,7 +42,7 @@ const addAddressService = async (data, userId) => {
 
   const trimmedName = fullName.trim();
   if (!trimmedName || !phone || !addressline1 || !city || !state || !pincode) {
-    return { success: false, message: "Required fields missing" };
+    return { success: false, message: "Required fields missing " };
   }
 
   const nameRegex = /^[a-zA-Z\s]{3,50}$/;

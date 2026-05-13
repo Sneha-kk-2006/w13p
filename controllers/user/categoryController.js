@@ -4,6 +4,8 @@ const category=require('../../models/categorySchema')
 const Wishlist = require('../../models/wishlistSchema')
 
 const mongoose=require('mongoose')
+const { attachOffers } = require('./productController');
+
 const loadcat = async (req, res) => {
     try {
         const search      = req.query.search     || '';
@@ -56,6 +58,8 @@ const loadcat = async (req, res) => {
             .skip(skip)
             .limit(limit);
 
+        const productsWithOffers = await attachOffers(products);
+
         const categories = await category.find({ isDeleted: false, status: 'Active' });
 
         const totalPages = Math.ceil(total / limit);
@@ -71,7 +75,7 @@ const loadcat = async (req, res) => {
         }
 
         res.render('user/category', {
-            products,
+            products: productsWithOffers,
             categories,  
             search,
             sort,

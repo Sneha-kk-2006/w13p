@@ -10,14 +10,11 @@ const session = require("express-session");
 const morgan = require("morgan");
 const passport = require("./config/passport");
 const nocache = require("nocache");
-const categoryRoutes = require('./routes/adminRouter')
-const attachCartCount = require('./middlewares/cartCount')
-const attachWishlistCount = require('./middlewares/wishlistCount')
-const Razorpay = require("razorpay");
-require("dotenv").config();
+const attachCartCount = require('./middlewares/cartCount');
+const attachWishlistCount = require('./middlewares/wishlistCount');
 
 
-db();
+
 
 app.use(nocache());
 app.use(morgan("dev"));
@@ -62,10 +59,7 @@ app.use(async (req, res, next) => {
   next();
 });
 
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID,
-  key_secret: process.env.RAZORPAY_KEY_SECRET,
-});
+
 
 
 app.use(attachCartCount)
@@ -83,8 +77,16 @@ app.use("/", userRouter);
 app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 
+const startServer = async () => {
+  try {
+    await db();
+    app.listen(3034, () => {
+      console.log("http://localhost:3034");
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
 
-
-app.listen(3034, () => {
-  console.log("http://localhost:3034");
-});
+startServer();

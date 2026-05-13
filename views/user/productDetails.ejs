@@ -35,21 +35,23 @@
 
         .main-grid {
             display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 100px;
+            grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+            gap: 80px;
         }
 
         /* Image Section */
         .image-col {
             display: flex;
             gap: 20px;
+            align-items: flex-start;
         }
 
         .thumb-stack {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
             width: 80px;
+            flex-shrink: 0;
         }
 
         .thumb {
@@ -58,20 +60,24 @@
             object-fit: cover;
             cursor: pointer;
             opacity: 0.6;
-            transition: 0.3s;
+            transition: all 0.3s ease;
             background: #f8f8f8;
+            border: 1px solid transparent;
         }
 
         .thumb:hover, .thumb.active {
             opacity: 1;
+            border-color: #000;
         }
 
         .main-img-box {
             flex: 1;
+            width: 100%;
             aspect-ratio: 3/4;
             background: #f8f8f8;
             overflow: hidden;
             position: relative;
+            border: 1px solid var(--border-light);
         }
 
         .main-img { width: 100%; height: 100%; object-fit: cover; }
@@ -279,16 +285,16 @@
                 <span class="p-category"><%= product.category.name %></span>
                 <h1 class="p-name"><%= product.name %></h1>
                 
-               <div class="p-price-box">
+               <div class="p-price-box" id="priceBox">
     <% if (offerPrice) { %>
         <!-- Offer price takes priority -->
-        <span class="cur-price" style="color:#e53935;">
+        <span class="cur-price" id="curPrice" style="color:#e53935;">
             ₹<%= offerPrice.toLocaleString('en-IN') %>
         </span>
-        <span class="old-price">
+        <span class="old-price" id="oldPrice">
             ₹<%= product.price.toLocaleString('en-IN') %>
         </span>
-        <span style="
+        <span id="discountBadge" style="
             display: inline-block;
             background: #e53935;
             color: #fff;
@@ -318,28 +324,31 @@
 
     <% } else if (product.discount > 0) { %>
         <!-- Fallback: product's own discount field -->
-        <span class="cur-price">
+        <span class="cur-price" id="curPrice">
             ₹<%= Math.round(product.price - (product.price * product.discount / 100)).toLocaleString('en-IN') %>
         </span>
-        <span class="old-price">
+        <span class="old-price" id="oldPrice">
             ₹<%= product.price.toLocaleString('en-IN') %>
         </span>
+        <span id="discountBadge" style="display:none;"></span>
 
     <% } else { %>
         <!-- No offer, no discount -->
-        <span class="cur-price">
+        <span class="cur-price" id="curPrice">
             ₹<%= product.price.toLocaleString('en-IN') %>
         </span>
+        <span id="oldPrice" style="display:none;"></span>
+        <span id="discountBadge" style="display:none;"></span>
     <% } %>
 </div>
 
                 <% if (product.variants && product.variants.length > 0) { %>
                     <%
-                        // Group by color
+                        // Group by color — include price per variant
                         const colorMap = {};
                         product.variants.forEach((v, idx) => {
                             if (!colorMap[v.color]) colorMap[v.color] = { images: v.images || [], sizes: [] };
-                            colorMap[v.color].sizes.push({ size: v.size, stock: v.stock, idx });
+                            colorMap[v.color].sizes.push({ size: v.size, stock: v.stock, price: v.price, idx });
                         });
                         const colorKeys = Object.keys(colorMap);
                         const firstColor = colorKeys[0];
@@ -377,6 +386,7 @@
                                      data-idx="<%= s.idx %>" 
                                      data-stock="<%= s.stock %>"
                                      data-size="<%= s.size %>"
+                                     data-price="<%= s.price || '' %>"
                                      onclick="<%= s.stock > 0 ? 'selectSize(this)' : '' %>">
                                     <%= s.size %>
                                 </div>
@@ -398,6 +408,9 @@
                                 ])
                             )
                         ) %>;
+                        const basePrice = <%= product.price %>;
+                        const baseOfferPrice = <%= offerPrice || 'null' %>;
+                        const discountPct = <%= discountPercent || 'null' %>;
                     </script>
                 <% } %>
 
@@ -508,9 +521,10 @@
             el.classList.add('active');
             // Update label
             document.getElementById('colourLabel').textContent = color;
-            // Reset size selection
+            // Reset size + price
             document.getElementById('selected-v').value = '';
             document.getElementById('sizeLabel').textContent = '\u2014';
+            resetPrice();
             // Rebuild size row
             const sizeRow = document.getElementById('sizeRow');
             const data = variantColorMap[color];
@@ -518,23 +532,24 @@
             (data.sizes || []).forEach(s => {
                 const box = document.createElement('div');
                 box.className = 'size-box' + (s.stock <= 0 ? ' unavailable' : '');
-                box.dataset.idx = s.idx;
+                box.dataset.idx   = s.idx;
                 box.dataset.stock = s.stock;
-                box.dataset.size = s.size;
-                box.textContent = s.size;
+                box.dataset.size  = s.size;
+                box.dataset.price = s.price || '';
+                box.textContent   = s.size;
                 if (s.stock > 0) box.onclick = () => selectSize(box);
                 sizeRow.appendChild(box);
             });
             // Rebuild left gallery with this color's images
             const imgs = (data.images && data.images.length > 0) ? data.images : allProductImages;
             const thumbStack = document.getElementById('thumbStack');
-            const mainView = document.getElementById('main-view');
+            const mainView   = document.getElementById('main-view');
             thumbStack.innerHTML = '';
             imgs.forEach((src, i) => {
-                const img = document.createElement('img');
-                img.src = src;
+                const img     = document.createElement('img');
+                img.src       = src;
                 img.className = 'thumb' + (i === 0 ? ' active' : '');
-                img.onclick = () => changeImage(src, img);
+                img.onclick   = () => changeImage(src, img);
                 thumbStack.appendChild(img);
             });
             mainView.src = imgs[0];
@@ -545,6 +560,55 @@
             el.classList.add('active');
             document.getElementById('sizeLabel').textContent = el.dataset.size;
             document.getElementById('selected-v').value = variants[el.dataset.idx]._id;
+
+            // Update price display based on variant price
+            const variantPrice = parseFloat(el.dataset.price);
+            if (variantPrice && variantPrice > 0) {
+                updatePrice(variantPrice);
+            } else {
+                resetPrice();
+            }
+        }
+
+        // Update the price display to show variant price (with offer discount applied if applicable)
+        function updatePrice(varPrice) {
+            const curEl   = document.getElementById('curPrice');
+            const oldEl   = document.getElementById('oldPrice');
+            const badgeEl = document.getElementById('discountBadge');
+
+            if (discountPct) {
+                // Offer exists — apply same discount % to variant price
+                const discounted = Math.round(varPrice - (varPrice * discountPct / 100));
+                curEl.textContent  = '\u20b9' + discounted.toLocaleString('en-IN');
+                curEl.style.color  = '#e53935';
+                oldEl.textContent  = '\u20b9' + varPrice.toLocaleString('en-IN');
+                oldEl.style.display = '';
+                if (badgeEl) { badgeEl.textContent = discountPct + '% OFF'; badgeEl.style.display = ''; }
+            } else {
+                curEl.textContent  = '\u20b9' + varPrice.toLocaleString('en-IN');
+                curEl.style.color  = '';
+                oldEl.style.display = 'none';
+                if (badgeEl) badgeEl.style.display = 'none';
+            }
+        }
+
+        // Reset to the base product price
+        function resetPrice() {
+            const curEl   = document.getElementById('curPrice');
+            const oldEl   = document.getElementById('oldPrice');
+            const badgeEl = document.getElementById('discountBadge');
+
+            if (baseOfferPrice) {
+                curEl.textContent  = '\u20b9' + baseOfferPrice.toLocaleString('en-IN');
+                curEl.style.color  = '#e53935';
+                oldEl.textContent  = '\u20b9' + basePrice.toLocaleString('en-IN');
+                oldEl.style.display = '';
+            } else {
+                curEl.textContent  = '\u20b9' + basePrice.toLocaleString('en-IN');
+                curEl.style.color  = '';
+                oldEl.style.display = 'none';
+                if (badgeEl) badgeEl.style.display = 'none';
+            }
         }
 
         async function addToCart(productId) {

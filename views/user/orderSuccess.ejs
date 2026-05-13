@@ -1,200 +1,210 @@
 <%- include("../partials/user/header") %>
 
-<style>
-    :root {
-        --primary: #1a1a1a;
-        --accent: #d4af37;
-        --bg-soft: #f8f9fa;
-        --text-muted: #6c757d;
-    }
-
-    body {
-        background-color: var(--bg-soft);
-        font-family: 'Inter', sans-serif;
-        color: var(--primary);
-    }
-
-    .success-container {
-        min-height: calc(100vh - 200px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-    }
-
-    .success-card {
-        background: #ffffff;
-        max-width: 600px;
-        width: 100%;
-        padding: 60px 40px;
-        border-radius: 24px;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-        text-align: center;
-        border: 1px solid rgba(0,0,0,0.05);
-        animation: slideUp 0.8s ease-out;
-    }
-
-    @keyframes slideUp {
-        from { opacity: 0; transform: translateY(30px); }
-        to { opacity: 1; transform: translateY(0); }
-    }
-
-    .success-illustration {
-        width: 280px;
-        margin: 0 auto 32px;
-        filter: drop-shadow(0 15px 30px rgba(0,0,0,0.1));
-    }
-
-    .success-card h1 {
-        font-size: 2.5rem;
-        font-weight: 800;
-        margin-bottom: 16px;
-        letter-spacing: -1px;
-    }
-
-    .success-card p {
-        font-size: 1.1rem;
-        color: var(--text-muted);
-        margin-bottom: 32px;
-        line-height: 1.6;
-    }
-
-    .order-info {
-        background: var(--bg-soft);
-        padding: 20px;
-        border-radius: 12px;
-        margin-bottom: 40px;
-        display: inline-block;
-        border: 1px dashed #ddd;
-    }
-
-    .order-info span {
-        display: block;
-        font-size: 0.85rem;
-        color: var(--text-muted);
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 4px;
-    }
-
-    .order-info strong {
-        font-size: 1.2rem;
-        color: var(--primary);
-    }
-
-    .button-group {
-        display: flex;
-        gap: 16px;
-        justify-content: center;
-    }
-
-    @media (max-width: 576px) {
-        .button-group {
-            flex-direction: column;
+    <style>
+        :root {
+            --primary: #1a1a1a;
+            --accent: #d4af37;
+            --bg-soft: #f8f9fa;
+            --text-muted: #6c757d;
         }
-    }
 
-    .btn-success {
-        padding: 16px 32px;
-        border-radius: 12px;
-        font-weight: 600;
-        text-decoration: none;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-    }
+        body {
+            background-color: var(--bg-soft);
+            font-family: 'Inter', sans-serif;
+            color: var(--primary);
+        }
 
-    .btn-primary-dark {
-        background: var(--primary);
-        color: white;
-    }
+        .success-container {
+            min-height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
 
-    .btn-primary-dark:hover {
-        background: #333;
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-    }
+        .success-card {
+            background: #ffffff;
+            max-width: 600px;
+            width: 100%;
+            padding: 60px 40px;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            animation: slideUp 0.8s ease-out;
+        }
 
-    .btn-outline {
-        border: 2px solid var(--primary);
-        color: var(--primary);
-    }
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
 
-    .btn-outline:hover {
-        background: var(--primary);
-        color: white;
-        transform: translateY(-2px);
-    }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-    /* Confetti effect placeholder */
-    .confetti {
-        position: absolute;
-        pointer-events: none;
-    }
-</style>
+        .success-illustration {
+            width: 280px;
+            margin: 0 auto 32px;
+            filter: drop-shadow(0 15px 30px rgba(0, 0, 0, 0.1));
+        }
 
-<div class="success-container">
-    <div class="success-card">
-        <img src="/images/order-success.png" alt="Order Success" class="success-illustration">
-        
-        <h1>Thank You!</h1>
-        <p>Your order has been placed successfully. We've sent a confirmation email to your registered address.</p>
-        
-        <div class="order-info" style="display: flex; gap: 40px; justify-content: center; text-align: center;">
-            <div>
-                <span>Order Reference</span>
-                <strong>#<%= order.orderId %></strong>
+        .success-card h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .success-card p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            line-height: 1.6;
+        }
+
+        .order-info {
+            background: var(--bg-soft);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            display: inline-block;
+            border: 1px dashed #ddd;
+        }
+
+        .order-info span {
+            display: block;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+
+        .order-info strong {
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+        }
+
+        @media (max-width: 576px) {
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        .btn-success {
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary-dark {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary-dark:hover {
+            background: #333;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-outline {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Confetti effect placeholder */
+        .confetti {
+            position: absolute;
+            pointer-events: none;
+        }
+    </style>
+
+    <div class="success-container">
+        <div class="success-card">
+            <img src="/images/order-success.png" alt="Order Success" class="success-illustration">
+
+            <h1>Thank You!</h1>
+            <p>Your order has been placed successfully. We've sent a confirmation email to your registered address.</p>
+
+            <div class="order-info" style="display: flex; gap: 40px; justify-content: center; text-align: center;">
+                <div>
+                    <span>Order Reference</span>
+                    <strong>#<%= order.orderId %></strong>
+                </div>
+                <div>
+                    <span>Date Ordered</span>
+                    <strong>
+                        <%= new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric' , month: 'short' ,
+                            year: 'numeric' }) %>
+                    </strong>
+                </div>
             </div>
-            <div>
-                <span>Date Ordered</span>
-                <strong><%= new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></strong>
+
+            <div class="button-group">
+                <a href="/order-details/<%= order._id %>" class="btn-success btn-primary-dark">
+                    <i class="fas fa-list-alt"></i> Order Details
+                </a>
+                <a href="/order/invoice/<%= order._id %>" class="btn-success btn-outline">
+                    <i class="fas fa-file-pdf"></i> Download Invoice
+                </a>
+                <a href="/products" class="btn-success btn-outline">
+                    <i class="fas fa-shopping-bag"></i> Continue Shopping
+                </a>
             </div>
-        </div>
-        
-        <div class="button-group">
-            <a href="/order-details/<%= order._id %>" class="btn-success btn-primary-dark">
-                <i class="fas fa-list-alt"></i> Order Details
-            </a>
-            <a href="/order/invoice/<%= order._id %>" class="btn-success btn-outline">
-                <i class="fas fa-file-pdf"></i> Download Invoice
-            </a>
-            <a href="/products" class="btn-success btn-outline">
-                <i class="fas fa-shopping-bag"></i> Continue Shopping
-            </a>
         </div>
     </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
-<script>
-    // Celebrate with confetti!
-    window.onload = function() {
-        var duration = 3 * 1000;
-        var end = Date.now() + duration;
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <script>
+        // Celebrate with confetti!
+        window.onload = function () {
+            var duration = 3 * 1000;
+            var end = Date.now() + duration;
 
-        (function frame() {
-            confetti({
-                particleCount: 3,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-                colors: ['#d4af37', '#1a1a1a', '#ffffff']
-            });
-            confetti({
-                particleCount: 3,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-                colors: ['#d4af37', '#1a1a1a', '#ffffff']
-            });
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#d4af37', '#1a1a1a', '#ffffff']
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#d4af37', '#1a1a1a', '#ffffff']
+                });
 
-            if (Date.now() < end) {
-                requestAnimationFrame(frame);
-            }
-        }());
-    };
-</script>
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+        };
+    </script>
 
-<%- include("../partials/user/footer") %>
+    <%- include("../partials/user/footer") %>

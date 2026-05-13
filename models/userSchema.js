@@ -16,10 +16,15 @@ const userSchema = new Schema(
 
     profileImage: { type: String, default: "" },
     loginAttempts: { type: Number, default: 0 },
-    phone: { type: String, default: "" }
+    phone: { type: String, default: "" },
+      referralCode:    { type: String, unique: true },   
+  referredByCode:  { type: String, default: null },  // code they entered at signup
+  credits:         { type: Number, default: 0 },  
 
   },
+   
   { timestamps: true }
+
 );
 
 const User = mongoose.model("User", userSchema);

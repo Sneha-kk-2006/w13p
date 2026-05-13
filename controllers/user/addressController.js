@@ -41,7 +41,7 @@ const addAddress = async (req, res) => {
     }
 
     if (req.headers.accept && req.headers.accept.includes('application/json')) {
-      return res.json({ success: true, message: "Operation successful" });
+      return res.json({ success: true, message: "Address added successful" });
     }
     return res.redirect(result.redirect);
 
@@ -58,8 +58,7 @@ const deleteAddress = async (req, res) => {
   try {
     const addressId = req.query.id;
     const userId = req.session.user._id;
-    
-    // Verify ownership before deletion
+
     const result = await Address.findOneAndDelete({ _id: addressId, userId });
     
     if (!result) {

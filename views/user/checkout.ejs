@@ -255,6 +255,93 @@
         margin-top: 20px !important;
         box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important;
     }
+
+    /* Coupon Section Styles */
+    .coupon-section {
+        margin-top: 20px;
+        padding-top: 20px;
+        border-top: 1px solid var(--border-color);
+    }
+
+    .coupon-input-group {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .coupon-input {
+        flex: 1;
+        padding: 10px 15px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .coupon-input:focus {
+        border-color: var(--primary);
+    }
+
+    .apply-btn {
+        padding: 10px 20px;
+        background: var(--primary);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .apply-btn:hover {
+        background: #333;
+    }
+
+    .applied-coupon {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #f8f9fa;
+        padding: 10px 15px;
+        border-radius: 8px;
+        border: 1px dashed #28a745;
+        margin-bottom: 15px;
+    }
+
+    .remove-coupon-btn {
+        color: #dc3545;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 0.8rem;
+        text-decoration: underline;
+    }
+
+    .available-coupons {
+        margin-top: 15px;
+    }
+
+    .coupon-tag {
+        display: inline-block;
+        padding: 4px 10px;
+        background: #fff4e6;
+        color: #fd7e14;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        cursor: pointer;
+        border: 1px solid #ffe8cc;
+        transition: all 0.2s;
+    }
+
+    .coupon-tag:hover {
+        background: #ffe8cc;
+        transform: translateY(-1px);
+    }
 </style>
 
 <div class="checkout-container">
@@ -360,15 +447,52 @@
                     <% }); %>
                 </div>
 
+                <!-- Coupon Section -->
+                <div class="coupon-section">
+                    <h4 style="margin: 0 0 15px 0; font-size: 1rem;">Have a coupon?</h4>
+                    
+                    <% if (appliedCoupon) { %>
+                        <div class="applied-coupon">
+                            <div>
+                                <span style="font-weight: 700; color: #28a745;"><%= appliedCoupon.code %></span>
+                                <p style="margin: 0; font-size: 0.75rem; color: var(--text-muted);">Coupon Applied</p>
+                            </div>
+                            <button class="remove-coupon-btn" onclick="removeCoupon()">Remove</button>
+                        </div>
+                    <% } else { %>
+                        <div class="coupon-input-group">
+                            <input type="text" id="couponCode" class="coupon-input" placeholder="Enter code" uppercase>
+                            <button class="apply-btn" onclick="applyCoupon()">Apply</button>
+                        </div>
+                    <% } %>
+
+                    <% if (!appliedCoupon && availableCoupons && availableCoupons.length > 0) { %>
+                        <div class="available-coupons">
+                            <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 10px;">Available Coupons:</p>
+                            <div style="display: flex; flex-wrap: wrap;">
+                                <% availableCoupons.forEach(coupon => { %>
+                                    <span class="coupon-tag" onclick="document.getElementById('couponCode').value='<%= coupon.code %>'; applyCoupon()"><%= coupon.code %></span>
+                                <% }); %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+
                 <div class="summary-details">
                     <div class="summary-row">
                         <span>Subtotal</span>
                         <span>₹<%= subtotal %></span>
                     </div>
                     <div class="summary-row" style="color: #28a745;">
-                        <span>Discount</span>
+                        <span>Offer Discount</span>
                         <span>- ₹<%= discount %></span>
                     </div>
+                    <% if (couponDiscount > 0) { %>
+                        <div class="summary-row" style="color: #28a745;">
+                            <span>Coupon Discount</span>
+                            <span>- ₹<%= couponDiscount %></span>
+                        </div>
+                    <% } %>
                     <div class="summary-row">
                         <span>Shipping</span>
                         <span style="color: #28a745;">Free</span>
@@ -646,10 +770,14 @@
                     const result = await verifyRes.json();
 
                     if (result.success) {
-                        showZaraToast('PAYMENT SUCCESSFUL! ORDER PLACED.');
-                        setTimeout(() => {
-                            window.location.href = `/checkout/success/${result.orderId}`;
-                        }, 2000);
+                        if (result.paymentStatus === 'Failed') {
+                            window.location.href = `/checkout/payment-error/${result.orderId}`;
+                        } else {
+                            showZaraToast('PAYMENT SUCCESSFUL! ORDER PLACED.');
+                            setTimeout(() => {
+                                window.location.href = `/checkout/success/${result.orderId}`;
+                            }, 2000);
+                        }
                     } else {
                         showZaraToast(result.message || 'PAYMENT VERIFICATION FAILED', 'error');
                         btn.disabled = false;
@@ -657,11 +785,25 @@
                     }
                 },
                 modal: {
-                    // User closed the Razorpay popup
-                    ondismiss: function () {
-                        showZaraToast('PAYMENT CANCELLED', 'error');
-                        btn.disabled = false;
-                        btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
+                    ondismiss: async function () {
+                        showZaraToast('PAYMENT CANCELLED. RECORDING ORDER...', 'error');
+                        try {
+                            const failRes = await fetch('/checkout/payment-failure', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ addressId: selectedAddressId })
+                            });
+                            const failData = await failRes.json();
+                            if(failData.success) {
+                                window.location.href = `/checkout/payment-error/${failData.orderId}`;
+                            } else {
+                                btn.disabled = false;
+                                btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
+                            }
+                        } catch (e) {
+                            btn.disabled = false;
+                            btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
+                        }
                     }
                 },
                 prefill: {
@@ -679,6 +821,51 @@
             showZaraToast('AN UNEXPECTED ERROR OCCURRED', 'error');
             btn.disabled = false;
             btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
+        }
+    }
+
+    async function applyCoupon() {
+        const code = document.getElementById('couponCode').value.trim();
+        if (!code) {
+            showZaraToast('PLEASE ENTER A COUPON CODE', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch('/checkout/apply-coupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code })
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                showZaraToast('COUPON APPLIED SUCCESSFULLY');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showZaraToast(result.message || 'INVALID COUPON', 'error');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showZaraToast('FAILED TO APPLY COUPON', 'error');
+        }
+    }
+
+    async function removeCoupon() {
+        try {
+            const response = await fetch('/checkout/remove-coupon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            });
+            const result = await response.json();
+
+            if (result.success) {
+                showZaraToast('COUPON REMOVED');
+                setTimeout(() => location.reload(), 1500);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showZaraToast('FAILED TO REMOVE COUPON', 'error');
         }
     }
 </script>

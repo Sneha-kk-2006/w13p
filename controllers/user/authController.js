@@ -2,6 +2,11 @@ const user = require("../../models/userSchema");
 const authService = require("../../services/user/userService");
 const ERROR = require('../../enums/messages');
 const Product = require('../../models/productSchema'); // adjust path to match yours
+const { attachOffers } = require('./productController');
+
+
+
+
 
 require("dotenv").config();
 
@@ -13,11 +18,12 @@ const loadHomepage = async (req, res) => {
 
     // Fetch latest 20 active products for home page to populate all editorial blocks
     const products = await Product.find({ isDeleted: false, isListed: true })
-      .sort({ createdAt: -1 })
       .limit(20)
       .populate('category');
 
-    res.render("user/home", { user: userData, products });
+    const productsWithOffers = await attachOffers(products);
+
+    res.render("user/home", { user: userData, products: productsWithOffers });
   } catch (error) {
     console.error("Home page error:", error);
     res.status(500).send("Server Error");
@@ -250,6 +256,17 @@ const googleCallback = (req, res) => {
 
 
 
+const validateReferral = async (req, res) => {
+  try {
+    const { code } = req.query;
+    const result = await authService.validateReferralCode(code);
+    return res.json({ valid: result.success });
+  } catch (error) {
+    console.error("Validate referral error:", error);
+    return res.status(500).json({ valid: false });
+  }
+};
+
 module.exports = {
   loadHomepage,
   errorPage,
@@ -267,4 +284,5 @@ module.exports = {
   loadproducts,
   googleAuth,
   googleCallback,
-};
+  validateReferral,
+};

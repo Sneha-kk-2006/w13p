@@ -32,7 +32,6 @@ const addOffer = async (req, res) => {
         } else if (offerType === 'category') {
             offerData.category = referenceId;
         }
-
         const offer = new Offer(offerData);
         await offer.save();
         res.json({ success: true, message: "Offer added successfully" });
@@ -41,6 +40,8 @@ const addOffer = async (req, res) => {
         res.status(500).json({ success: false, message: error.message || "Error adding offer" });
     }
 };
+
+
 
 const toggleOfferStatus = async (req, res) => {
     try {

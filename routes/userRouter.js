@@ -22,6 +22,7 @@ router.get('/', isUser, userController.loadHomepage);
 router.get('/errorPage', userController.errorPage);
 router.get('/signup', isAuth, userController.loadsignup);
 router.post('/signup', isAuth, userController.signup);
+router.get('/validate-referral', userController.validateReferral);
 router.get("/verify-otp", isUser, userController.loadVerify);
 router.post("/verify-otp", isUser, userController.verifyOtp);
 router.post("/resend-otp", isUser, userController.resendOtp);
@@ -79,10 +80,14 @@ router.post('/wishlist/remove', userAuth, wishlistController.removeFromWishlist)
 
 
 router.get('/checkout', userAuth, orderController.loadCheckout);
+router.post('/checkout/apply-coupon', userAuth, orderController.applyCoupon);
+router.post('/checkout/remove-coupon', userAuth, orderController.removeCoupon);
 router.post('/checkout/place-order', userAuth, orderController.placeOrder);
 router.post('/checkout/razorpayOrder',userAuth,orderController.createRazorpayOrder)
 router.post('/checkout/verifyPayment',userAuth,orderController.verifyRazorpayPayment)
+router.post('/checkout/payment-failure', userAuth, orderController.recordPaymentFailure);
 router.get('/checkout/success/:id', userAuth, orderController.loadOrderSuccess);
+router.get('/checkout/payment-error/:id', userAuth, orderController.loadPaymentError);
 router.get('/order-details/:id', userAuth, orderController.loadOrderDetails);
 router.get('/orders', userAuth, orderController.loadOrders);
 router.post('/order/cancel/:orderId/:itemId', userAuth, orderController.cancelOrderItem);

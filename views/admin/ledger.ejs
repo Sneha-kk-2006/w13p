@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNOVA | Ledger Book</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-black: #000;
+            --off-white: #fff;
+            --border-gray: #eee;
+            --text-muted: #999;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--off-white); display: flex; min-height: 100vh; }
+
+        .admin-main { flex: 1; padding: 40px; }
+
+        .dash-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid var(--border-gray); padding-bottom: 20px; }
+        .dash-title { font-family: 'Playfair Display', serif; font-size: 2rem; letter-spacing: -1px; }
+
+        .breadcrumbs { display: flex; gap: 10px; align-items: center; margin-bottom: 20px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }
+        .breadcrumbs a { color: var(--text-muted); text-decoration: none; transition: 0.3s; }
+        .breadcrumbs a:hover { color: #000; }
+        .breadcrumbs span { color: #ccc; }
+
+        .filter-bar { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 30px; }
+        .filter-group { display: flex; flex-direction: column; gap: 8px; }
+        .filter-group label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; color: var(--text-muted); }
+        .filter-input { border: none; border-bottom: 1px solid #000; padding: 5px 0; font-size: 0.8rem; outline: none; }
+
+        .btn-filter { background: #000; color: #fff; border: none; padding: 10px 25px; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; cursor: pointer; }
+
+        .ledger-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .ledger-table th { text-align: left; font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text-muted); padding: 15px 0; border-bottom: 1px solid var(--border-gray); }
+        .ledger-table td { padding: 20px 0; font-size: 0.75rem; border-bottom: 1px solid var(--border-gray); text-transform: uppercase; }
+
+        .status-pill { padding: 4px 12px; font-size: 0.55rem; font-weight: 700; letter-spacing: 1px; border: 1px solid #000; display: inline-block; }
+    </style>
+</head>
+<body>
+
+    <%- include('../partials/admin/header', { activePage: 'dashboard' }) %>
+
+    <main class="admin-main">
+        <nav class="breadcrumbs">
+            <a href="/admin/dashboard">Dashboard</a>
+            <span>/</span>
+            <a href="/admin/ledger">Ledger Book</a>
+        </nav>
+
+        <header class="dash-header">
+            <h1 class="dash-title">Ledger Book</h1>
+            <button class="btn-filter" onclick="window.print()">Print Ledger</button>
+        </header>
+
+        <form action="/admin/ledger" method="GET" class="filter-bar">
+            <div class="filter-group">
+                <label>Start Date</label>
+                <input type="date" name="startDate" value="<%= startDate %>" class="filter-input">
+            </div>
+            <div class="filter-group">
+                <label>End Date</label>
+                <input type="date" name="endDate" value="<%= endDate %>" class="filter-input">
+            </div>
+            <button type="submit" class="btn-filter">Filter Ledger</button>
+        </form>
+
+        <table class="ledger-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Transaction ID</th>
+                    <th>Method</th>
+                    <th>Status</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% ledger.forEach(order => { %>
+                <tr>
+                    <td><%= new Date(order.createdAt).toLocaleDateString('en-GB') %></td>
+                    <td><%= order.orderId %></td>
+                    <td><%= order.paymentMethod %></td>
+                    <td><span class="status-pill"><%= order.orderStatus %></span></td>
+                    <td>₹<%= order.totalPrice.toLocaleString() %></td>
+                </tr>
+                <% }) %>
+                <% if (ledger.length === 0) { %>
+                <tr>
+                    <td colspan="5" style="text-align: center; color: #ccc; padding: 50px;">No transactions found in this period</td>
+                </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </main>
+
+</body>
+</html>

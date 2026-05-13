@@ -275,7 +275,11 @@
                         </div>
                         <div class="summary-row">
                             <span>Discount</span>
-                            <span class="text-gray-400">-₹<%= discount.toLocaleString('en-IN') %></span>
+                            <span class="text-gray-400">-₹<span id="discountAmount"><%= discount.toLocaleString('en-IN') %></span></span>
+                        </div>
+                        <div class="summary-row">
+                            <span>GST (18%)</span>
+                            <span id="gstAmount">₹<%= Math.round((subtotal - discount) * 0.18).toLocaleString('en-IN') %></span>
                         </div>
                         <div class="summary-row">
                             <span>Shipping</span>
@@ -284,7 +288,7 @@
                         <div class="summary-row summary-total">
                             <span>Total</span>
                            
-                            <span id="main-total">₹<%= subtotal.toLocaleString('en-IN') %></span>
+                            <span id="main-total">₹<%= Math.round((subtotal - discount) * 1.18).toLocaleString('en-IN') %></span>
                             
                         </div>
 
@@ -383,7 +387,15 @@
                             document.getElementById(`qty-${itemId}`).textContent = data.quantity;
                             document.getElementById(`totalPrice-${itemId}`).textContent = `₹${data.itemTotal.toLocaleString('en-IN')}`;
                             document.getElementById(`subtotal`).textContent = `₹${data.subtotal.toLocaleString('en-IN')}`;
-                            document.getElementById(`main-total`).textContent = `₹${data.total.toLocaleString('en-IN')}`;
+                            
+                            // Update discount and GST
+                            const discountVal = data.subtotal - data.total;
+                            const gstVal = Math.round(data.total * 0.18);
+                            const finalTotal = data.total + gstVal;
+                            
+                            document.getElementById(`discountAmount`).textContent = discountVal.toLocaleString('en-IN');
+                            document.getElementById(`gstAmount`).textContent = `₹${gstVal.toLocaleString('en-IN')}`;
+                            document.getElementById(`main-total`).textContent = `₹${finalTotal.toLocaleString('en-IN')}`;
                         } else {
                             showToast(data.msg || 'Cannot update quantity', '#c62828');
                         }

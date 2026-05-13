@@ -53,18 +53,16 @@ const addProduct = async (req, res) => {
 
         const images = req.files?.map(file => '/uploads/products/' + file.filename) || [];
         const stockVal = parseInt(stock);
-        if (isNaN(stockVal) || stockVal < 0) {
-            return res.status(400).json({ success: false, message: 'invalid stock value' })
+        const priceVal = parseFloat(price);
+        if (isNaN(priceVal) || priceVal <= 0) {
+            return res.status(400).json({ success: false, message: "Invalid price value" });
         }
-        const existing = await product.findOne({ name });
+        if (isNaN(stockVal) || stockVal < 1) {
+            return res.status(400).json({ success: false, message: "Invalid stock value" });
+        }
+        const existing = await product.findOne({ name: { $regex: new RegExp(`^${name.trim()}$`, "i") }, isDeleted: false });
         if (existing) {
-            return res.status(400).json({ success: false, message: "product already exists" })
-        }
-        if (price < 0) {
-            return res.status(400).json({ success: false, message: "price not negative" })
-        }
-        if (stock < 0) {
-            return res.status(400).json({ success: false, message: "stock not negative" })
+            return res.status(400).json({ success: false, message: "Product name already exists" });
         }
         const newProduct = new product({
             name,
@@ -106,9 +104,22 @@ const editProduct = async (req, res) => {
     try {
         const { name, description, price, stock, category, size, color } = req.body;
         const stockVal = parseInt(stock);
+        const priceVal = parseFloat(price);
 
         if (isNaN(stockVal) || stockVal < 0) {
             return res.status(400).json({ success: false, message: "Invalid stock value" });
+        }
+        if (isNaN(priceVal) || priceVal < 0) {
+            return res.status(400).json({ success: false, message: "Invalid price value" });
+        }
+
+        const existing = await product.findOne({ 
+            name: { $regex: new RegExp(`^${name.trim()}$`, "i") }, 
+            _id: { $ne: req.params.id },
+            isDeleted: false 
+        });
+        if (existing) {
+            return res.status(400).json({ success: false, message: "Product name already exists" });
         }
 
         let updateData = {
@@ -246,6 +257,8 @@ const editVariant = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
+
+
 
 const deleteVariant = async (req, res) => {
     try {

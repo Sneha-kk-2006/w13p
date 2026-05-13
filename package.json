@@ -12,10 +12,12 @@
   "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "chart.js": "^4.5.1",
     "cloudinary": "^2.10.0",
     "crypto": "^1.0.1",
     "easyinvoice": "^3.0.47",
     "ejs": "^5.0.1",
+    "exceljs": "^4.4.0",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "joi": "^18.1.2",
@@ -29,6 +31,7 @@
     "passport-google-oauth20": "^2.0.0",
     "pdfkit": "^0.18.0",
     "pdfkit-table": "^0.1.99",
-    "razorpay": "^2.9.6"
+    "razorpay": "^2.9.6",
+    "uuid": "^14.0.0"
   }
 }

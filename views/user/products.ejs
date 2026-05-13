@@ -260,8 +260,8 @@
       <% products.forEach(product => { %>
         <div class="product-card">
           <!-- Discount badge -->
-          <% if (product.discount > 0) { %>
-            <span class="badge-minimal">Sale</span>
+          <% if (product.offerPrice || product.discount > 0) { %>
+            <span class="badge-minimal" style="background:#e53935;">Sale</span>
           <% } %>
 
           <!-- Wishlist -->
@@ -319,8 +319,11 @@
             <a href="/product/<%= product._id %>" style="text-decoration:none; color:inherit;"><span class="p-name"><%= product.name %></span></a>
             
             <div class="p-price-row">
-              <% if (product.discount > 0) { %>
-                <span style="color: #000;">₹<%= Math.round(product.price - (product.price * product.discount / 100)).toLocaleString('en-IN') %></span>
+              <% if (product.offerPrice) { %>
+                <span style="color: #e53935;">₹<%= product.offerPrice.toLocaleString('en-IN') %></span>
+                <span class="old-price">₹<%= product.price.toLocaleString('en-IN') %></span>
+              <% } else if (product.discount > 0) { %>
+                <span style="color: #e53935;">₹<%= Math.round(product.price - (product.price * product.discount / 100)).toLocaleString('en-IN') %></span>
                 <span class="old-price">₹<%= product.price.toLocaleString('en-IN') %></span>
               <% } else { %>
                 <span>₹<%= product.price.toLocaleString('en-IN') %></span>

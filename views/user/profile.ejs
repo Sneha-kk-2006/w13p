@@ -164,6 +164,65 @@
             .dashboard-container { flex-direction: column; }
             .sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #eee; padding: 30px; }
         }
+
+        /* Referral Card Style */
+        .referral-card {
+            background: #f9f9f9;
+            padding: 30px;
+            margin-top: 50px;
+            border-left: 4px solid #000;
+        }
+
+        .referral-card h4 {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .referral-card p {
+            font-size: 0.75rem;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .copy-group {
+            display: flex;
+            background: #fff;
+            border: 1px solid #000;
+            padding: 5px;
+        }
+
+        .copy-group input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: #000;
+            outline: none;
+        }
+
+        .btn-copy {
+            background: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 25px;
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-copy:hover {
+            opacity: 0.8;
+        }
     </style>
 </head>
 <body>
@@ -201,27 +260,21 @@
                     <span class="info-val"><%= user.phone || 'NOT PROVIDED' %></span>
                 </div>
 
-                <button class="btn-minimal" onclick="openModal('editModal')">Edit Details</button>
+                <div class="referral-card">
+                    <h4>🎁 Share & Earn</h4>
+                    <p>Invite your friends to SNOVA. When they sign up using your code, we'll credit <strong>₹100</strong> to your wallet, and they'll get <strong>₹50</strong> too!</p>
 
-                <div class="section-header">SAVED ADDRESSES</div>
-                <div class="address-summary" style="margin-bottom: 30px;">
-                    <% if (addresses && addresses.length > 0) { %>
-                        <% addresses.forEach(addr => { %>
-                            <div style="margin-bottom: 15px; padding: 15px; border: 1px solid #eee; position: relative;">
-                                <span style="font-size: 0.55rem; text-transform: uppercase; letter-spacing: 1px; color: #999;"><%= addr.type %></span>
-                                <p style="font-size: 0.8rem; font-weight: 600; margin: 5px 0;"><%= addr.fullName %></p>
-                                <p style="font-size: 0.75rem; color: #666;"><%= addr.addressline1 %>, <%= addr.city %>, <%= addr.state %> - <%= addr.pincode %></p>
-                                <% if(addr.isDefault) { %>
-                                    <span style="position: absolute; top: 15px; right: 15px; font-size: 0.6rem; font-weight: 700;">DEFAULT</span>
-                                <% } %>
-                            </div>
-                        <% }); %>
-                        <a href="/address" class="btn-minimal" style="display: block; margin-top: 10px;">Manage All Addresses</a>
-                    <% } else { %>
-                        <p style="font-size: 0.75rem; color: #999;">No addresses saved yet.</p>
-                        <a href="/address" class="btn-minimal" style="display: block; margin-top: 10px;">Add New Address</a>
-                    <% } %>
+                    <div class="copy-group">
+                        <input type="text" id="refCode" value="<%= user.referralCode %>" readonly>
+                        <button class="btn-copy" onclick="copyCode()">Copy Code</button>
+                    </div>
                 </div>
+
+                <div style="margin-top: 40px;">
+                    <button class="btn-minimal" onclick="openModal('editModal')">Edit Profile Details</button>
+                </div>
+
+
 
                 <div class="section-header">SECURITY</div>
                 <% if(!user.googleId) { %>
@@ -349,6 +402,25 @@
                     style: { background: "#ff0000", borderRadius: "0px" }
                 }).showToast();
             }
+        }
+
+
+        function copyCode() {
+            const code = document.getElementById('refCode').value;
+            navigator.clipboard.writeText(code).then(() => {
+                Toastify({
+                    text: "REFERRAL CODE COPIED",
+                    duration: 2000,
+                    gravity: "top",
+                    position: "center",
+                    style: { 
+                        background: "#000", 
+                        borderRadius: "0px",
+                        fontSize: "0.65rem",
+                        letterSpacing: "2px"
+                    }
+                }).showToast();
+            });
         }
     </script>
 </body>

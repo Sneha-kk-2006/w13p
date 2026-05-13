@@ -914,8 +914,8 @@
                 // Validate basic fields
                 if (!name) return showToast('Product Name is required', 'red');
                 if (!category) return showToast('Please select a category', 'red');
-                if (price === "" || isNaN(price) || price < 0) return showToast('Valid Price is required', 'red');
-                if (stock === "" || isNaN(stock) || stock < 0) return showToast('Valid Stock is required', 'red');
+                if (price === "" || isNaN(price) || price < 1) return showToast('Valid Price is required', 'red');
+                if (stock === "" || isNaN(stock) || stock < 1) return showToast('Valid Stock is required', 'red');
                 if (!description) return showToast('Description is required', 'red');
                 
 

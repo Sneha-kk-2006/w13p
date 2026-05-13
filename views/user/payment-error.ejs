@@ -1,0 +1,179 @@
+<%- include("../partials/user/header") %>
+
+<style>
+    :root {
+        --primary: #1a1a1a;
+        --error: #e74c3c;
+        --bg-soft: #f8f9fa;
+        --text-muted: #6c757d;
+    }
+
+    body {
+        background-color: var(--bg-soft);
+        font-family: 'Inter', sans-serif;
+        color: var(--primary);
+    }
+
+    .error-container {
+        min-height: calc(100vh - 200px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .error-card {
+        background: #ffffff;
+        max-width: 600px;
+        width: 100%;
+        padding: 60px 40px;
+        border-radius: 24px;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        border: 1px solid rgba(231, 76, 60, 0.1);
+        animation: slideUp 0.8s ease-out;
+    }
+
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .error-icon {
+        font-size: 5rem;
+        color: var(--error);
+        margin-bottom: 32px;
+        filter: drop-shadow(0 10px 20px rgba(231, 76, 60, 0.2));
+    }
+
+    .error-card h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 16px;
+        color: var(--primary);
+        letter-spacing: -1px;
+    }
+
+    .error-card p {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        margin-bottom: 32px;
+        line-height: 1.6;
+    }
+
+    .order-summary {
+        background: var(--bg-soft);
+        padding: 24px;
+        border-radius: 16px;
+        margin-bottom: 40px;
+        text-align: left;
+    }
+
+    .summary-item {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 0.9rem;
+    }
+
+    .summary-item strong {
+        color: var(--primary);
+    }
+
+    .button-group {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+    }
+
+    @media (max-width: 576px) {
+        .button-group {
+            flex-direction: column;
+        }
+    }
+
+    .btn-action {
+        padding: 16px 32px;
+        border-radius: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-retry {
+        background: var(--error);
+        color: white;
+    }
+
+    .btn-retry:hover {
+        background: #c0392b;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+    }
+
+    .btn-outline {
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        background: transparent;
+    }
+
+    .btn-outline:hover {
+        background: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .support-text {
+        margin-top: 24px;
+        font-size: 0.85rem;
+        color: var(--text-muted);
+    }
+</style>
+
+<div class="error-container">
+    <div class="error-card">
+        <div class="error-icon">
+            <i class="fas fa-exclamation-circle"></i>
+        </div>
+        
+        <h1>Payment Failed</h1>
+        <p>Unfortunately, your payment could not be processed. Your order details have been saved, and you can attempt the payment again.</p>
+        
+        <div class="order-summary">
+            <div class="summary-item">
+                <span>Order ID:</span>
+                <strong>#<%= order.orderId %></strong>
+            </div>
+            <div class="summary-item">
+                <span>Total Amount:</span>
+                <strong>₹<%= order.totalPrice.toLocaleString() %></strong>
+            </div>
+            <div class="summary-item">
+                <span>Status:</span>
+                <strong style="color: var(--error);">Payment Pending</strong>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <a href="/order-details/<%= order._id %>" class="btn-action btn-retry">
+                <i class="fas fa-redo"></i> Retry Payment
+            </a>
+            <a href="/orders" class="btn-action btn-outline">
+                View My Orders
+            </a>
+        </div>
+
+        <p class="support-text">
+            If money was deducted from your account, it will be refunded within 5-7 business days. 
+            For further assistance, please contact support.
+        </p>
+    </div>
+</div>
+
+<%- include("../partials/user/footer") %>

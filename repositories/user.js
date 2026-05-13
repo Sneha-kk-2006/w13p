@@ -45,7 +45,9 @@ const updateByIdAndUser = (addressId, userId, data) => {
   );
 };
 
-
+const findUserByReferralCode = async (referralCode) => {
+  return await user.findOne({ referralCode });
+};
 
 module.exports = {
   findUserByEmail,
@@ -57,5 +59,6 @@ module.exports = {
   findByUserId,
   findByIdAndUser,
   updateByIdAndUser,
+   findUserByReferralCode,
    
 };
