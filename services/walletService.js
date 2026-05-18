@@ -70,7 +70,7 @@ async function credit(userId, amount, description, opts = {}) {
   return { wallet: updated, transaction: updated.transactions[0], duplicate: false };
 }
  
-// ── Debit (subtract money) ────────────────────────────────────────
+
 async function debit(userId, amount, description, opts = {}) {
   if (!amount || amount <= 0) throw new Error('Debit amount must be positive');
  
@@ -116,7 +116,7 @@ async function refundForCancellation(userId, amount, orderId, orderRef) {
     type: 'refund_cancel',
     orderId,
     orderRef,
-    idempotencyKey: `cancel_${orderId}`,
+   idempotencyKey: `cancel_${orderId}_${orderRef}`,
   });
 }
  

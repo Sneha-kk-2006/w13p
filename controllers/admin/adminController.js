@@ -19,6 +19,12 @@ const loadlogin = async (req, res) => {
 const login = async (req, res) => {
   try {
     let { email, password } = req.body;
+
+
+        console.log("req.body:", req.body);
+    if (!email) {
+      return res.render("admin/login", { message: "Email is required" });
+    }
     email = email.trim();
     const admin = await User.findOne({ email: email, role: "admin" });
     if (!admin) {
@@ -60,7 +66,7 @@ const loadDashboard = async (req, res) => {
 
     const filter = req.query.filter || 'monthly';
 
-    // 1. Summary Stats
+
     const summaryData = await Order.aggregate([
       { $match: { orderStatus: { $ne: 'Cancelled' } } },
       {
@@ -78,6 +84,7 @@ const loadDashboard = async (req, res) => {
     const topProducts = await Order.aggregate([
       { $match: { orderStatus: { $ne: 'Cancelled' } } },
       { $unwind: '$orderItems' },
+      { $match: { 'orderItems.status': { $nin: ['Cancelled', 'Returned', 'Return Requested'] } } },
       {
         $group: {
           _id: '$orderItems.product',
@@ -115,6 +122,7 @@ const loadDashboard = async (req, res) => {
     const topCategories = await Order.aggregate([
       { $match: { orderStatus: { $ne: 'Cancelled' } } },
       { $unwind: '$orderItems' },
+      { $match: { 'orderItems.status': { $nin: ['Cancelled', 'Returned', 'Return Requested'] } } },
       {
         $addFields: {
           productObjectId: { $toObjectId: '$orderItems.product' }

@@ -56,12 +56,9 @@ const createRazorpayOrder=async(req,res)=>{
 }
 
 
-
 const addMoney = async (req, res) => {
     try {
         const userId = typeof req.session.user === 'object' ? req.session.user._id : req.session.user;
-
-        // ← fixed: destructure all 4 fields from req.body (were missing before)
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = req.body;
 
         if (!userId) return res.status(401).json({ success: false, message: 'Unauthorized' });
@@ -87,7 +84,7 @@ const addMoney = async (req, res) => {
             'Wallet Top-up',
             {
                 type: 'credit',
-                paymentId: razorpay_payment_id, // ← store payment reference
+                paymentId: razorpay_payment_id, 
                 orderId: razorpay_order_id
             }
         );

@@ -56,7 +56,7 @@
 
                 if (newQty > MAX_QTY)       return res.json({ success: false, msg: `Max ${MAX_QTY} per item` });
                 
-                // Check stock (either variant stock or base stock)
+           
                 let availableStock = product.stock;
                 if (variantId) {
                     const variant = product.variants.id(variantId);

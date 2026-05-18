@@ -69,30 +69,47 @@ const updateOrderStatus = async (req, res) => {
       return res.status(400).json({ success: false, message: "A returned order cannot be changed to another status." });
     }
 
-    if (status === "Returned" && order.orderStatus !== "Returned") {
+    const isCancelling = status === "Cancelled" && order.orderStatus !== "Cancelled";
+    const isReturning = status === "Returned" && order.orderStatus !== "Returned";
+
+    if (isCancelling || isReturning) {
       for (const item of order.orderItems) {
-        const product = await Product.findById(item.product);
-        if (product) {
-          if (item.variantId && product.variants && product.variants.length > 0) {
-            const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
-            if (variant) {
-              variant.stock += item.quantity;
+        if (!['Cancelled', 'Returned'].includes(item.status)) {
+          const product = await Product.findById(item.product);
+          if (product) {
+            if (item.variantId && product.variants && product.variants.length > 0) {
+              const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+              if (variant) {
+                variant.stock += item.quantity;
+              }
+            } else {
+              product.stock += item.quantity;
             }
-          } else {
-            product.stock += item.quantity;
+            await product.save();
           }
-          await product.save();
         }
       }
       
-      // Refund for full order return
-      if (order.paymentStatus === "Paid" || order.paymentMethod === "Wallet") {
-        await walletService.credit(
-          order.userId,
-          order.totalPrice,
-          `Refund for returned order ${order.orderId}`,
-          { type: 'refund_return', orderId: order._id, orderRef: order.orderId, idempotencyKey: `return_full_${order._id}` }
-        );
+      // Refund for full order return or cancellation
+      if (order.paymentStatus === "Paid" && order.totalPrice > 0) {
+        if (isCancelling) {
+          await walletService.refundForCancellation(
+            order.userId,
+            order.totalPrice,
+            order._id,
+            `cancel_full_${order.orderId}`
+          );
+        } else {
+          await walletService.credit(
+            order.userId,
+            order.totalPrice,
+            `Refund for returned order ${order.orderId}`,
+            { type: 'refund_return', orderId: order._id, orderRef: order.orderId, idempotencyKey: `return_full_${order._id}` }
+          );
+        }
+      }
+      if (isCancelling) {
+        order.totalPrice = 0;
       }
     }
 
@@ -158,18 +175,41 @@ const updateItemStatus = async (req, res) => {
       }
 
       if (status === "Cancelled") {
-        order.totalPrice = Math.max(0, order.totalPrice - (item.price * item.quantity));
+        const itemTotalPrice = item.price * item.quantity;
+        const orderSubtotal = order.orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        const discount = order.discount || 0;
+        const discountRatio = orderSubtotal > 0 ? discount / orderSubtotal : 0;
+        const refundAmount = parseFloat((itemTotalPrice * (1 - discountRatio)).toFixed(2));
+
+        order.totalPrice = Math.max(0, order.totalPrice - refundAmount);
+
+        if (order.paymentStatus === "Paid" && refundAmount > 0) {
+          await walletService.refundForCancellation(
+            order.userId,
+            refundAmount,
+            order._id,
+            `${order.orderId}_${itemId}`
+          );
+        }
       }
 
       // Refund for item return
-      if (isNewReturn && (order.paymentStatus === "Paid" || order.paymentMethod === "Wallet")) {
-        await walletService.refundForReturn(
-          order.userId,
-          item.price * item.quantity,
-          order._id,
-          order.orderId,
-          item._id.toString()
-        );
+      if (isNewReturn && order.paymentStatus === "Paid") {
+        const itemTotalPrice = item.price * item.quantity;
+        const orderSubtotal = order.orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
+        const discount = order.discount || 0;
+        const discountRatio = orderSubtotal > 0 ? discount / orderSubtotal : 0;
+        const refundAmount = parseFloat((itemTotalPrice * (1 - discountRatio)).toFixed(2));
+
+        if (refundAmount > 0) {
+          await walletService.refundForReturn(
+            order.userId,
+            refundAmount,
+            order._id,
+            order.orderId,
+            item._id.toString()
+          );
+        }
       }
     }
 

@@ -40,10 +40,10 @@ const addAddressService = async (data, userId) => {
     return { success: false, redirect: "/login" };
   }
 
-  const trimmedName = fullName.trim();
-  if (!trimmedName || !phone || !addressline1 || !city || !state || !pincode) {
+  if (!fullName || !phone || !addressline1 || !city || !state || !pincode) {
     return { success: false, message: "Required fields missing " };
   }
+  const trimmedName = fullName.trim();
 
   const nameRegex = /^[a-zA-Z\s]{3,50}$/;
   const phoneRegex = /^[6-9]\d{9}$/;
@@ -121,10 +121,10 @@ const updateAddressService = async (data, userId) => {
     redirect = "/address"
   } = data;
 
-  const trimmedName = fullName.trim();
-  if (!trimmedName || !phone || !addressline1 || !city || !state || !pincode) {
+  if (!fullName || !phone || !addressline1 || !city || !state || !pincode) {
     return { success: false, message: "Required fields missing" };
   }
+  const trimmedName = fullName.trim();
 
   const nameRegex = /^[a-zA-Z\s]{3,50}$/;
   const phoneRegex = /^[6-9]\d{9}$/;

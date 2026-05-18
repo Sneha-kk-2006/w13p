@@ -60,6 +60,9 @@ const addProduct = async (req, res) => {
         if (isNaN(stockVal) || stockVal < 1) {
             return res.status(400).json({ success: false, message: "Invalid stock value" });
         }
+        if (!name || name.trim() === "") {
+            return res.status(400).json({ success: false, message: "Product name is required" });
+        }
         const existing = await product.findOne({ name: { $regex: new RegExp(`^${name.trim()}$`, "i") }, isDeleted: false });
         if (existing) {
             return res.status(400).json({ success: false, message: "Product name already exists" });
@@ -113,6 +116,9 @@ const editProduct = async (req, res) => {
             return res.status(400).json({ success: false, message: "Invalid price value" });
         }
 
+        if (!name || name.trim() === "") {
+            return res.status(400).json({ success: false, message: "Product name is required" });
+        }
         const existing = await product.findOne({ 
             name: { $regex: new RegExp(`^${name.trim()}$`, "i") }, 
             _id: { $ne: req.params.id },

@@ -12,12 +12,13 @@ const userSchema = new Schema(
     role: {
       type: String,
       enum: ["user", "admin"],
+      default:'user',
     },
 
     profileImage: { type: String, default: "" },
     loginAttempts: { type: Number, default: 0 },
     phone: { type: String, default: "" },
-      referralCode:    { type: String, unique: true },   
+      referralCode:    { type: String, unique: true,sparse:true, },   
   referredByCode:  { type: String, default: null },  // code they entered at signup
   credits:         { type: Number, default: 0 },  
 

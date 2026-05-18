@@ -128,13 +128,7 @@ const loadProductDetails = async (req, res) => {
       relatedProducts = [...relatedProducts, ...extra];
     }
 
-    console.log('--- DISCOVERY LOGS ---');
-    console.log('Product:', product.name);
-    console.log('Category:', product.category?.name);
-    console.log('1st Attempt (Same Cat):', firstAttemptCount);
-    console.log('Total Discovery Count:', relatedProducts.length);
-    console.log('----------------------');
-
+  
     const reviews = await Review.find({ productId: product.id }).populate('userId', 'name');
     const avgRating = reviews.length
       ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)

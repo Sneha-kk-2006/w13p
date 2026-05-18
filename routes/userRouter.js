@@ -15,19 +15,21 @@ const orderController = require('../controllers/user/orderController');
 const walletController = require('../controllers/user/walletController');
 
 
+const { loginLimiter,otpLimiter, signupLimiter,forgotPasswordLimiter,cartLimiter,apiLimiter} = require('../middlewares/rateLimiter');
+
 
 
 
 router.get('/', isUser, userController.loadHomepage);
 router.get('/errorPage', userController.errorPage);
 router.get('/signup', isAuth, userController.loadsignup);
-router.post('/signup', isAuth, userController.signup);
+router.post('/signup', isAuth, signupLimiter, userController.signup);
 router.get('/validate-referral', userController.validateReferral);
 router.get("/verify-otp", isUser, userController.loadVerify);
-router.post("/verify-otp", isUser, userController.verifyOtp);
-router.post("/resend-otp", isUser, userController.resendOtp);
-router.get('/login', isAuth, userController.loadlogin);
-router.post('/login', isAuth, userController.login);
+router.post("/verify-otp", isUser,otpLimiter, userController.verifyOtp);
+router.post("/resend-otp", isUser,otpLimiter, userController.resendOtp);
+router.get('/login', isAuth,apiLimiter, userController.loadlogin);
+router.post('/login', isAuth, loginLimiter, userController.login);
 router.get(
   '/google',
   passport.authenticate('google', { scope: ['profile', 'email'] })
@@ -39,9 +41,9 @@ router.get(
   userController.googleCallback
 );
 router.get('/forgotPassword', isAuth, userController.loadforgot);
-router.post('/forgotPassword', isAuth, userController.forgotPassword);
+router.post('/forgotPassword', isAuth,forgotPasswordLimiter,  userController.forgotPassword);
 router.get('/resetPassword', isAuth, userController.loadreset);
-router.post('/resetPassword', isAuth, userController.resetPassword);
+router.post('/resetPassword', isAuth,forgotPasswordLimiter,  userController.resetPassword);
 // router.get('/products', userController.loadproducts);
 
 router.get('/profile', userAuth, profileController.loadprofile);
@@ -68,7 +70,7 @@ router.post('/logout', profileController.logout);
 
 
 router.get('/cart', userAuth, cartController.getcart)
-router.post('/cart/add', userAuth, cartController.addToCart)
+router.post('/cart/add', userAuth, cartLimiter, cartController.addToCart)
 router.post('/cart/updateQty', userAuth, cartController.updateCartQty)
 router.post('/cart/remove', userAuth, cartController.remove)
 router.post('/cart/clearCart', userAuth, cartController.clearCart)

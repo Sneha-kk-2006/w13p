@@ -15,8 +15,6 @@ const loadHomepage = async (req, res) => {
   try {
     const id = req.session.user?._id;
     const userData = id ? await user.findById(id) : null;
-
-    // Fetch latest 20 active products for home page to populate all editorial blocks
     const products = await Product.find({ isDeleted: false, isListed: true })
       .limit(20)
       .populate('category');
@@ -193,17 +191,10 @@ const resetPassword = async (req, res) => {
 
 const loadproducts = async (req, res) => {
   try {
-    // Check raw data directly from DB
-    const raw = await Product.collection.findOne({});
-    console.log('RAW DB document:', JSON.stringify(raw, null, 2));
-
     const products = await Product.find({
       isBlocked: false,
       isListed: true
     }).populate('category');
-
-    console.log('Total found:', products.length);
-    console.log('First product:', JSON.stringify(products[0], null, 2));
 
     res.render("user/products", { products });
   } catch (error) {
@@ -252,10 +243,6 @@ const googleCallback = (req, res) => {
 
 
 
-
-
-
-
 const validateReferral = async (req, res) => {
   try {
     const { code } = req.query;
@@ -285,4 +272,4 @@ module.exports = {
   googleAuth,
   googleCallback,
   validateReferral,
-};
+};

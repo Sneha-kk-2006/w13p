@@ -9,10 +9,10 @@ const loadoffers = async (req, res) => {
             .populate('category', 'name')
             .sort({ createdAt: -1 });
         
-        // Product schema has `isListed: true` and `isDeleted: false` instead of `isBlocked`
+    
         const products = await Product.find({ isListed: true, isDeleted: false }, 'name');
         
-        // Category schema has `status: 'Active'` and `isDeleted: false` instead of `isListed`
+      
         const categories = await Category.find({ status: 'Active', isDeleted: false }, 'name');
         
         res.render('admin/offers', { offers, products, categories });

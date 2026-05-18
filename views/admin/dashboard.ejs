@@ -129,7 +129,8 @@
             <div class="card">
                 <div class="card-title">Category Share</div>
                 <% topCategories.forEach(cat => { 
-                    const percent = Math.round((cat.revenue / summary.totalRevenue) * 100) || 0;
+                    let percent = Math.round((cat.revenue / summary.totalRevenue) * 100) || 0;
+                    if (percent > 100) percent = 100;
                 %>
                 <div class="progress-container">
                     <div class="progress-info">
@@ -210,9 +211,14 @@
         const ctx = document.getElementById('performanceChart').getContext('2d');
         const salesData = <%- JSON.stringify(salesData) %>;
 
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         const labels = salesData.map(d => {
-            if (d._id.month) return `${d._id.year}-${d._id.month}`;
-            if (d._id.week) return `W${d._id.week} ${d._id.year}`;
+            if (d._id.month) {
+                return `${monthNames[d._id.month - 1]} ${d._id.year}`;
+            }
+            if (d._id.week) {
+                return `Week ${d._id.week}, ${d._id.year}`;
+            }
             return d._id.year;
         });
 

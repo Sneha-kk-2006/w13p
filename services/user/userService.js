@@ -14,6 +14,10 @@ const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const signupWithOtp = async (data, session) => {
   const { name, email, password, confirmpassword, role,referralCode } = data;
 
+  if (!name || !email || !password || !confirmpassword) {
+    return { success: false, message: "All fields are required" };
+  }
+
   const trimmedName = name.trim();
   const nameRegex = /^[a-zA-Z\s]{3,50}$/;
 
