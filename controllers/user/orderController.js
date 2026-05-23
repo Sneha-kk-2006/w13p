@@ -110,8 +110,6 @@ const loadCheckout = async (req, res) => {
         } else {
           couponDiscount = coupon.discountValue;
         }
-
-        // ✅ FIX #6: Validate coupon discount does not exceed or equal the total
         if (couponDiscount >= subtotalAfterDiscount) {
           delete req.session.appliedCoupon;
           couponDiscount = 0;
@@ -332,22 +330,17 @@ const placeOrder = async (req, res) => {
       await walletService.debit(userId, finalTotalPrice,
         `Order payment for ${orderId}`, { orderRef: orderId });
       paymentStatus = "Paid";
-
-    } else if (paymentMethod === "Razorpay") {
-      // ✅ FIX #4: Variables are now properly declared above via destructuring
-      if (!razorpayPaymentId || !razorpayOrderId || !razorpaySignature) {
-        return res.status(400).json({
-          success: false,
-          message: "Payment verification failed"
-        });
-      }
-      const body = razorpayOrderId + "|" + razorpayPaymentId;
-      const expectedSignature = crypto
-        .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
-        .update(body)
-        .digest("hex");
-      paymentStatus = expectedSignature === razorpaySignature ? "Paid" : "Failed";
-    } else {
+} else if (paymentMethod === "Razorpay") {
+    console.log("forcedPaymentStatus received:", forcedPaymentStatus);
+  console.log("full req.body:", req.body);
+  if (!forcedPaymentStatus) {
+    return res.status(400).json({
+      success: false,
+      message: "Payment verification failed"
+    });
+  }
+  paymentStatus = forcedPaymentStatus; // Already verified in verifyRazorpayPayment
+} else {
       paymentStatus = "Pending";
     }
 
@@ -788,6 +781,7 @@ const verifyRazorpayPayment = async (req, res) => {
   try {
     const { razorpay_order_id, razorpay_payment_id, razorpay_signature, addressId } = req.body;
 
+    console.log(req.body)
     const razorpayOrder = await razorpay.orders.fetch(razorpay_order_id);
     const expectedAmount = Math.round((req.session.pendingOrderAmount || 0) * 100);
 
@@ -896,13 +890,11 @@ const applyCoupon = async (req, res) => {
       couponDiscount = coupon.discountValue;
     } else if (coupon.discountType === "percentage") {
       couponDiscount = Math.round((coupon.discountValue / 100) * subtotalAfterDiscount);
-      // ✅ FIX #8: Apply maxDiscountValue cap for percentage coupons
       if (coupon.maxDiscountValue > 0 && couponDiscount > coupon.maxDiscountValue) {
         couponDiscount = coupon.maxDiscountValue;
       }
     }
 
-    // ✅ FIX #3: Discount cannot equal or exceed the subtotal
     if (couponDiscount >= subtotalAfterDiscount) {
       return res.json({
         success: false,

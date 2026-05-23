@@ -15,6 +15,7 @@ const loadOrders = async (req, res) => {
     const sortOrder = req.query.sort === "asc" ? 1 : -1;
 
     let query = {};
+  
 
     if (search) {
       query.$or = [
@@ -32,6 +33,34 @@ const loadOrders = async (req, res) => {
       .sort({ createdAt: sortOrder })
       .skip(skip)
       .limit(limit);
+    // console.log(orders)
+
+
+  //   const q={
+  //   "shippingAddress.fullName":{$regex:/admin/i}
+  //   }
+  // const or=await Order.find(q)
+  //  console.log("count",or)
+
+
+
+
+
+  //   const q={
+  //     paymentStatus:"Paid"
+  //   }
+  //  const or=await Order.find(q)
+  //  console.log("count",or)
+
+//       const order=await Order.find({paymentMethod:"Razorpay",paymentStatus:"Paid",orderStatus:"Cancelled"},{userId:1}).populate('userId','name email')
+//      order.forEach(o => {
+//   console.log("User Name:", o.userId?.name);
+// });
+
+
+
+// const or=await Order.find({},{userId:1}).populate("userId","name").sort({createdAt:-1}).limit(5)
+// console.log(or)
 
     const totalOrders = await Order.countDocuments(query);
     const totalPages = Math.ceil(totalOrders / limit);

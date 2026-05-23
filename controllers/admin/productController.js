@@ -50,6 +50,7 @@ const addProduct = async (req, res) => {
     try {
 
         const { name, description, image, price, stock, category, size, color } = req.body;
+        
 
         const images = req.files?.map(file => '/uploads/products/' + file.filename) || [];
         const stockVal = parseInt(stock);
@@ -62,6 +63,9 @@ const addProduct = async (req, res) => {
         }
         if (!name || name.trim() === "") {
             return res.status(400).json({ success: false, message: "Product name is required" });
+        }
+        if(images.length===0){
+             return res.status(400).json({ success: false, message: "Product image is required" });
         }
         const existing = await product.findOne({ name: { $regex: new RegExp(`^${name.trim()}$`, "i") }, isDeleted: false });
         if (existing) {
@@ -182,9 +186,6 @@ const toggleProductStatus = async (req, res) => {
 }
 
 
-
-
-
 const addVariant = async (req, res) => {
     try {
         const { id } = req.params;
@@ -198,9 +199,6 @@ const addVariant = async (req, res) => {
         const sizes = Array.isArray(size) ? size : [size];
         const stockVal = parseInt(stock) || 0;
         const priceVal = parseFloat(price) || 0;
-        // if (!fabrics) {
-        //     return res.status(404).json({ success: false, message: 'fabrics not found' })
-        // }
         sizes.forEach(s => {
             if (s) {
 
@@ -245,7 +243,9 @@ const editVariant = async (req, res) => {
 
         const variant = prod.variants.id(variantId);
         if (!variant) return res.status(404).json({ success: false, message: 'Variant not found' });
-
+        // if(stock<=0){
+        //     return res.status(404).json({ success: false, message: 'stock is invalid' });
+        // }
         variant.size = size;
         variant.color = color;
         variant.stock = parseInt(stock) || 0;

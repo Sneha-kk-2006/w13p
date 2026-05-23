@@ -70,13 +70,10 @@ const updateProfileService = async (req) => {
     return { success: false, message: "Invalid phone number (10 digits starting with 6-9)" };
   }
 
-  // ================== Handle Email Change ==================
   if (email && email !== user.email) {
     const otp = Math.floor(100000 + Math.random() * 900000);
     console.log("--- DEBUG: NEW EMAIL OTP IS: ", otp, " ---");
     req.session.auth = { otp, email, type: "emailUpdate", expiredAt: Date.now() + 5 * 60 * 1000 };
-
-    // send OTP to both old and new email
     await sendVerificationEmail(user.email, otp);
     await sendVerificationEmail(email, otp);
 

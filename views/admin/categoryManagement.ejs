@@ -44,7 +44,12 @@
         .pagination { display: flex; justify-content: center; gap: 15px; margin-top: 40px; }
         .page-link { font-size: 0.7rem; text-transform: uppercase; padding: 5px 10px; text-decoration: none; color: #999; font-weight: 600; }
         .page-link.active { color: #000; text-decoration: underline; }
-
+        .modal-box { 
+    width: 90%; 
+    max-width: 400px; 
+    padding: 40px; 
+    border: 1px solid #000;  /* ← add this */
+}
         /* Zara Style Notifications */
         .zara-toast { background: #000 !important; color: #fff !important; border-radius: 0 !important; font-family: 'Inter', sans-serif !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 2px !important; padding: 15px 40px !important; width: 100% !important; max-width: 600px !important; margin-top: 20px !important; box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; z-index: 9999 !important; }
     </style>
@@ -193,11 +198,17 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name })
                 });
+                const data = await res.json();
                 if(res.ok) {
                     showToast("UPDATED");
                     setTimeout(() => location.reload(), 1000);
+                }else{
+                    showToast(data.message||"something went wrong")
+                     setTimeout(() => location.reload(), 1000);
                 }
-            } catch(err) { console.error(err); }
+            } catch(err) {
+             
+                console.error(err); }
         });
 
         async function toggleStatus(id) {

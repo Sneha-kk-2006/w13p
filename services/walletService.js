@@ -13,12 +13,11 @@ async function getBalance(userId) {
   return wallet ? wallet.balance : 0;
 }
  
-// ── Get wallet ────────────────────────────────────────────────────
+
 async function getWallet(userId) {
   return getOrCreate(userId);
 }
  
-// ── Credit (add money) ────────────────────────────────────────────
 async function credit(userId, amount, description, opts = {}) {
   if (!amount || amount <= 0) throw new Error('Credit amount must be positive');
  
@@ -45,8 +44,6 @@ async function credit(userId, amount, description, opts = {}) {
  
   const wallet = await Wallet.findOne({ user: userId });
   const newBalance = wallet.balance + amount;
- 
-  //transaction records
   const tx = {
     type,
     amount,

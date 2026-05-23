@@ -81,8 +81,10 @@ const editCategory=async(req,res)=>{
                _id: { $ne: id },
                isDeleted: false
            });
-           if (exist)
-               return res.status(400).send("category name already exists");
+          if (exist) {
+      return res.status(400).json({ success: false, message: "Category already exists" });
+    }
+              //  return res.status(400).send("category name already exists");
         await category.findByIdAndUpdate(id,{
             name:name.trim(),
             status:isActive?"Active":"Inactive"

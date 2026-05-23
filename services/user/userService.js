@@ -252,3 +252,12 @@ module.exports = {
   resendOtpService,
   validateReferralCode,
 };
+
+
+
+// const pagination=async(req,res)=>{
+// const search=req.query;
+// const skip=(page-1)*limit
+// const limit=5;
+// const totalpages=await product.countDocuments()
+// }
