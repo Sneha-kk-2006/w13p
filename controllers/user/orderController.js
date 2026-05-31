@@ -491,7 +491,6 @@ const cancelOrderItem = async (req, res) => {
       await product.save();
     }
 
-    // ✅ FIX #7: Include proportional GST share in refund calculation
     const itemTotalPrice = item.price * item.quantity;
     const orderSubtotal = order.orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
     const discount = order.discount || 0;
@@ -845,13 +844,13 @@ const applyCoupon = async (req, res) => {
       return res.json({ success: false, message: "Coupon usage limit reached" });
     }
 
-    // ✅ FIX #2: Per-user usage check
+
     const alreadyUsed = coupon.usedBy?.includes(userId.toString());
     if (alreadyUsed) {
       return res.json({ success: false, message: "You have already used this coupon" });
     }
 
-    // ✅ FIX #9: Cart empty check
+
     let cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart || cart.items.length === 0) {
       return res.json({ success: false, message: "Your cart is empty" });
@@ -879,7 +878,7 @@ const applyCoupon = async (req, res) => {
 
     const subtotalAfterDiscount = subtotal - discount;
 
-    // ✅ FIX #1: minOrderAmount check FIRST, then discount validation
+
     if (subtotalAfterDiscount < coupon.minOrderAmount) {
       return res.json({ success: false, message: `Minimum purchase of ₹${coupon.minOrderAmount} required` });
     }
@@ -902,7 +901,7 @@ const applyCoupon = async (req, res) => {
       });
     }
 
-    // ✅ FIX #3: Final price must be greater than 0
+
     const finalPrice = subtotalAfterDiscount - couponDiscount;
     if (finalPrice <= 0) {
       return res.json({

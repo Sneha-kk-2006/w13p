@@ -4,6 +4,17 @@ const generateReferralCode=require('../../utils/referralcode')
 const walletService = require("../walletService");
 
 const { ERRORS, SUCCESS } = require("../../enums/messages");
+const validatePassword = (password) => {
+  if (password.length < 8)
+    return 'Password must be at least 8 characters';
+  if (!/[A-Z]/.test(password))
+    return 'Password must contain at least one uppercase letter';
+  if (!/[0-9]/.test(password))
+    return 'Password must contain at least one number';
+  if (!/[!@#$%^&*()_+\-=\[\]{}]/.test(password))
+    return 'Password must contain at least one special character';
+  return null;
+};
 
 const generateOtp = require("../../utils/generateOtp");
 const sendVerificationEmail = require("../../utils/sendEmail").sendVerificationEmail;
@@ -25,9 +36,8 @@ const signupWithOtp = async (data, session) => {
     return { success: false, message: ERRORS.INVALID_NAME };
   }
 
-  if (password.length < 6) {
-    return { success: false, message: ERRORS.PASSWORD_LENGTH };
-  }
+ const pwdError = validatePassword(password);
+ if (pwdError) return { success: false, message: pwdError };
 
   if (password !== confirmpassword) {
     return { success: false, message: ERRORS.PASSWORD_MISMATCH };
@@ -150,8 +160,7 @@ const verifyOtpService = async (otp, session, userId) => {
         await userRepository.updateUser(newUser._id, {
           referredByCode: referralCode,
         });
-
-        // Reward the referrer with 100 in wallet
+        
         await walletService.credit(referrer._id, 100, `Referral reward for inviting ${newUser.name}`, {
           type: 'credit'
         });
@@ -172,6 +181,7 @@ const verifyOtpService = async (otp, session, userId) => {
   }
 
   if (session.auth.type === "forgot") {
+      session.auth.otp = null;
     return { success: true, redirectUrl: "/resetPassword" };
   }
 
@@ -208,7 +218,8 @@ const resetPasswordService = async (data, session) => {
 
   if (!password || !confirmPassword) return { success: false, message: ERRORS.REQUIRED_FIELDS };
   if (password !== confirmPassword) return { success: false, message: ERRORS.PASSWORD_MISMATCH };
-  if (password.length < 6) return { success: false, message: ERRORS.PASSWORD_LENGTH };
+  const pwdError = validatePassword(password);
+if (pwdError) return { success: false, message: pwdError };
 
   if (!session.auth || !session.auth.email) return { success: false, message: ERRORS.SESSION_EXPIRED };
 

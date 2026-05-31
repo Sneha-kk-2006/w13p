@@ -222,7 +222,7 @@ const updateItemStatus = async (req, res) => {
         }
       }
 
-      // Refund for item return
+
       if (isNewReturn && order.paymentStatus === "Paid") {
         const itemTotalPrice = item.price * item.quantity;
         const orderSubtotal = order.orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);

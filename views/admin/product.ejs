@@ -920,9 +920,16 @@
 
                 // Validate basic fields
                 if (!name) return showToast('Product Name is required', 'red');
+                if (name.length < 3 || name.length > 100) {
+                    return showToast('Product name must be between 3 and 100 characters', 'red');
+                }
+                const nameRegex = /^(?![0-9]+$)[a-zA-Z0-9][a-zA-Z0-9\s'&()\-.\/,+%]*$/;
+                if (!nameRegex.test(name)) {
+                    return showToast('Product name can only contain letters, numbers, spaces, and basic symbols (%, -, &, etc.) and must not be purely numeric', 'red');
+                }
                 if (!category) return showToast('Please select a category', 'red');
-                if (price === "" || isNaN(price) || price < 1) return showToast('Valid Price is required', 'red');
-                if (stock === "" || isNaN(stock) || stock < 1) return showToast('Valid Stock is required', 'red');
+                if (price === "" || isNaN(price) || price <= 0) return showToast('Price must be a valid positive number', 'red');
+                if (stock === "" || isNaN(stock) || stock < 0) return showToast('Stock must be a valid non-negative number', 'red');
                 if (!description) return showToast('Description is required', 'red');
                 
 
@@ -984,8 +991,33 @@
                         btn.onclick = () => setPrimaryImage(p._id, src);
                     }
                     
+                    const delBtn = document.createElement('button');
+                    delBtn.innerHTML = '×';
+                    delBtn.style = 'position:absolute; top:-5px; right:-5px; background:red; color:white; border:none; border-radius:50%; width:20px; height:20px; cursor:pointer; font-size:12px; line-height:20px; text-align:center; padding:0; z-index:10;';
+                    delBtn.onclick = async (e) => {
+                        e.preventDefault();
+                        if (!confirm("Are you sure you want to remove this image?")) return;
+                        try {
+                            const res = await fetch(`/admin/product/removeImage/${p._id}`, {
+                                method: 'DELETE',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ imageUrl: src })
+                            });
+                            if (res.ok) {
+                                showToast('Image removed!', 'green');
+                                setTimeout(() => location.reload(), 800);
+                            } else {
+                                const data = await res.json();
+                                showToast(data.message || 'Failed to remove image', 'red');
+                            }
+                        } catch {
+                            showToast('Server error', 'red');
+                        }
+                    };
+                    
                     wrap.appendChild(img);
                     wrap.appendChild(btn);
+                    wrap.appendChild(delBtn);
                     cur.appendChild(wrap);
                 });
 
@@ -1035,9 +1067,16 @@
                 const blobs = editCropper.getBlobs();
 
                 if (!name) return showToast('Product Name is required', 'red');
+                if (name.length < 3 || name.length > 100) {
+                    return showToast('Product name must be between 3 and 100 characters', 'red');
+                }
+                const nameRegex = /^(?![0-9]+$)[a-zA-Z0-9][a-zA-Z0-9\s'&()\-.\/,+%]*$/;
+                if (!nameRegex.test(name)) {
+                    return showToast('Product name can only contain letters, numbers, spaces, and basic symbols (%, -, &, etc.) and must not be purely numeric', 'red');
+                }
                 if (!category) return showToast('Please select a category', 'red');
-                if (price === "" || isNaN(price) || price < 0) return showToast('Valid Price is required', 'red');
-                if (stock === "" || isNaN(stock) || stock < 0) return showToast('Valid Stock is required', 'red');
+                if (price === "" || isNaN(price) || price <= 0) return showToast('Price must be a valid positive number', 'red');
+                if (stock === "" || isNaN(stock) || stock < 0) return showToast('Stock must be a valid non-negative number', 'red');
                 if (!description) return showToast('Description is required', 'red');
 
                 const fd = new FormData();
@@ -1136,7 +1175,12 @@
                 const price = document.getElementById('variantPrice').value;
                 const blobs = variantCropper.getBlobs();
 
-                if (!size || !color || !stock) return showToast('Please select size, color, and stock', 'red');
+                if (!size || !color) return showToast('Please select both size and color', 'red');
+                const stockVal = parseInt(stock);
+                if (isNaN(stockVal) || stockVal < 0) return showToast('Stock must be a valid non-negative number', 'red');
+                if (price !== "" && (isNaN(parseFloat(price)) || parseFloat(price) <= 0)) {
+                    return showToast('Price must be a positive number if specified', 'red');
+                }
 
                 const fd = new FormData();
                 fd.append('size', size);
@@ -1152,7 +1196,8 @@
                         closeModal('addVariantModal');
                         location.reload(); // Reload to see changes in Edit modal if it was open from table
                     } else {
-                        showToast('Failed to add variant', 'red');
+                        const data = await res.json();
+                        showToast(data.message || 'Failed to add variant', 'red');
                     }
                 } catch { showToast('Server error', 'red'); }
             }
@@ -1196,7 +1241,11 @@
                 const price = document.getElementById('editVariantPrice').value;
                 const blobs = editVariantCropper.getBlobs();
 
-                if (!size || !color || !stock) return showToast('Size, color, and stock are required', 'red');
+                if (!size || !color) return showToast('Please select both size and color', 'red');
+                const stockVal = parseInt(stock);
+                if (isNaN(stockVal) || stockVal < 0) return showToast('Stock must be a valid non-negative number', 'red');
+                const priceVal = parseFloat(price);
+                if (isNaN(priceVal) || priceVal <= 0) return showToast('Price must be a valid positive number', 'red');
 
                 const fd = new FormData();
                 fd.append('size', size);
@@ -1212,7 +1261,8 @@
                         closeModal('editVariantModal');
                         location.reload();
                     } else {
-                        showToast('Failed to update variant', 'red');
+                        const data = await res.json();
+                        showToast(data.message || 'Failed to update variant', 'red');
                     }
                 } catch { showToast('Server error', 'red'); }
             }

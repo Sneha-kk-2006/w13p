@@ -104,6 +104,7 @@ const deleteCategory=async(req,res)=>{
     await category.findByIdAndUpdate(id,{
         isDeleted:true
     });
+  
     res.json({sucess:true,message:"category deleted"});
 
     }catch(error){
@@ -126,8 +127,6 @@ const toggleCategoryStatus = async (req, res) => {
         res.status(500).json({ message: "Server error" });
     }
 }
-
-
 
 
 

@@ -65,6 +65,7 @@ router.post('/product/addVariant/:id', uploads.array('images', 10), productContr
 router.post('/product/editVariant/:productId/:variantId', uploads.array('images', 10), productController.editVariant);
 router.delete('/product/deleteVariant/:productId/:variantId', productController.deleteVariant);
 router.patch('/product/setPrimary/:id', productController.setPrimaryImage);
+router.delete('/product/removeImage/:productId', adminAuth, productController.removeProductImage);
 router.get('/product/variants/:id', adminAuth, productController.viewVariants);
 router.get('/inventory', adminAuth, productController.loadInventory);
 

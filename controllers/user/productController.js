@@ -141,6 +141,16 @@ const loadProductDetails = async (req, res) => {
     // Attach offers to related products too
     const relatedWithOffers = await attachOffers(relatedProducts);
 
+    // Check if this product is in user's wishlist
+    let wishlistProductIds = [];
+    const userId = req.session.user?._id;
+    if (userId) {
+      const wishlist = await Wishlist.findOne({ userId });
+      if (wishlist) {
+        wishlistProductIds = wishlist.products.map(p => p.productId.toString());
+      }
+    }
+
     res.render('user/productDetails', {
       product,
       relatedProducts: relatedWithOffers,
@@ -148,7 +158,9 @@ const loadProductDetails = async (req, res) => {
       avgRating,
       offer: bestOffer,
       offerPrice,
-      discountPercent
+      discountPercent,
+      wishlistProductIds,
+      isLoggedIn: !!userId
     });
 
   } catch (error) {

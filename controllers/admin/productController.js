@@ -56,23 +56,31 @@ const addProduct = async (req, res) => {
         const stockVal = parseInt(stock);
         const priceVal = parseFloat(price);
         if (isNaN(priceVal) || priceVal <= 0) {
-            return res.status(400).json({ success: false, message: "Invalid price value" });
+            return res.status(400).json({ success: false, message: "Price must be a valid positive number" });
         }
-        if (isNaN(stockVal) || stockVal < 1) {
-            return res.status(400).json({ success: false, message: "Invalid stock value" });
+        if (isNaN(stockVal) || stockVal < 0) {
+            return res.status(400).json({ success: false, message: "Stock must be a valid non-negative number" });
         }
         if (!name || name.trim() === "") {
             return res.status(400).json({ success: false, message: "Product name is required" });
         }
+        const trimmedName = name.trim();
+        if (trimmedName.length < 3 || trimmedName.length > 100) {
+            return res.status(400).json({ success: false, message: "Product name must be between 3 and 100 characters" });
+        }
+        const nameRegex = /^(?![0-9]+$)[a-zA-Z0-9][a-zA-Z0-9\s'&()\-.\/,+%]*$/;
+        if (!nameRegex.test(trimmedName)) {
+            return res.status(400).json({ success: false, message: "Product name can only contain letters, numbers, spaces, and basic symbols (%, -, &, etc.) and must not be purely numeric" });
+        }
         if(images.length===0){
              return res.status(400).json({ success: false, message: "Product image is required" });
         }
-        const existing = await product.findOne({ name: { $regex: new RegExp(`^${name.trim()}$`, "i") }, isDeleted: false });
+        const existing = await product.findOne({ name: { $regex: new RegExp(`^${trimmedName}$`, "i") }, isDeleted: false });
         if (existing) {
             return res.status(400).json({ success: false, message: "Product name already exists" });
         }
         const newProduct = new product({
-            name,
+            name: trimmedName,
             description,
             images,
             price,
@@ -114,17 +122,25 @@ const editProduct = async (req, res) => {
         const priceVal = parseFloat(price);
 
         if (isNaN(stockVal) || stockVal < 0) {
-            return res.status(400).json({ success: false, message: "Invalid stock value" });
+            return res.status(400).json({ success: false, message: "Stock must be a valid non-negative number" });
         }
-        if (isNaN(priceVal) || priceVal < 0) {
-            return res.status(400).json({ success: false, message: "Invalid price value" });
+        if (isNaN(priceVal) || priceVal <= 0) {
+            return res.status(400).json({ success: false, message: "Price must be a valid positive number" });
         }
 
         if (!name || name.trim() === "") {
             return res.status(400).json({ success: false, message: "Product name is required" });
         }
+        const trimmedName = name.trim();
+        if (trimmedName.length < 3 || trimmedName.length > 100) {
+            return res.status(400).json({ success: false, message: "Product name must be between 3 and 100 characters" });
+        }
+        const nameRegex = /^(?![0-9]+$)[a-zA-Z0-9][a-zA-Z0-9\s'&()\-.\/,+%]*$/;
+        if (!nameRegex.test(trimmedName)) {
+            return res.status(400).json({ success: false, message: "Product name can only contain letters, numbers, spaces, and basic symbols (%, -, &, etc.) and must not be purely numeric" });
+        }
         const existing = await product.findOne({ 
-            name: { $regex: new RegExp(`^${name.trim()}$`, "i") }, 
+            name: { $regex: new RegExp(`^${trimmedName}$`, "i") }, 
             _id: { $ne: req.params.id },
             isDeleted: false 
         });
@@ -133,7 +149,7 @@ const editProduct = async (req, res) => {
         }
 
         let updateData = {
-            name,
+            name: trimmedName,
             description,
             price,
             stock: stockVal,
@@ -196,30 +212,45 @@ const addVariant = async (req, res) => {
         const prod = await product.findById(id);
         if (!prod) return res.status(404).json({ success: false, message: 'Product not found' });
 
-        const sizes = Array.isArray(size) ? size : [size];
-        const stockVal = parseInt(stock) || 0;
-        const priceVal = parseFloat(price) || 0;
+        const allowedSizes = ['XS','S','M','L','XL','XXL','One Size'];
+        const sizes = (Array.isArray(size) ? size : [size]).filter(s => s && s.trim() !== "");
+        if (sizes.length === 0) {
+            return res.status(400).json({ success: false, message: 'Size is required' });
+        }
+        for (const s of sizes) {
+            if (!allowedSizes.includes(s)) {
+                return res.status(400).json({ success: false, message: `Invalid size value: ${s}` });
+            }
+        }
+        if (!color || color.trim() === '') {
+            return res.status(400).json({ success: false, message: 'Color is required' });
+        }
+        const stockVal = parseInt(stock);
+        if (isNaN(stockVal) || stockVal < 0) {
+            return res.status(400).json({ success: false, message: 'Stock must be a non-negative integer' });
+        }
+        let priceVal = 0;
+        if (price !== undefined && price !== "") {
+            priceVal = parseFloat(price);
+            if (isNaN(priceVal) || priceVal <= 0) {
+                return res.status(400).json({ success: false, message: 'Price must be a positive number' });
+            }
+        }
+        for (const s of sizes) {
+            if (s && prod.variants.some(v => v.size === s && v.color === color)) {
+                return res.status(400).json({ success: false, message: `A variant with size '${s}' and color '${color}' already exists.` });
+            }
+        }
+
         sizes.forEach(s => {
             if (s) {
-
-                const vIdx = prod.variants.findIndex(v => v.size === s && v.color === color);
-
-                if (vIdx !== -1) {
-
-                    prod.variants[vIdx].stock += stockVal;
-                    if (priceVal > 0) prod.variants[vIdx].price = priceVal;
-                    if (images.length > 0) prod.variants[vIdx].images = images;
-                } else {
-                    // Add new
-                    prod.variants.push({
-                        size: s,
-                        color,
-                        
-                        stock: stockVal,
-                        price: priceVal || prod.price,
-                        images: images.length > 0 ? images : prod.images
-                    });
-                }
+                prod.variants.push({
+                    size: s,
+                    color,
+                    stock: stockVal,
+                    price: priceVal || prod.price,
+                    images: images.length > 0 ? images : prod.images
+                });
             }
         });
 
@@ -229,6 +260,22 @@ const addVariant = async (req, res) => {
         res.json({ success: true, message: 'Variant inventory synchronized' });
     } catch (error) {
         console.error('addVariant error:', error);
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
+
+const removeProductImage = async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const { imageUrl } = req.body;
+        const prod = await product.findById(productId);
+        if (!prod) return res.status(404).json({ success: false, message: 'Product not found' });
+        
+        prod.images = prod.images.filter(img => img !== imageUrl);
+        await prod.save();
+        res.json({ success: true, message: 'Image removed successfully' });
+    } catch (error) {
+        console.error('removeProductImage error:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
@@ -243,13 +290,32 @@ const editVariant = async (req, res) => {
 
         const variant = prod.variants.id(variantId);
         if (!variant) return res.status(404).json({ success: false, message: 'Variant not found' });
-        // if(stock<=0){
-        //     return res.status(404).json({ success: false, message: 'stock is invalid' });
-        // }
+        
+        const allowedSizes = ['XS','S','M','L','XL','XXL','One Size'];
+        if (!size || !allowedSizes.includes(size)) {
+            return res.status(400).json({ success: false, message: 'Valid size is required' });
+        }
+        if (!color || color.trim() === '') {
+            return res.status(400).json({ success: false, message: 'Color is required' });
+        }
+        const stockVal = parseInt(stock);
+        if (isNaN(stockVal) || stockVal < 0) {
+            return res.status(400).json({ success: false, message: 'Stock must be a non-negative integer' });
+        }
+        const priceVal = parseFloat(price);
+        if (isNaN(priceVal) || priceVal <= 0) {
+            return res.status(400).json({ success: false, message: 'Price must be a positive number' });
+        }
+
+        const duplicate = prod.variants.find(v => v.size === size && v.color === color && v._id.toString() !== variantId);
+        if (duplicate) {
+            return res.status(400).json({ success: false, message: 'A variant with this size and color already exists' });
+        }
+
         variant.size = size;
         variant.color = color;
-        variant.stock = parseInt(stock) || 0;
-        variant.price = parseFloat(price) || 0;
+        variant.stock = stockVal;
+        variant.price = priceVal;
         // variant.fabrics = fabrics;
 
         if (req.files && req.files.length > 0) {
@@ -362,5 +428,5 @@ module.exports = {
   setPrimaryImage,
   viewVariants,
   loadInventory,
+  removeProductImage,
 };
-

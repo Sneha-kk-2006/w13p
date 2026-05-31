@@ -10,7 +10,7 @@ const { attachOffers } = require('./productController');
 
 require("dotenv").config();
 
-// ================== Homepage ==================
+
 const loadHomepage = async (req, res) => {
   try {
     const id = req.session.user?._id;
@@ -28,7 +28,7 @@ const loadHomepage = async (req, res) => {
   }
 };
 
-// ================== Error Page ==================
+
 const errorPage = async (req, res) => {
   try {
     res.render("user/errorPage");
@@ -38,7 +38,6 @@ const errorPage = async (req, res) => {
   }
 };
 
-// ================== Signup & Login Pages ==================
 const loadsignup = (req, res) => {
   try {
     res.render("user/signup");
@@ -57,7 +56,9 @@ const loadlogin = (req, res) => {
   }
 };
 
-// ================== Signup ==================
+
+
+
 const signup = async (req, res) => {
   try {
     const result = await authService.signupWithOtp(req.body, req.session);
@@ -73,7 +74,7 @@ const signup = async (req, res) => {
   }
 };
 
-// ================== Verify OTP ==================
+
 const verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -207,7 +208,7 @@ const loadproducts = async (req, res) => {
 
 
 const googleAuth = (req, res, next) => {
-  next(); // passport will handle redirect
+  next(); 
 };
 
 const googleCallback = (req, res) => {

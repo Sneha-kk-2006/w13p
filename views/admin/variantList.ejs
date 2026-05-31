@@ -610,7 +610,7 @@
             <div class="form-row">
                 <div class="form-group" style="margin:0;">
                     <span class="field-label">Color Name</span>
-                    <input type="text" id="evColor" class="form-input">
+                    <input type="text" id="evColor" class="form-input" placeholder="e.g. Cobalt Blue" list="clrList">
                 </div>
                 <div class="form-group" style="margin:0;">
                     <span class="field-label">Color Hex</span>
@@ -846,9 +846,16 @@
                     if(f) fd.append('images', f);
                 }
             }
-            const res = await fetch(`/admin/product/addVariant/${productId}`, { method: 'POST', body: fd });
-            if (res.ok) { showToast('Variant created'); setTimeout(() => location.reload(), 900); }
-            else showToast('Failed to create variant');
+            try {
+                const res = await fetch(`/admin/product/addVariant/${productId}`, { method: 'POST', body: fd });
+                if (res.ok) { showToast('Variant created'); setTimeout(() => location.reload(), 900); }
+                else {
+                    const data = await res.json();
+                    showToast(data.message || 'Failed to create variant');
+                }
+            } catch (err) {
+                showToast('Server error');
+            }
         }
 
         // ─── EDIT VARIANT ──────────────────────────
@@ -864,9 +871,16 @@
             const fd = new FormData();
             fd.append('size', size); fd.append('color', color);
             fd.append('stock', stock); fd.append('price', price);
-            const res = await fetch(`/admin/product/editVariant/${productId}/${vId}`, { method: 'POST', body: fd });
-            if (res.ok) { showToast('Variant updated'); setTimeout(() => location.reload(), 900); }
-            else showToast('Update failed');
+            try {
+                const res = await fetch(`/admin/product/editVariant/${productId}/${vId}`, { method: 'POST', body: fd });
+                if (res.ok) { showToast('Variant updated'); setTimeout(() => location.reload(), 900); }
+                else {
+                    const data = await res.json();
+                    showToast(data.message || 'Update failed');
+                }
+            } catch (err) {
+                showToast('Server error');
+            }
         }
 
         // ─── DELETE ────────────────────────────────

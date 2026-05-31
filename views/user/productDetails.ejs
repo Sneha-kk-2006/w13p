@@ -202,6 +202,23 @@
             font-size: 0.65rem;
             font-weight: 600;
             margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            background: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .btn-wish.wishlisted {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+        }
+
+        .btn-wish.wishlisted:hover {
+            background: #333;
         }
 
         .p-desc {
@@ -416,11 +433,19 @@
 
                 <p class="p-desc"><%= product.description %></p>
 
+                <% const inWishlist = typeof wishlistProductIds !== 'undefined' && wishlistProductIds.includes(product._id.toString()); %>
                 <% if (product.stock > 0) { %>
                     <button class="btn-bag" onclick="addToCart('<%= product._id %>')">Add to bag</button>
-                    <button class="btn-wish" onclick="toggleWishlist('<%= product._id %>')">Add to wishlist</button>
+                    <button class="btn-wish <%= inWishlist ? 'wishlisted' : '' %>" id="wishlistBtn" onclick="toggleWishlist('<%= product._id %>', this)">
+                        <i class="<%= inWishlist ? 'fa-solid' : 'fa-regular' %> fa-heart"></i>
+                        <span><%= inWishlist ? 'In your wishlist' : 'Add to wishlist' %></span>
+                    </button>
                 <% } else { %>
                     <button class="btn-bag opacity-30 cursor-not-allowed" disabled>Sold out</button>
+                    <button class="btn-wish <%= inWishlist ? 'wishlisted' : '' %>" id="wishlistBtn" onclick="toggleWishlist('<%= product._id %>', this)">
+                        <i class="<%= inWishlist ? 'fa-solid' : 'fa-regular' %> fa-heart"></i>
+                        <span><%= inWishlist ? 'In your wishlist' : 'Add to wishlist' %></span>
+                    </button>
                 <% } %>
 
                 <div class="text-[10px] uppercase tracking-widest leading-loose text-gray-400">
@@ -642,21 +667,39 @@
         }
 
 
-        async function toggleWishlist(productId) {
+        async function toggleWishlist(productId, btn) {
             try {
-                const res = await fetch('/wishlist/add', {
+                const icon = btn.querySelector('i');
+                const label = btn.querySelector('span');
+                const isWishlisted = icon.classList.contains('fa-solid');
+                const url = isWishlisted ? '/wishlist/remove' : '/wishlist/add';
+
+                const res = await fetch(url, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ productId })
                 });
                 const data = await res.json();
                 if (data.success) {
-                    showToast('Wishlist updated');
+                    if (isWishlisted) {
+                        // Was wishlisted → now removed
+                        icon.classList.replace('fa-solid', 'fa-regular');
+                        btn.classList.remove('wishlisted');
+                        label.textContent = 'Add to wishlist';
+                        showToast('Removed from wishlist');
+                    } else {
+                        // Was not wishlisted → now added
+                        icon.classList.replace('fa-regular', 'fa-solid');
+                        btn.classList.add('wishlisted');
+                        label.textContent = 'In your wishlist';
+                        showToast('Added to wishlist');
+                    }
                     if (typeof updateWishlistBadge === 'function') {
                         updateWishlistBadge(data.wishlistCount);
                     }
+                } else {
+                    showToast(data.msg || 'Error');
                 }
-
             } catch (err) { console.error(err); }
         }
 
