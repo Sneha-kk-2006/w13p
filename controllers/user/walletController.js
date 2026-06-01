@@ -34,10 +34,14 @@ const createRazorpayOrder=async(req,res)=>{
     const {amount}=req.body;
 
     if(!userId)  return res.status(401).json({success:false,message:"unauthorised"});
-    if(!amount||amount<=0)  return res.status(400).json({success:false,message:"invalid amount"})                                                                
+    
+    const parsedAmount = parseFloat(amount);
+    if(isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > 100000) {
+        return res.status(400).json({success:false,message:"invalid amount (must be between 1 and 100,000)"});
+    }                                                                
      
         const order=await razorpay.orders.create({
-            amount:Math.round(parseFloat(amount)*100),
+            amount:Math.round(parsedAmount*100),
             currency:'INR',
              receipt: `wt_${Date.now()}`,
             notes:{userId:userId.toString(),purpose:'wallet Top-up'}
@@ -62,7 +66,11 @@ const addMoney = async (req, res) => {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, amount } = req.body;
 
         if (!userId) return res.status(401).json({ success: false, message: 'Unauthorized' });
-        if (!amount || amount <= 0) return res.status(400).json({ success: false, message: 'Invalid amount' });
+        
+        const parsedAmount = parseFloat(amount);
+        if(isNaN(parsedAmount) || parsedAmount <= 0 || parsedAmount > 100000) {
+            return res.status(400).json({ success: false, message: 'Invalid amount (must be between 1 and 100,000)' });
+        }
 
         // ← fixed: verify all 3 razorpay fields are present
         if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature) {
@@ -80,7 +88,7 @@ const addMoney = async (req, res) => {
 
         const result = await walletService.credit(
             userId,
-            parseFloat(amount),
+            parsedAmount,
             'Wallet Top-up',
             {
                 type: 'credit',

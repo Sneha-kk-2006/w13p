@@ -25,7 +25,27 @@ const loadoffers = async (req, res) => {
 const addOffer = async (req, res) => {
     try {
         const { name, offerType, referenceId, discount, startDate, endDate } = req.body;
-        const offerData = { name, offerType, discount, startDate, endDate };
+        
+        // Validations
+        if (!name || name.trim().length < 3) return res.status(400).json({ success: false, message: "Name must be at least 3 characters long" });
+        if (!/^[a-zA-Z0-9\s\-_.%&]+$/.test(name.trim())) return res.status(400).json({ success: false, message: "Name contains invalid characters" });
+        
+        if (!offerType || !['product', 'category'].includes(offerType)) return res.status(400).json({ success: false, message: "Invalid offer type" });
+        if (!referenceId) return res.status(400).json({ success: false, message: "Please select a product or category" });
+        
+        const discNum = parseFloat(discount);
+        if (isNaN(discNum) || discNum <= 0 || discNum > 100) return res.status(400).json({ success: false, message: "Discount must be between 1 and 100" });
+        
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) return res.status(400).json({ success: false, message: "Invalid dates provided" });
+        if (start < today) return res.status(400).json({ success: false, message: "Start date cannot be in the past" });
+        if (end <= start) return res.status(400).json({ success: false, message: "End date must be after start date" });
+
+        const offerData = { name: name.trim(), offerType, discount: discNum, startDate: start, endDate: end };
         
         if (offerType === 'product') {
             offerData.product = referenceId;

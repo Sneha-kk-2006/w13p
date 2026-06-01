@@ -146,8 +146,14 @@ const updateOrderStatus = async (req, res) => {
     order.orderStatus = status;
     
     order.orderItems.forEach(item => {
-      if (!['Cancelled', 'Returned', 'Return Requested'].includes(item.status)) {
-        item.status = status;
+      if (status === 'Returned' || status === 'Return Rejected') {
+        if (item.status === 'Return Requested' || !['Cancelled', 'Returned', 'Return Rejected'].includes(item.status)) {
+          item.status = status;
+        }
+      } else {
+        if (!['Cancelled', 'Returned', 'Return Requested', 'Return Rejected'].includes(item.status)) {
+          item.status = status;
+        }
       }
     });
 

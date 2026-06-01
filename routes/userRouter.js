@@ -107,6 +107,9 @@ router.post('/wallet/createOrder',walletController.createRazorpayOrder);
 
 router.get('/category', categoryController.loadcat)
 router.get('/product/:id', productController.loadProductDetails)
+router.post('/product/:productId/review', userAuth, productController.submitReview);
+router.delete('/product/:productId/review', userAuth, productController.deleteReview);
+router.post('/product/:productId/rate', userAuth, productController.rateProduct);
 
 
 

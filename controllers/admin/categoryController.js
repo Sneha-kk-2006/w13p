@@ -40,6 +40,16 @@ const addCategory = async (req, res) => {
       return res.status(400).json({ message: "Name required" });
     }
 
+    const trimmedName = name.trim();
+    if (trimmedName.length < 3 || trimmedName.length > 50) {
+      return res.status(400).json({ success: false, message: "Category name must be between 3 and 50 characters" });
+    }
+
+    const nameRegex = /^[a-zA-Z0-9\s\-_.&]+$/;
+    if (!nameRegex.test(trimmedName)) {
+      return res.status(400).json({ success: false, message: "Category name contains invalid characters" });
+    }
+
     const exists = await category.findOne({
       name: { $regex: new RegExp(`^${name.trim()}$`,"i") },
       isDeleted: false
@@ -74,8 +84,19 @@ const editCategory=async(req,res)=>{
     try{
         const {id}=req.params;
         const {name,isActive}=req.body;
-        if(!name||!name.trim())
-            return res.status(400).send("name required")
+        if (!name || !name.trim()) {
+            return res.status(400).json({ success: false, message: "Name required" });
+        }
+        
+        const trimmedName = name.trim();
+        if (trimmedName.length < 3 || trimmedName.length > 50) {
+            return res.status(400).json({ success: false, message: "Category name must be between 3 and 50 characters" });
+        }
+
+        const nameRegex = /^[a-zA-Z0-9\s\-_.&]+$/;
+        if (!nameRegex.test(trimmedName)) {
+            return res.status(400).json({ success: false, message: "Category name contains invalid characters" });
+        }
            const exist = await category.findOne({
                name: { $regex: new RegExp(`^${name.trim()}$`, "i") },
                _id: { $ne: id },

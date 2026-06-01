@@ -229,6 +229,11 @@
             const userId = req.session.user?._id;
             const { itemId, change } = req.body;
 
+            const changeInt = parseInt(change, 10);
+            if (isNaN(changeInt) || (changeInt !== 1 && changeInt !== -1)) {
+                return res.json({ success: false, msg: "Invalid quantity change" });
+            }
+
             let cart = await Cart.findOne({ userId }).populate("items.productId");
             if (!cart) return res.json({ success: false, msg: "Cart not found" });
 
@@ -249,7 +254,7 @@
             }
             let  MAX_QTY=5
 
-            let newQty = item.quantity + change;
+            let newQty = item.quantity + changeInt;
           
             if (newQty < 1) newQty = 1;
 

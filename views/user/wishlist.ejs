@@ -200,7 +200,9 @@
                                     <% } %>
                                 </span>
                                 
-                                <button class="btn-black-minimal" onclick="addToCart('<%= item.productId._id %>')">
+                                <button class="btn-black-minimal" 
+                                    data-variant-id="<%= item.variantId ? item.variantId.toString() : '' %>"
+                                    onclick="addToCart('<%= item.productId._id %>', this)">
                                     Add to Bag
                                 </button>
                             </div>
@@ -237,19 +239,20 @@
             }).showToast();
         }
 
-        async function addToCart(productId) {
+        async function addToCart(productId, btn) {
             try {
+                // Use stored variantId from wishlist entry if available
+                const variantId = (btn && btn.dataset.variantId) ? btn.dataset.variantId : null;
                 const response = await fetch('/cart/add', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ productId, quantity: 1 })
+                    body: JSON.stringify({ productId, variantId, quantity: 1 })
                 });
                 const data = await response.json();
                 if (data.success) {
                     showToast('Added to bag');
                     if (typeof updateCartBadge === 'function') updateCartBadge(data.cartCount);
                 } else {
-
                     showToast(data.msg || 'Error');
                 }
             } catch (error) { console.error(error); }

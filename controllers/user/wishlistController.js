@@ -30,7 +30,8 @@ const getWishlist = async (req, res) => {
    
         const wishlistWithOffers = sortedWishlist.map((item, idx) => ({
             ...item.toObject(),
-            productId: productsWithOffers[idx]
+            productId: productsWithOffers[idx],
+            variantId: item.variantId || null
         }));
 
         res.render('user/wishlist', { 
@@ -47,7 +48,7 @@ const getWishlist = async (req, res) => {
 const addToWishlist = async (req, res) => {
     try {
         const userId = req.session.user?._id;
-        const { productId } = req.body;
+        const { productId, variantId } = req.body;
 
         if (!userId) {
             return res.json({ success: false, msg: 'Please login first' });
@@ -63,7 +64,7 @@ const addToWishlist = async (req, res) => {
             return res.json({ success: false, msg: 'Product already in wishlist' });
         }
 
-        wishlist.products.push({ productId });
+        wishlist.products.push({ productId, variantId: variantId || null });
         await wishlist.save();
 
         res.json({ 
@@ -71,7 +72,6 @@ const addToWishlist = async (req, res) => {
             msg: 'Product added to wishlist',
             wishlistCount: wishlist.products.length
         });
-
 
     } catch (err) {
         console.error('addToWishlist error:', err);
