@@ -11,6 +11,9 @@ const { attachOffers } = require('./productController');
 require("dotenv").config();
 
 
+
+
+
 const loadHomepage = async (req, res) => {
   try {
     const id = req.session.user?._id;
@@ -50,6 +53,7 @@ const loadsignup = (req, res) => {
 const loadlogin = (req, res) => {
   try {
     res.render("user/login");
+
   } catch (error) {
     console.error("Login page error:", error);
     res.status(500).send("Server error");

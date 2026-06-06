@@ -113,6 +113,7 @@
                         <th>Preview</th>
                         <th>Nomenclature</th>
                         <th>Category</th>
+                        <th>users</th>
                         <th style="text-align: center;">Valuation</th>
                         <th style="text-align: center;">Availability</th>
                         <th style="text-align: center;">Active</th>
@@ -145,6 +146,9 @@
                                 </td>
                                 <td style="font-weight: 600;"><%= p.name %></td>
                                 <td><%= p.category?.name || '—' %></td>
+                                <td><%= p.users||'-'%></td>
+
+                               
                                 <td style="text-align: center;">₹<%= p.price %></td>
                                 <td style="text-align: center;">
                                     <% if(p.stock===0) { %>

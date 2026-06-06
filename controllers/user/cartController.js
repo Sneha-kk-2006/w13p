@@ -325,7 +325,7 @@ const remove = async (req, res) => {
 
         if (!userId) return res.json({ success: false, msg: "unauthorized" });
 
-        const cart = await Cart.findOne({ userId });
+        const cart = await Cart.findOne({ userId }).populate("items.productId");
         if (!cart) return res.json({ success: false, msg: "cart not found" });
 
       
@@ -340,9 +340,31 @@ const remove = async (req, res) => {
 
         await cart.save();
 
+        let finalSubtotal = 0;
+        let finalDiscount = 0;
+        
+        await Promise.all(cart.items.map(async (itm) => {
+            const p = itm.productId;
+            if (!p) return;
+            let prc = p.price || 0;
+            if (itm.variantId && p.variants && p.variants.length > 0) {
+                const v = p.variants.find(v => v._id.toString() === itm.variantId.toString());
+                if (v && v.price) prc = v.price;
+            }
+            const itmOffer = await getBestOffer(p._id, p.category?._id);
+            const dsc = itmOffer ? itmOffer.discount : (p.discount || 0);
+            finalSubtotal += (prc * itm.quantity);
+            finalDiscount += (prc * (dsc / 100) * itm.quantity);
+        }));
+
+        const total = finalSubtotal - finalDiscount;
+
         return res.json({
             success: true,
-            isEmpty: cart.items.length === 0
+            isEmpty: cart.items.length === 0,
+            subtotal: finalSubtotal,
+            discount: finalDiscount,
+            total: total
         });
 
     } catch (error) {

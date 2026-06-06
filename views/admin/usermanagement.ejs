@@ -185,6 +185,7 @@
                         <th>Sl.No</th>
                         <th>Full Name</th>
                         <th>Email Contact</th>
+                        <!-- <th>ordercount</th> -->
                         <th>Status</th>
                         <th>Registration Date</th>
                         <th style="text-align: right;">Authorization</th>
@@ -202,6 +203,9 @@
                             <td class="lowercase" style="letter-spacing: 0;">
                                 <%= user.email %>
                             </td>
+                            <!-- <td class="lowercase" style="letter-spacing: 0;">
+                                <%= user.ordercount%>
+                            </td> -->
                             <td>
                                 <% if(user.isBlocked) { %>
                                     <span class="badge badge-blocked">Suspended</span>

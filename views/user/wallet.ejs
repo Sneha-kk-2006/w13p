@@ -461,7 +461,45 @@
 
                         if (verifyData.success) {
                             showToast('Money added successfully');
-                            setTimeout(() => location.reload(), 1500);
+                            
+                            // Update balance
+                            const balanceElem = document.querySelector('.balance-amount');
+                            if (balanceElem) {
+                                balanceElem.innerHTML = `<span class="currency">₹</span>${verifyData.balance.toLocaleString('en-IN')}`;
+                            }
+
+                            // Add new transaction to the top of the list
+                            const txList = document.querySelector('.transactions-list');
+                            if (txList) {
+                                const emptyState = txList.querySelector('.empty-state');
+                                if (emptyState) emptyState.remove();
+
+                                const now = new Date();
+                                const formattedDate = now.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                                const newTxHtml = `
+                                    <div class="transaction-item" style="animation: fadeIn 1s;">
+                                        <div class="tx-left">
+                                            <div class="tx-icon icon-credit">
+                                                <i class="fa-solid fa-arrow-down"></i>
+                                            </div>
+                                            <div class="tx-details">
+                                                <h4>WALLET TOP-UP</h4>
+                                                <p>Ref: ${response.razorpay_payment_id}</p>
+                                            </div>
+                                        </div>
+                                        <div class="tx-right">
+                                            <div class="tx-amount credit">
+                                                + ₹${amount.toLocaleString('en-IN')}
+                                            </div>
+                                            <div class="tx-date">
+                                                ${formattedDate}
+                                            </div>
+                                        </div>
+                                    </div>
+                                `;
+                                txList.insertAdjacentHTML('afterbegin', newTxHtml);
+                            }
                         } else {
                             showToast(verifyData.message || 'Payment verification failed', 'error');
                         }

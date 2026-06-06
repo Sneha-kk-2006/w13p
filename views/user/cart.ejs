@@ -352,7 +352,51 @@
                         const res = await fetch('/cart/remove', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ itemId }) });
                         const data = await res.json();
                         if (data.success) {
-                            location.reload();
+                            showToast('Item removed from bag');
+                            
+                            // Remove element from DOM
+                            const itemElement = document.getElementById(`cart-item-${itemId}`);
+                            if (itemElement) itemElement.remove();
+                            
+                            if (data.isEmpty) {
+                                // If cart is empty, dynamically render the empty state
+                                document.querySelector('.lg\\:col-span-2').innerHTML = `
+                                    <div class="cart-header-minimal">Items in your bag (0)</div>
+                                    <div class="py-20 text-center">
+                                        <p class="text-xs uppercase tracking-widest text-gray-400">Your bag is currently empty.</p>
+                                        <a href="/products" class="mt-5 inline-block text-xs uppercase underline tracking-widest font-semibold">Start Shopping</a>
+                                    </div>
+                                `;
+                                
+                                // Update totals to 0
+                                document.getElementById('subtotal').textContent = '₹0';
+                                document.getElementById('discountAmount').textContent = '0';
+                                document.getElementById('gstAmount').textContent = '₹0';
+                                document.getElementById('main-total').textContent = '₹0';
+                                
+                                // Remove checkout button
+                                const checkoutBtn = document.querySelector('.btn-checkout');
+                                if (checkoutBtn) checkoutBtn.remove();
+                            } else {
+                                // Update summary with new totals from backend
+                                document.getElementById('subtotal').textContent = `₹${data.subtotal.toLocaleString('en-IN')}`;
+                                document.getElementById('discountAmount').textContent = data.discount.toLocaleString('en-IN');
+                                
+                                const gstVal = Math.round(data.total * 0.18);
+                                const finalTotal = data.total + gstVal;
+                                
+                                document.getElementById('gstAmount').textContent = `₹${gstVal.toLocaleString('en-IN')}`;
+                                document.getElementById('main-total').textContent = `₹${finalTotal.toLocaleString('en-IN')}`;
+                                
+                                // Update items count in header
+                                const headerCount = document.querySelector('.cart-header-minimal');
+                                if (headerCount) {
+                                    const countMatch = headerCount.textContent.match(/\d+/);
+                                    if (countMatch) {
+                                        headerCount.textContent = `Items in your bag (${parseInt(countMatch[0]) - 1})`;
+                                    }
+                                }
+                            }
                         }
                     } catch (err) { console.error(err); }
                 }

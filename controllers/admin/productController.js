@@ -1,5 +1,8 @@
 const product = require('../../models/productSchema');
 const category = require('../../models/categorySchema')
+const user=require('../../models/userSchema');
+const Order = require('../../models/orderSchema');
+
 
 
 const loadProduct = async (req, res) => {
@@ -17,16 +20,37 @@ const loadProduct = async (req, res) => {
 
         const totalPages = Math.ceil(totalProducts / limit);
 
+
+
         const products = await product.find(filter)
             .populate('category')
             .skip((currentPage - 1) * limit)
             .limit(limit)
             .sort({ createdAt: -1 });
+         
+      
+       const productwithuser=await Promise.all(
+           products.map(async(p)=>{
+             const orders=await Order.find({"orderItems.product":p._id}).populate("userId","name");
 
+             const users = [
+                ...new Set(orders.map((o) => o.userId?.name).filter(Boolean))
+
+             ]
+
+             return {
+                ...p.toObject(),
+                users
+             }
+           })
+        
+       )
+
+console.log(productwithuser[0])
         const categories = await category.find();
 
         res.render('admin/product', {
-            products,
+            products:productwithuser,
             search,
             currentPage,
             totalPages,

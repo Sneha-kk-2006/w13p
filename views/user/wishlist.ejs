@@ -270,7 +270,15 @@
                     document.getElementById(`card-${productId}`).remove();
                     showToast('Removed from wishlist');
                     if (typeof updateWishlistBadge === 'function') updateWishlistBadge(data.wishlistCount);
-                    if(document.querySelectorAll('.wishlist-card').length === 0) location.reload();
+                    if(document.querySelectorAll('.wishlist-card').length === 0) {
+                        document.querySelector('.container-minimal').innerHTML = `
+                            <h1 class="page-title">Wishlist</h1>
+                            <div class="empty-wrap">
+                                <p>Your wishlist is empty.</p>
+                                <a href="/products" class="underline-link">Go to boutique</a>
+                            </div>
+                        `;
+                    }
                 }
 
             } catch (error) { console.error(error); }

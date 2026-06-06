@@ -14,7 +14,7 @@ const userSchema = new Schema(
       enum: ["user", "admin"],
       default:'user',
     },
-
+    orders:{type: mongoose.Schema.ObjectId,ref:'Order'},
     profileImage: { type: String, default: "" },
     loginAttempts: { type: Number, default: 0 },
     phone: { type: String, default: "" },
