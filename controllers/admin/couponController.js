@@ -6,6 +6,9 @@ const loadCoupons = async (req, res) => {
     const query = search ? { code: { $regex: search, $options: "i" } } : {};
     const coupons = await Coupon.find(query).sort({ createdAt: -1 });
 
+  
+
+  
     res.render("admin/coupons", { coupons, search });
   } catch (error) {
     console.error("Error loading coupons:", error);

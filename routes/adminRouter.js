@@ -76,7 +76,7 @@ router.post('/orders/updateItemStatus', adminAuth, orderController.updateItemSta
 router.get('/orders/detail/:id', adminAuth, orderController.viewOrderDetail);
 
 // Coupon Management
-router.get('/coupons', adminAuth, couponController.loadCoupons);
+router.get('/coupons', couponController.loadCoupons);
 router.post('/coupons/add', adminAuth, couponController.addCoupon);
 router.delete('/coupons/delete/:id', adminAuth, couponController.deleteCoupon);
 router.patch('/coupons/toggle/:id', adminAuth, couponController.toggleCouponStatus);

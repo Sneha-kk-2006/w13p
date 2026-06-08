@@ -80,6 +80,14 @@ const getProducts = async (req, res) => {
       }
     }
 
+
+
+
+console.log("dpppppppppp",dp)
+
+
+
+
     const products = await attachOffers(rawProducts);
 
     res.render('user/products', {

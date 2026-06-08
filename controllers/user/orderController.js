@@ -152,26 +152,7 @@ const loadCheckout = async (req, res) => {
 const placeOrder = async (req, res) => {
   try {
     const userId = typeof req.session.user === 'object' ? req.session.user._id : req.session.user;
-    
-  //   const start=new Date();
-  //   start.setHours(0,0,0,0)
 
-  //    const end=new Date();
-  //   end.setHours(23,59,59,999)
-
-  //   const exist=await Order.findOne({
-  //     userId:userId,
-  //     createdAt:{
-  //       $gt:start,
-  //       $lt:end
-  //     }
-  //   })
-  // if(exist){
-  //      return res.status(400).json({
-  //       success: false,
-  //       message: "You can only place one order per day"
-  //     });
-  // }
 
     const {
       addressId,

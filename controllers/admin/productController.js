@@ -21,14 +21,65 @@ const loadProduct = async (req, res) => {
         const totalPages = Math.ceil(totalProducts / limit);
 
 
-
         const products = await product.find(filter)
             .populate('category')
             .skip((currentPage - 1) * limit)
             .limit(limit)
             .sort({ createdAt: -1 });
-         
-      
+  
+//             const sum=await product.aggregate([
+//                 {$group:{_id:"$category",count:{$sum:1}}},
+//                 {$lookup:{
+//                 from:'categories',
+//                 localField:"_id",
+//                 foreignField:"_id",
+//                 as:"categoryinfo"
+//             }},
+//         {$unwind:'$categoryinfo'},
+//     {$project:{categoryname:"$categoryinfo.name",count:1,_id:0}},
+// ])
+//             console.log("count ",sum)
+
+
+// const avg=await product.aggregate([
+//     {$group:{_id:"$category",avgerge:{$avg:'$price'}}},
+    
+// {$lookup:{
+//     from:"categories",
+//     localField:"_id",
+//     foreignField:"_id",
+//     as:"categoryinfo"
+// }},
+// {$unwind:"$categoryinfo"},
+// {$project:{categoryavg:'$categoryinfo.name',avgerge:{$round:["$avgerge",0]},_id:0}}
+// ])
+
+// const recent=await product.aggregate([
+//     {$sort:{createdAt:-1}},
+//     {$group:{
+//         _id:"$category",
+//         recent:{$first:"$$ROOT"}
+//     }},
+//     {$lookup:{
+//         from:"categories",
+//         localField:"_id",
+//     foreignField:"_id",
+//     as:"categoryinfo"
+
+//     }},
+//     {$unwind:"$categoryinfo"},
+//     {$project:{categoryavg:'$categoryinfo.name',RECENT:"$recent.name",createdAt:"$recent.createdAt",_id:0}}
+// ])
+
+// console.log("ppppppppppppppppppppp",recent)
+
+
+
+
+
+
+
+
        const productwithuser=await Promise.all(
            products.map(async(p)=>{
              const orders=await Order.find({"orderItems.product":p._id}).populate("userId","name");
@@ -46,7 +97,7 @@ const loadProduct = async (req, res) => {
         
        )
 
-console.log(productwithuser[0])
+
         const categories = await category.find();
 
         res.render('admin/product', {
@@ -60,7 +111,7 @@ console.log(productwithuser[0])
             editProduct: null
         });
 
-        console.log('images:', products[0]?.images);
+       
 
     } catch (error) {
         console.error(error);

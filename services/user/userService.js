@@ -93,7 +93,7 @@ const signupWithOtp = async (data, session) => {
     type: "signup",
     role: role || "user",
      referralCode: referralCode ? referralCode.trim().toUpperCase() : null,
-    expiredAt: Date.now() + 5 * 60 * 1000
+    expiredAt: Date.now() + 1 * 60 * 1000
   };
 
   console.log("Signup OTP:", otp);
@@ -135,8 +135,22 @@ const loginUser = async (data, session) => {
 
 const verifyOtpService = async (otp, session, userId) => {
   if (!session.auth) return { success: false, message: ERRORS.SESSION_EXPIRED };
-  if (Date.now() > session.auth.expiredAt) return { success: false, message: ERRORS.OTP_EXPIRED };
-  if (String(otp) !== String(session.auth.otp)) return { success: false, message: ERRORS.INVALID_OTP };
+
+
+
+
+  console.log("expiredAt:", session.auth.expiredAt);
+  console.log("Date.now():", Date.now());
+  console.log("Expired?:", Date.now() > Number(session.auth.expiredAt));
+  console.log("OTP in session:", session.auth.otp);
+  console.log("OTP received:", otp);
+
+
+
+
+  if (Date.now() >Number(session.auth.expiredAt) ) return { success: false, message: ERRORS.OTP_EXPIRED };
+    if (String(otp) !== String(session.auth.otp)) return { success: false, message: ERRORS.INVALID_OTP };
+if (Date.now() > Number(session.auth.expiredAt)) return { success: false, message: ERRORS.OTP_EXPIRED };
 
   if (session.auth.type === "signup") {
     const { name, email, password, role ,referralCode} = session.auth;

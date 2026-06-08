@@ -128,7 +128,7 @@
                
             });
         }
-
+  
     
 
         // filter out inactive products
