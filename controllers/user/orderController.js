@@ -192,21 +192,94 @@ const placeOrder = async (req, res) => {
     }
 
     const phoneRegex = /^[6-9]\d{9}$/;
-    const pincodeRegex = /^\d{6}$/;
+  
+    const pincodeRegex = /^[1-9]\d{5}$/;
 
-    if (!phoneRegex.test(address.phone)) {
-      return res.status(400).json({ success: false, message: "Invalid phone number in selected address" });
+   
+    const statePincodePrefixes = {
+      andhrapradesh:        ["50", "51", "52", "53"],
+      arunachalpradesh:     ["79"],
+      assam:                ["78"],
+      bihar:                ["80", "81", "82", "83", "84", "85"],
+      chhattisgarh:         ["49"],
+      goa:                  ["40"],
+      gujarat:              ["36", "37", "38", "39"],
+      haryana:              ["12", "13"],
+      himachalpradesh:      ["17"],
+      jharkhand:            ["82", "83", "84", "85"],
+      karnataka:            ["56", "57", "58", "59"],
+      kerala:               ["67", "68", "69"],
+      madhyapradesh:        ["45", "46", "47", "48", "49"],
+      maharashtra:          ["40", "41", "42", "43", "44"],
+      manipur:              ["79"],
+      meghalaya:            ["79"],
+      mizoram:              ["79"],
+      nagaland:             ["79"],
+      odisha:               ["75", "76", "77"],
+      punjab:               ["14", "15", "16"],
+      rajasthan:            ["30", "31", "32", "33", "34"],
+      sikkim:               ["73"],
+      tamilnadu:            ["60", "61", "62", "63", "64"],
+      telangana:            ["50", "51", "52", "53"],
+      tripura:              ["79"],
+      uttarpradesh:         ["20", "21", "22", "23", "24", "25", "26", "27", "28"],
+      uttarakhand:          ["24", "26"],
+      westbengal:           ["70", "71", "72", "73", "74"],
+      delhi:                ["11"],
+      jammuandkashmir:      ["18", "19"],
+      ladakh:               ["19"],
+      chandigarh:           ["16"],
+      puducherry:           ["60"],
+      andamanandnicobar:    ["74"],
+      dadraandnagarhaveli:  ["39"],
+      daman:                ["39"],
+      diu:                  ["36"],
+      lakshadweep:          ["68"],
+    };
+
+    function normalizeState(name) {
+      if (!name) return "";
+      return name.toLowerCase().replace(/[^a-z]/g, '');
     }
 
+    function isValidStatePincode(state, pincode) {
+      const normalizedState = normalizeState(state);
+      const prefixes = statePincodePrefixes[normalizedState];
+      
+      if (!prefixes) return true;
+
+      return prefixes.some(prefix => pincode.startsWith(prefix));
+    }
+
+    
     if (!pincodeRegex.test(address.pincode)) {
-      return res.status(400).json({ success: false, message: "Invalid pincode in selected address" });
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid pincode — must be a 6-digit number not starting with 0" 
+      });
+    }
+
+    
+    if (!isValidStatePincode(address.state, address.pincode)) {
+      return res.status(400).json({
+        success: false,
+        message: `Pincode does not match the selected state (${address.state})`
+      });
+    }
+
+   
+    if (!phoneRegex.test(address.phone)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid phone number in selected address" 
+      });
     }
 
     let totalPrice = 0;
     const orderItems = [];
     const productsToUpdate = [];
 
-    // Price calculation loop
+
     for (const item of cart.items) {
       const product = await Product.findById(item.productId._id || item.productId)
         .populate('category');
@@ -739,7 +812,7 @@ const createRazorpayOrder = async (req, res) => {
           couponDiscountAmount = coupon.discountValue;
         }
 
-        // ✅ Validate coupon doesn't wipe out total
+      
         if (couponDiscountAmount >= finalTotal) {
           delete req.session.appliedCoupon;
           return res.status(400).json({
@@ -929,6 +1002,114 @@ const removeCoupon = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+const retryRazorpayPayment = async (req, res) => {
+  try {
+    const userId = typeof req.session.user === 'object' ? req.session.user._id : req.session.user;
+    const { orderId } = req.params;
+
+    const order = await Order.findOne({ _id: orderId, userId }).populate("orderItems.product");
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    if (order.paymentStatus !== "Failed" && order.paymentStatus !== "Pending") {
+      return res.status(400).json({ success: false, message: "This order is not eligible for payment retry." });
+    }
+
+    for (const item of order.orderItems) {
+      const product = item.product;
+      if (!product || product.isBlocked || product.isDeleted) {
+        return res.status(400).json({ success: false, message: `Product ${product?.name || 'Unknown'} is no longer available.` });
+      }
+
+      if (item.variantId && product.variants?.length > 0) {
+        const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+        if (!variant || variant.stock < item.quantity) {
+          return res.status(400).json({ success: false, message: `Insufficient stock for ${product.name}.` });
+        }
+      } else {
+        if (product.stock < item.quantity) {
+          return res.status(400).json({ success: false, message: `Insufficient stock for ${product.name}.` });
+        }
+      }
+    }
+
+    const finalTotal = order.totalPrice;
+    if (finalTotal <= 0) {
+      return res.status(400).json({ success: false, message: "Invalid order amount" });
+    }
+
+    const razorpayOrder = await razorpay.orders.create({
+      amount: Math.round(finalTotal * 100),
+      currency: "INR",
+      receipt: `retry_${order._id.toString()}`,
+    });
+
+    res.json({
+      success: true,
+      orderId: razorpayOrder.id,
+      amount: razorpayOrder.amount,
+      currency: razorpayOrder.currency,
+      keyId: process.env.RAZORPAY_KEY_ID,
+    });
+  } catch (error) {
+    console.error("Retry Razorpay order creation error:", error);
+    res.status(500).json({ success: false, message: "Could not initiate retry payment." });
+  }
+};
+
+const verifyRetryPayment = async (req, res) => {
+  try {
+    const userId = typeof req.session.user === 'object' ? req.session.user._id : req.session.user;
+    const { orderId } = req.params;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
+
+    const order = await Order.findOne({ _id: orderId, userId }).populate("orderItems.product");
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
+    }
+
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      console.log("Signature mismatch! Expected:", expectedSignature, "Got:", razorpay_signature);
+      return res.status(400).json({ success: false, message: "Invalid payment signature" });
+    }
+
+    console.log("Signature matched, proceeding to deduct stock");
+  
+    for (const item of order.orderItems) {
+      const product = await Product.findById(item.product._id || item.product);
+      if (product) {
+        if (item.variantId && product.variants?.length > 0) {
+          const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
+          if (variant) {
+            variant.stock -= item.quantity;
+          }
+        } else {
+          product.stock -= item.quantity;
+        }
+        await product.save();
+      }
+    }
+
+    order.paymentStatus = "Paid";
+    await order.save();
+    
+
+    await Cart.findOneAndDelete({ userId });
+
+    res.json({ success: true, message: "Payment successful" });
+
+  } catch (error) {
+    console.error("verifyRetryPayment error:", error);
+    res.status(500).json({ success: false, message: "Verification error: " + error.message });
+  }
+};
 
 
 module.exports = {
@@ -946,5 +1127,7 @@ module.exports = {
   downloadInvoice,
   createRazorpayOrder,
   verifyRazorpayPayment,
-  recordPaymentFailure
+  recordPaymentFailure,
+  retryRazorpayPayment,
+  verifyRetryPayment
 };

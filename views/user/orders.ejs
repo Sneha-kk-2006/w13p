@@ -171,6 +171,9 @@
                                 </td>
                                 <td style="font-weight: 600;">₹<%= order.totalPrice %></td>
                                 <td style="text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 15px;">
+                                    <% if (order.paymentMethod === 'Razorpay' && (order.paymentStatus === 'Failed' || order.paymentStatus === 'Pending') && order.orderStatus !== 'Cancelled') { %>
+                                        <button onclick="retryPayment('<%= order._id %>')" class="btn-clear" style="color: #000; border-color: #000; padding: 4px 10px;">Retry Payment</button>
+                                    <% } %>
                                     <% if (order.orderStatus === 'Delivered') { %>
                                         <a href="/order/invoice/<%= order._id %>" title="Download Invoice" style="color: #000; font-size: 0.9rem;">
                                             <i class="fa-solid fa-file-pdf"></i>
@@ -195,6 +198,7 @@
     <%- include('../partials/user/footer') %>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
         function searchOrders() {
             const search = document.getElementById('orderSearch').value.trim();
@@ -250,6 +254,84 @@
                 }
             });
         }
+
+        async function retryPayment(orderId) {
+            try {
+                const response = await fetch(`/order/retry-payment/${orderId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                const data = await response.json();
+                
+                if (!data.success) {
+                    return Toastify({
+                        text: (data.message || "Failed to initiate payment").toUpperCase(),
+                        duration: 3000, gravity: "top", position: "center",
+                        style: { background: "#ff0000", borderRadius: "0px" }
+                    }).showToast();
+                }
+
+                const options = {
+                    key: data.keyId,
+                    amount: data.amount,
+                    currency: data.currency,
+                    name: "SNOVA",
+                    description: "Retry Order Payment",
+                    order_id: data.orderId,
+                    handler: async function (response) {
+                        try {
+                            const verifyRes = await fetch(`/order/verify-retry/${orderId}`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    razorpay_order_id: response.razorpay_order_id,
+                                    razorpay_payment_id: response.razorpay_payment_id,
+                                    razorpay_signature: response.razorpay_signature
+                                })
+                            });
+                            
+                            const verifyData = await verifyRes.json();
+                            
+                            if (verifyData.success) {
+                                window.location.href = `/checkout/success/${orderId}`;
+                            } else {
+                                Toastify({
+                                    text: (verifyData.message || "PAYMENT VERIFICATION FAILED").toUpperCase(),
+                                    duration: 3000, gravity: "top", position: "center",
+                                    style: { background: "#ff0000", borderRadius: "0px" }
+                                }).showToast();
+                            }
+                        } catch (err) {
+                            Toastify({
+                                text: "ERROR VERIFYING PAYMENT",
+                                duration: 3000, gravity: "top", position: "center",
+                                style: { background: "#ff0000", borderRadius: "0px" }
+                            }).showToast();
+                        }
+                    },
+                    theme: { color: "#000000" }
+                };
+
+                const rzp = new window.Razorpay(options);
+                rzp.on('payment.failed', function (response) {
+                    Toastify({
+                        text: "PAYMENT CANCELLED OR FAILED",
+                        duration: 3000, gravity: "top", position: "center",
+                        style: { background: "#ff0000", borderRadius: "0px" }
+                    }).showToast();
+                });
+                rzp.open();
+
+            } catch (error) {
+                Toastify({
+                    text: "SOMETHING WENT WRONG",
+                    duration: 3000, gravity: "top", position: "center",
+                    style: { background: "#ff0000", borderRadius: "0px" }
+                }).showToast();
+            }
+        }
+
     </script>
 </body>
 </html>

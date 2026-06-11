@@ -67,19 +67,18 @@ const signupWithOtp = async (data, session) => {
    if (referralCode && referralCode.trim() !== '') {
     const code = referralCode.trim().toUpperCase();
 
-    // 1. Format check
+   
     const validFormat = /^[A-Z0-9]{6,20}$/.test(code);
     if (!validFormat) {
       return { success: false, message: 'Invalid referral code format' };
     }
 
-    // 2. Exists in DB check
+    
     const referrer = await userRepository.findUserByReferralCode(code);
     if (!referrer) {
       return { success: false, message: 'Referral code not found' };
     }
 
-    // 3. Can't use your own code (check by email)
     if (referrer.email === email) {
       return { success: false, message: 'You cannot use your own referral code' };
     }
@@ -137,19 +136,8 @@ const verifyOtpService = async (otp, session, userId) => {
   if (!session.auth) return { success: false, message: ERRORS.SESSION_EXPIRED };
 
 
-
-
-  console.log("expiredAt:", session.auth.expiredAt);
-  console.log("Date.now():", Date.now());
-  console.log("Expired?:", Date.now() > Number(session.auth.expiredAt));
-  console.log("OTP in session:", session.auth.otp);
-  console.log("OTP received:", otp);
-
-
-
-
   if (Date.now() >Number(session.auth.expiredAt) ) return { success: false, message: ERRORS.OTP_EXPIRED };
-    if (String(otp) !== String(session.auth.otp)) return { success: false, message: ERRORS.INVALID_OTP };
+  if (String(otp) !== String(session.auth.otp)) return { success: false, message: ERRORS.INVALID_OTP };
 if (Date.now() > Number(session.auth.expiredAt)) return { success: false, message: ERRORS.OTP_EXPIRED };
 
   if (session.auth.type === "signup") {
@@ -185,9 +173,6 @@ if (Date.now() > Number(session.auth.expiredAt)) return { success: false, messag
         });
       }
     }
-
-
-
 
 
     delete session.auth;

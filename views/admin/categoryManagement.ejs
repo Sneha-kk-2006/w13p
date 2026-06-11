@@ -87,7 +87,7 @@
                         <td style="font-weight: 600;"><%= cat.name %></td>
                         <td>
                             <label class="switch">
-                                <input type="checkbox" <%= cat.status==='Active' ? 'checked' : '' %> onchange="toggleStatus('<%= cat._id %>')">
+                                <input type="checkbox" <%= cat.status==='Active' ? 'checked' : '' %> onclick="toggleStatus(event, '<%= cat._id %>', '<%= cat.status %>')">
                                 <span class="slider"></span>
                             </label>
                         </td>
@@ -211,22 +211,42 @@
                 console.error(err); }
         });
 
-        async function toggleStatus(id) {
-            try { 
-                const res = await fetch('/admin/category/toggle/'+id, { method: 'PATCH' }); 
-                const data = await res.json();
-                if(data.success) {
-                    // Show specific status message
-                    const status = data.message ? data.message.toUpperCase() : 'STATUS UPDATED';
-                    showToast(status);
-                } else {
-                    showToast('ERROR UPDATING STATUS');
-                    setTimeout(() => location.reload(), 1000);
+        function toggleStatus(event, id, currentStatus) {
+            event.preventDefault(); // Stop the switch from toggling visually until confirmed
+            
+            const actionText = currentStatus === 'Active' ? 'UNLIST' : 'LIST';
+
+            Swal.fire({
+                title: `${actionText} CATEGORY?`,
+                text: `ARE YOU SURE YOU WANT TO ${actionText} THIS CATEGORY?`,
+                showCancelButton: true,
+                confirmButtonColor: '#000',
+                cancelButtonColor: '#999',
+                confirmButtonText: actionText,
+                cancelButtonText: 'CANCEL',
+                customClass: {
+                    title: 'font-serif uppercase',
+                    popup: 'rounded-none'
                 }
-            } catch(err) { 
-                console.error(err);
-                location.reload();
-            }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try { 
+                        const res = await fetch('/admin/category/toggle/'+id, { method: 'PATCH' }); 
+                        const data = await res.json();
+                        if(data.success) {
+                            const status = data.message ? data.message.toUpperCase() : 'STATUS UPDATED';
+                            showToast(status);
+                            setTimeout(() => location.reload(), 800);
+                        } else {
+                            showToast('ERROR UPDATING STATUS');
+                            setTimeout(() => location.reload(), 1000);
+                        }
+                    } catch(err) { 
+                        console.error(err);
+                        location.reload();
+                    }
+                }
+            });
         }
 
         function confirmDelete(id) {

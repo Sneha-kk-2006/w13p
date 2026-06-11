@@ -96,6 +96,8 @@ router.post('/order/cancel/:orderId/:itemId', userAuth, orderController.cancelOr
 router.post('/order/return/:orderId/:itemId', userAuth, orderController.returnOrderItem);
 router.get('/order/invoice/:orderId', userAuth, orderController.downloadInvoice);
 router.delete('/orders/clear', userAuth, orderController.clearAllOrders);
+router.post('/order/retry-payment/:orderId', userAuth, orderController.retryRazorpayPayment);
+router.post('/order/verify-retry/:orderId', userAuth, orderController.verifyRetryPayment);
 
 router.get('/wallet', userAuth, walletController.loadWallet);
 router.post('/wallet/add-money', userAuth, walletController.addMoney);
@@ -105,8 +107,8 @@ router.post('/wallet/createOrder',walletController.createRazorpayOrder);
 
 
 
-router.get('/category', categoryController.loadcat)
-router.get('/product/:id', productController.loadProductDetails)
+router.get('/category',userAuth, categoryController.loadcat)
+router.get('/product/:id',userAuth, productController.loadProductDetails)
 router.post('/product/:productId/review', userAuth, productController.submitReview);
 router.delete('/product/:productId/review', userAuth, productController.deleteReview);
 router.post('/product/:productId/rate', userAuth, productController.rateProduct);

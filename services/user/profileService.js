@@ -83,30 +83,32 @@ const updateProfileService = async (req) => {
   const updateData = { name, email, phone };
 
   if (req.body.removeProfileImage === "true" && user.profileImage) {
-    const oldPath = path.join(__dirname, "../../public", user.profileImage.replace(/^\/+/, ""));
-    if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    if (!user.profileImage.startsWith('http')) {
+      const oldPath = path.join(__dirname, "../../public", user.profileImage.replace(/^\/+/, ""));
+      if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    }
     updateData.profileImage = null;
   }
 
   if (req.file) {
-    const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/jpg", "image/webp"];
-    const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
     const filePath = path.join(__dirname, "../../public/uploads", req.file.filename);
 
+    const allowedExtensions = ['.jpg', '.jpeg', '.png', '.webp'];
+    const fileExt = path.extname(req.file.originalname).toLowerCase();
 
-    if (!ALLOWED_IMAGE_TYPES.includes(req.file.mimetype)) {
+    if (!req.file.mimetype.startsWith('image/') || !allowedExtensions.includes(fileExt)) {
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      return { success: false, message: "Only image files are allowed (jpeg, jpg, png, webp)" };
+      return { success: false, message: "File type not allowed" };
     }
 
     if (req.file.size > MAX_FILE_SIZE) {
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      return { success: false, message: "Image size must be under 2MB" };
+      return { success: false, message: "Image size must be under 5MB" };
     }
 
-
-    if (user.profileImage) {
+    if (user.profileImage && !user.profileImage.startsWith('http')) {
       const oldPath = path.join(__dirname, "../../public", user.profileImage.replace(/^\/+/, ""));
       if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
     }

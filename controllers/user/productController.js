@@ -83,7 +83,7 @@ const getProducts = async (req, res) => {
 
 
 
-console.log("dpppppppppp",dp)
+
 
 
 

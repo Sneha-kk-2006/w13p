@@ -335,6 +335,23 @@
         function previewImage(event) {
             const file = event.target.files[0];
             if (!file) return;
+
+            const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp'];
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+
+            if (!file.type.startsWith('image/') || !allowedExtensions.includes(fileExtension)) {
+                Toastify({
+                    text: "File type not allowed",
+                    duration: 3000,
+                    gravity: "top",
+                    position: "center",
+                    style: { background: "#ff0000", borderRadius: "0px" }
+                }).showToast();
+                event.target.value = '';
+                document.getElementById("modalImage").src = "https://ui-avatars.com/api/?name=<%= encodeURIComponent(user.name) %>";
+                return;
+            }
+
             const reader = new FileReader();
             reader.onload = function(e) { document.getElementById("modalImage").src = e.target.result; };
             reader.readAsDataURL(file);

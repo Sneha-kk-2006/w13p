@@ -118,7 +118,7 @@
                                 </span>
                             </td>
                             <td style="text-align: right;">
-                                <button class="action-icon" style="color: <%= coupon.isActive ? '#999' : '#000' %>" onclick="toggleStatus('<%= coupon._id %>')">
+                                <button class="action-icon" style="color: <%= coupon.isActive ? '#999' : '#000' %>" onclick="toggleStatus('<%= coupon._id %>', '<%= coupon.isActive %>')">
                                     <%= coupon.isActive ? 'Deactivate' : 'Activate' %>
                                 </button>
                                 <button class="action-icon" style="color: #e74c3c" onclick="confirmDelete('<%= coupon._id %>')">Delete</button>
@@ -312,19 +312,36 @@
             });
         }
         
-        async function toggleStatus(id) {
-            try {
-                const res = await fetch(`/admin/coupons/toggle/${id}`, { method: "PATCH" });
-                const data = await res.json();
-                if (data.success) {
-                    showToast(data.msg.toUpperCase());
-                    setTimeout(() => location.reload(), 800);
-                } else {
-                    showToast(data.msg || "ERROR TOGGLING STATUS", 'error');
+        function toggleStatus(id, isActive) {
+            const actionText = isActive === 'true' ? 'DEACTIVATE' : 'ACTIVATE';
+            Swal.fire({
+                title: `${actionText} COUPON?`,
+                text: `ARE YOU SURE YOU WANT TO ${actionText} THIS COUPON?`,
+                showCancelButton: true,
+                confirmButtonColor: '#000',
+                cancelButtonColor: '#999',
+                confirmButtonText: actionText,
+                cancelButtonText: 'CANCEL',
+                customClass: {
+                    title: 'font-serif uppercase',
+                    popup: 'rounded-none'
                 }
-            } catch (err) {
-                showToast("SERVER ERROR", 'error');
-            }
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    try {
+                        const res = await fetch(`/admin/coupons/toggle/${id}`, { method: "PATCH" });
+                        const data = await res.json();
+                        if (data.success) {
+                            showToast(data.msg.toUpperCase());
+                            setTimeout(() => location.reload(), 800);
+                        } else {
+                            showToast(data.msg || "ERROR TOGGLING STATUS", 'error');
+                        }
+                    } catch (err) {
+                        showToast("SERVER ERROR", 'error');
+                    }
+                }
+            });
         }
     </script>
 </body>

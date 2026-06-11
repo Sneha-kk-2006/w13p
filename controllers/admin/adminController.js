@@ -238,25 +238,6 @@ const loaduser = async (req, res) => {
         .limit(limit),
       User.countDocuments(query),
     ]);
-    
-  //   const userwithcount=await Promise.all(
-  //     users.map(async(user)=>{
-  //       let count= await Order.countDocuments({userId:user._id})
-  //       return {
-  //         _id:user._id,
-  //          name:user.name,
-  //          email:user.email,
-  //         ordercount:count
-  //       }
-  //     })
-  //   )
-  //  console.log(users)
-  
-    const bluser=await User.find({isBlocked:true},{name:1,_id:0})
-   
-    console.log(bluser)
-
-
 
 
     res.render("admin/usermanagement", {

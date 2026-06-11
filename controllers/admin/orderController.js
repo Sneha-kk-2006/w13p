@@ -14,7 +14,9 @@ const loadOrders = async (req, res) => {
     const filterStatus = req.query.status || "";
     const sortOrder = req.query.sort === "asc" ? 1 : -1;
 
-    let query = {};
+    let query = {
+
+    };
   
     if (search) {
       query.$or = [
@@ -27,12 +29,16 @@ const loadOrders = async (req, res) => {
       query.orderStatus = filterStatus;
     }
 
+ 
+  
+
     const orders = await Order.find(query)
       .populate("userId")
       .sort({ createdAt: sortOrder })
       .skip(skip)
       .limit(limit);
  
+  
 
     const totalOrders = await Order.countDocuments(query);
     const totalPages = Math.ceil(totalOrders / limit);
