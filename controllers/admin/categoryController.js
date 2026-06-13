@@ -1,6 +1,6 @@
 const mongoose  = require('mongoose')
 const category=require('../../models/categorySchema')
-
+const product=require('../../models/productSchema')
 
 const loadp=async(req,res)=>{
     try{
@@ -121,12 +121,19 @@ const editCategory=async(req,res)=>{
 
 const deleteCategory=async(req,res)=>{
     try{
+      
     const {id}=req.params;
+   
     await category.findByIdAndUpdate(id,{
-        isDeleted:true
+        isDeleted: true,
+        status: "Inactive"
     });
-  
-    res.json({sucess:true,message:"category deleted"});
+
+    await product.updateMany(
+        { category: new mongoose.Types.ObjectId(id) },
+        { isActive: false, isListed: false }
+    );
+    res.json({success:true,message:"category deleted"});
 
     }catch(error){
        res.json({message:"error deleting category"}) 

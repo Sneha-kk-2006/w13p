@@ -13,6 +13,7 @@ const loadProduct = async (req, res) => {
 
         let filter = {
             isDeleted: false,
+          
             name: { $regex: search, $options: 'i' }
         };
 
@@ -26,6 +27,7 @@ const loadProduct = async (req, res) => {
             .skip((currentPage - 1) * limit)
             .limit(limit)
             .sort({ createdAt: -1 });
+
 
 
        const productwithuser=await Promise.all(
@@ -46,7 +48,9 @@ const loadProduct = async (req, res) => {
        )
 
 
-        const categories = await category.find();
+        const categories = await category.find({status:"Active",isDeleted:false});
+        
+
 
         res.render('admin/product', {
             products:productwithuser,
@@ -211,8 +215,24 @@ const deleteProduct = async (req, res) => {
 
 const toggleProductStatus = async (req, res) => {
     try {
-        const products = await product.findById(req.params.id);
-        products.isActive = !products.isActive;
+        let userid = req.params.id;
+        const products = await product.findById(userid).populate('category');
+        if (!products) return res.status(404).json({ success: false, message: 'Product not found' });
+  
+         
+        console.log("Found product:", products);
+        console.log("isActive:", products?.isActive);
+        console.log("category:", products?.category);
+        console.log("category.isDeleted:", products?.category?.isDeleted);
+    if (!products.isActive && (!products.category || products.category.isDeleted === true)) {
+            return res.json({ 
+                success: false, 
+                message: "Cannot activate product. Its category has been deleted." 
+            });
+        }
+      
+      products.isActive = !products.isActive;
+
         await products.save();
         res.json({
             success: true,

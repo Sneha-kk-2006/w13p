@@ -1143,7 +1143,7 @@
                     const data = await res.json();
                     if (!data.success) {
                         checkbox.checked = !checkbox.checked;
-                        showToast('Failed to update status', 'red');
+                     showToast(data.message || 'Failed to update status', 'red');
                     } else {
                         showToast(`Status: ${data.status}`, 'green');
                     }

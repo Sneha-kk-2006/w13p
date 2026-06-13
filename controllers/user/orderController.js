@@ -315,7 +315,36 @@ const placeOrder = async (req, res) => {
           });
         }
       }
+   
 
+const isCategoryInvalid = !product.category || product.category.isDeleted === true;
+const isProductInactive = product.isActive === false;
+
+if (isCategoryInvalid || isProductInactive) {
+  // Razorpay already paid ആണെങ്കിൽ — wallet refund ചെയ്യുക
+  if (paymentMethod === 'Razorpay' && forcedPaymentStatus === 'Paid') {
+    const refundAmount = req.session.pendingOrderAmount || 0;
+    if (refundAmount > 0) {
+      await walletService.credit(
+        userId,
+        refundAmount,
+        `Refund: "${product.name}" category unavailable`,
+        { orderRef: 'REFUND' }
+      );
+    }
+    return res.status(400).json({
+      success: false,
+      message: `"${product.name}" is no longer available. ₹${refundAmount} refunded to your wallet.`
+    });
+  }
+
+  return res.status(400).json({
+    success: false,
+    message: isCategoryInvalid
+      ? `"${product.name}" is no longer available (category removed)`
+      : `"${product.name}" is currently inactive`
+  });
+}
       const itmOffer = await getBestOffer(product._id, product.category?._id);
       const discountPct = itmOffer ? itmOffer.discount : (product.discount || 0);
       const salePrice = Math.round(unitPrice * (1 - discountPct / 100));
@@ -753,7 +782,12 @@ const createRazorpayOrder = async (req, res) => {
           message: `A product in your cart is no longer available`
         });
       }
-
+if (!product.category || product.category.isDeleted === true || product.isActive === false) {
+  return res.status(400).json({
+    success: false,
+    message: `"${product.name}" is no longer available`
+  });
+}
       let unitPrice = product.salePrice || product.price;
       if (item.variantId && product.variants?.length > 0) {
         const variant = product.variants.find(v => v._id.toString() === item.variantId.toString());
