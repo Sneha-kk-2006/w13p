@@ -29,15 +29,26 @@ const loadCheckout = async (req, res) => {
       return res.redirect("/cart");
     }
 
-    cart.items = cart.items.filter(
-      (item) =>
-        item.productId &&
-        item.productId.isActive !== false &&
-        item.productId.isDeleted !== true &&
-        (!item.productId.category ||
-          (item.productId.category.isActive !== false &&
-            item.productId.category.isDeleted !== true))
-    );
+    const validItems = cart.items.filter(
+  (item) =>
+    item.productId &&
+    item.productId.isActive !== false &&
+    item.productId.isDeleted !== true &&
+    (!item.productId.category ||
+      (item.productId.category.isActive !== false &&
+        item.productId.category.isDeleted !== true))
+);
+
+if (validItems.length !== cart.items.length) {
+  cart.items = validItems;
+  await cart.save(); 
+}
+
+cart.items = validItems;
+
+if (cart.items.length === 0) {
+  return res.redirect("/cart");
+}
 
     let subtotal = 0;
     let discount = 0;
@@ -284,12 +295,12 @@ const placeOrder = async (req, res) => {
       const product = await Product.findById(item.productId._id || item.productId)
         .populate('category');
 
-      if (!product || product.isBlocked || product.isDeleted) {
-        return res.status(400).json({
-          success: false,
-          message: `Product is no longer available`
-        });
-      }
+      // if (!product || product.isBlocked || product.isDeleted) {
+      //   return res.status(400).json({
+      //     success: false,
+      //     message: `Product is no longer available`
+      //   });
+      // }
 
       let unitPrice = product.salePrice || product.price;
       let variantToUpdate = null;
@@ -321,7 +332,7 @@ const isCategoryInvalid = !product.category || product.category.isDeleted === tr
 const isProductInactive = product.isActive === false;
 
 if (isCategoryInvalid || isProductInactive) {
-  // Razorpay already paid ആണെങ്കിൽ — wallet refund ചെയ്യുക
+
   if (paymentMethod === 'Razorpay' && forcedPaymentStatus === 'Paid') {
     const refundAmount = req.session.pendingOrderAmount || 0;
     if (refundAmount > 0) {
@@ -399,7 +410,6 @@ if (isCategoryInvalid || isProductInactive) {
         couponDiscountAmount = coupon.discountValue;
       }
 
-      // ✅ Ensure coupon doesn't make final price zero or negative
       if (couponDiscountAmount >= finalTotalPrice) {
         delete req.session.appliedCoupon;
         return res.status(400).json({
@@ -416,7 +426,6 @@ if (isCategoryInvalid || isProductInactive) {
       });
     }
 
-    // ✅ FIX #5: Single orderId declared once at the top, used throughout
     const orderId = "ORD" + Math.floor(100000 + Math.random() * 900000);
 
     let paymentStatus;
@@ -443,7 +452,7 @@ if (isCategoryInvalid || isProductInactive) {
       message: "Payment verification failed"
     });
   }
-  paymentStatus = forcedPaymentStatus; // Already verified in verifyRazorpayPayment
+  paymentStatus = forcedPaymentStatus; 
 } else {
       paymentStatus = "Pending";
     }
@@ -548,15 +557,24 @@ const loadOrders = async (req, res) => {
   try {
     const userId = typeof req.session.user === 'object' ? req.session.user._id : req.session.user;
     const search = req.query.search || "";
+    const page = parseInt(req.query.page) || 1;
+    const limit=5;
+    const skip=(page-1)*limit;
+
 
     let query = { userId };
     if (search) {
       query.orderId = { $regex: search, $options: "i" };
     }
+    const totalOrders=await Order.countDocuments(query);
+     const totalPages = Math.ceil(totalOrders / limit);
+      const orders = await Order.find(query)
+             .skip((page - 1) * limit)
+             .limit(limit)
+             .sort({ createdAt: -1 });
+    
 
-    const orders = await Order.find(query).sort({ createdAt: -1 });
-
-    res.render("user/orders", { orders, search });
+    res.render("user/orders", { orders, search, currentPage: page,  totalPages,limit});
   } catch (error) {
     console.error("loadOrders error:", error);
     res.status(500).send("Server Error");
@@ -776,16 +794,17 @@ const createRazorpayOrder = async (req, res) => {
     for (const item of cart.items) {
       const product = await Product.findById(item.productId._id || item.productId)
         .populate('category');
-      if (!product || product.isBlocked || product.isDeleted) {
-        return res.status(400).json({
-          success: false,
-          message: `A product in your cart is no longer available`
-        });
-      }
-if (!product.category || product.category.isDeleted === true || product.isActive === false) {
+if (!product || product.isBlocked || product.isDeleted || !product.isActive) {
   return res.status(400).json({
     success: false,
-    message: `"${product.name}" is no longer available`
+    message: `A product in your cart is no longer available`
+  });
+}
+
+if (!product.category || product.category.isDeleted === true) {
+  return res.status(400).json({
+    success: false,
+    message: `"${product.name}" is no longer available (category removed)`
   });
 }
       let unitPrice = product.salePrice || product.price;

@@ -37,8 +37,8 @@ const loadOrders = async (req, res) => {
       .sort({ createdAt: sortOrder })
       .skip(skip)
       .limit(limit);
+
  
-  
 
     const totalOrders = await Order.countDocuments(query);
     const totalPages = Math.ceil(totalOrders / limit);

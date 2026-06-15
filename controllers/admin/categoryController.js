@@ -10,6 +10,11 @@ const loadp=async(req,res)=>{
        const skip=(page-1)*limit;
 
 
+
+ 
+
+
+
        const filter={
         isDeleted:false
        }
@@ -18,12 +23,13 @@ const loadp=async(req,res)=>{
         filter.name={$regex:search,$options:"i"};
 
        }
+      //  const resu=await category.find({isDeleted:true})
+      //  console.log("deleted ",resu)
 
        const total=await category.countDocuments(filter);
        const categories=await category.find(filter).sort({createdAt:-1}).skip(skip).limit(limit);
        const totalPage=Math.ceil(total/limit)
-     
-
+    
    res.render('admin/categoryManagement',{categories,search,currentPage:page,totalPage,total,limit})
     }catch(error){
 console.log(error)

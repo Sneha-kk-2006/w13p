@@ -205,6 +205,7 @@
         })); // Note: Changed to Promise.all below
 
         const total = subtotal - discount;
+    
         
         res.render('user/cart', {
             items: mappedItems,

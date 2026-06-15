@@ -13,7 +13,7 @@ const loadProduct = async (req, res) => {
 
         let filter = {
             isDeleted: false,
-          
+            
             name: { $regex: search, $options: 'i' }
         };
 
@@ -27,7 +27,6 @@ const loadProduct = async (req, res) => {
             .skip((currentPage - 1) * limit)
             .limit(limit)
             .sort({ createdAt: -1 });
-
 
 
        const productwithuser=await Promise.all(
@@ -154,7 +153,6 @@ const editProduct = async (req, res) => {
         if (isNaN(priceVal) || priceVal <= 0) {
             return res.status(400).json({ success: false, message: "Price must be a valid positive number" });
         }
-
         if (!name || name.trim() === "") {
             return res.status(400).json({ success: false, message: "Product name is required" });
         }
@@ -162,37 +160,52 @@ const editProduct = async (req, res) => {
         if (trimmedName.length < 3 || trimmedName.length > 100) {
             return res.status(400).json({ success: false, message: "Product name must be between 3 and 100 characters" });
         }
-        const nameRegex = /^(?![0-9]+$)[a-zA-Z0-9][a-zA-Z0-9\s'&()\-.\/,+%]*$/;
+        const nameRegex = /^(?![0-9]+$)[a-zA-Z0-9][a-zA-Z0-9\s'&()\-.\\/,+%]*$/;
         if (!nameRegex.test(trimmedName)) {
-            return res.status(400).json({ success: false, message: "Product name can only contain letters, numbers, spaces, and basic symbols (%, -, &, etc.) and must not be purely numeric" });
+            return res.status(400).json({ success: false, message: "Product name can only contain letters, numbers, spaces, and basic symbols" });
         }
-        const existing = await product.findOne({ 
-            name: { $regex: new RegExp(`^${trimmedName}$`, "i") }, 
+        const existing = await product.findOne({
+            name: { $regex: new RegExp(`^${trimmedName}$`, "i") },
             _id: { $ne: req.params.id },
-            isDeleted: false 
+            isDeleted: false
         });
         if (existing) {
             return res.status(400).json({ success: false, message: "Product name already exists" });
         }
 
-        let updateData = {
-            name: trimmedName,
-            description,
-            price,
-            stock: stockVal,
-            category,
-            size: size || "",
-            color: color || ""
-        };
+        
+        const prod = await product.findById(req.params.id);
+        if (!prod) return res.status(404).json({ success: false, message: 'Product not found' });
 
-        if (req.files && req.files.length > 0) {
-            updateData.images = req.files.map(file => '/uploads/products/' + file.filename);
+        if (prod.variants && prod.variants.length > 0) {
+            prod.variants[0].stock = stockVal;
+            prod.markModified('variants');
         }
 
-        await product.findByIdAndUpdate(req.params.id, updateData);
+        const totalStock = (prod.variants && prod.variants.length > 0)
+            ? prod.variants.reduce((sum, v) => sum + (v.stock || 0), 0)
+            : stockVal;
+
+        prod.name        = trimmedName;
+        prod.description = description;
+        prod.price       = priceVal;
+        prod.stock       = totalStock;
+        prod.category    = category;
+        prod.size        = size  || "";
+        prod.color       = color || "";
+
+        if (totalStock > 0) {
+            prod.isActive = true;
+        }
+
+        if (req.files && req.files.length > 0) {
+            prod.images = req.files.map(file => '/uploads/products/' + file.filename);
+        }
+
+        await prod.save();
         return res.json({ success: true, message: 'Product updated successfully' });
     } catch (error) {
-        console.log("error", error);
+        console.log("editProduct error:", error);
         res.status(500).json({ success: false, message: "Server error" });
     }
 }

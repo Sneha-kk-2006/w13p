@@ -50,6 +50,63 @@
         .zara-toast { background: #000 !important; color: #fff !important; border-radius: 0 !important; font-family: 'Inter', sans-serif !important; font-size: 0.65rem !important; text-transform: uppercase !important; letter-spacing: 2px !important; padding: 15px 40px !important; width: 100% !important; max-width: 600px !important; margin-top: 20px !important; box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; z-index: 99999 !important; }
         .swal2-container { z-index: 99999 !important; }
 
+        /* Stock badge & global fixed popover */
+        .stock-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            cursor: default;
+        }
+        .stock-badge .info-icon {
+            font-size: 0.6rem;
+            color: #aaa;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            width: 15px;
+            height: 15px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+            cursor: pointer;
+        }
+        /* Global floating popover — appended to body, never clipped */
+        #stockFloatPopover {
+            display: none;
+            position: fixed;
+            background: #fff;
+            border: 1px solid #000;
+            min-width: 230px;
+            z-index: 99999;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+            pointer-events: none;
+        }
+        #stockFloatPopover table { width: 100%; border-collapse: collapse; }
+        #stockFloatPopover th {
+            font-size: 0.52rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #fff;
+            background: #000;
+            padding: 7px 10px;
+            text-align: left;
+        }
+        #stockFloatPopover td {
+            font-size: 0.65rem;
+            padding: 6px 10px;
+            border-bottom: 0.5px solid #eee;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #333;
+        }
+        #stockFloatPopover tr:last-child td { border-bottom: none; }
+        #stockFloatPopover .pop-total-row td {
+            font-weight: 700;
+            background: #f8f8f8;
+            color: #000;
+            border-top: 1px solid #ddd;
+        }
+
         /* Modals */
         .modal-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.98); z-index: 2000; display: none; align-items: center; justify-content: center; }
         .modal-box { width: 90%; max-width: 700px; padding: 60px; max-height: 95vh; overflow-y: auto; background: #fff; position: relative; display: flex; flex-direction: column; }
@@ -115,7 +172,7 @@
                         <th>Category</th>
                         <th>users</th>
                         <th style="text-align: center;">Valuation</th>
-                        <th style="text-align: center;">Availability</th>
+                        <th style="text-align: center;">Stock / Variants</th>
                         <th style="text-align: center;">Active</th>
                         <th style="text-align: right;">Operations</th>
                     </tr>
@@ -151,13 +208,33 @@
                                
                                 <td style="text-align: center;">₹<%= p.price %></td>
                                 <td style="text-align: center;">
-                                    <% if(p.stock===0) { %>
-                                        <span style="color:#e74c3c; font-weight:700;">SOLD OUT</span>
-                                    <% } else if(p.stock <=5) { %>
-                                        <span style="color:#f39c12; font-weight:700;"><%= p.stock %> REMAINING</span>
-                                    <% } else { %>
-                                        <span style="color:#666;"><%= p.stock %> UNITS</span>
-                                    <% } %>
+                                    <%
+                                        // Compute total stock from variants (if any), else use base stock
+                                        let totalStock = 0;
+                                        const hasVariants = p.variants && p.variants.length > 0;
+                                        if (hasVariants) {
+                                            totalStock = p.variants.reduce((sum, v) => sum + (v.stock || 0), 0);
+                                        } else {
+                                            totalStock = p.stock || 0;
+                                        }
+                                    %>
+                                    <span class="stock-badge"
+                                        <% if(hasVariants) { %>
+                                        data-variants='<%- JSON.stringify(p.variants.map(function(v){ return {size:v.size,color:v.color,stock:v.stock}; })) %>'
+                                        data-total="<%= totalStock %>"
+                                        <% } %>
+                                    >
+                                        <% if(totalStock === 0) { %>
+                                            <span style="color:#e74c3c; font-weight:700;">SOLD OUT</span>
+                                        <% } else if(totalStock <= 5) { %>
+                                            <span style="color:#f39c12; font-weight:700;"><%= totalStock %> REMAINING</span>
+                                        <% } else { %>
+                                            <span style="color:#666;"><%= totalStock %> UNITS</span>
+                                        <% } %>
+                                        <% if(hasVariants) { %>
+                                            <span class="info-icon">i</span>
+                                        <% } %>
+                                    </span>
                                 </td>
                                 <td style="text-align: center;">
                                     <label class="switch" style="transform: scale(0.85);">
@@ -1337,6 +1414,89 @@
             }
 
 
+        </script>
+
+        <!-- ===================== GLOBAL STOCK FLOAT POPOVER ===================== -->
+        <div id="stockFloatPopover">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Size</th>
+                        <th style="text-align:right;">Stock</th>
+                    </tr>
+                </thead>
+                <tbody id="stockFloatBody"></tbody>
+            </table>
+        </div>
+
+        <script>
+            (function () {
+                const popover = document.getElementById('stockFloatPopover');
+                const popBody = document.getElementById('stockFloatBody');
+                let hideTimer = null;
+
+                function showPopover(badge, variants, total) {
+                    clearTimeout(hideTimer);
+
+                    // Group by size, summing stock across all colors
+                    const sizeMap = {};
+                    variants.forEach(function (v) {
+                        sizeMap[v.size] = (sizeMap[v.size] || 0) + v.stock;
+                    });
+
+                    // Build one row per size
+                    popBody.innerHTML = Object.keys(sizeMap).map(function (size) {
+                        const s = sizeMap[size];
+                        const stockColor  = s === 0 ? '#e74c3c' : (s <= 5 ? '#f39c12' : '#333');
+                        const stockWeight = s <= 5 ? '700' : '400';
+                        return `<tr>
+                            <td>${size}</td>
+                            <td style="text-align:right; color:${stockColor}; font-weight:${stockWeight};">${s}</td>
+                        </tr>`;
+                    }).join('') +
+                    `<tr class="pop-total-row">
+                        <td>Total</td>
+                        <td style="text-align:right;">${total}</td>
+                    </tr>`;
+
+                    // Position: just above the badge, centred
+                    const rect = badge.getBoundingClientRect();
+                    popover.style.display = 'block';
+
+                    const popW = popover.offsetWidth;
+                    const popH = popover.offsetHeight;
+                    const gap = 8;
+
+                    let left = rect.left + rect.width / 2 - popW / 2;
+                    let top  = rect.top - popH - gap;
+
+                    // If it would go off-screen at top, show below instead
+                    if (top < 8) {
+                        top = rect.bottom + gap;
+                    }
+                    // Clamp horizontally within viewport
+                    if (left < 8) left = 8;
+                    if (left + popW > window.innerWidth - 8) left = window.innerWidth - popW - 8;
+
+                    popover.style.left = left + 'px';
+                    popover.style.top  = top  + 'px';
+                }
+
+                function hidePopover() {
+                    hideTimer = setTimeout(function () {
+                        popover.style.display = 'none';
+                    }, 80);
+                }
+
+                // Attach hover events to every stock-badge that has variant data
+                document.querySelectorAll('.stock-badge[data-variants]').forEach(function (badge) {
+                    const variants = JSON.parse(badge.getAttribute('data-variants'));
+                    const total    = parseInt(badge.getAttribute('data-total'), 10);
+
+                    badge.addEventListener('mouseenter', function () { showPopover(badge, variants, total); });
+                    badge.addEventListener('mouseleave', hidePopover);
+                });
+            })();
         </script>
 </body>
 
