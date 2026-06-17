@@ -286,6 +286,7 @@ const placeOrder = async (req, res) => {
       });
     }
 
+    let offerDiscountTotal = 0; 
     let totalPrice = 0;
     const orderItems = [];
     const productsToUpdate = [];
@@ -361,10 +362,13 @@ if (isCategoryInvalid || isProductInactive) {
       const salePrice = Math.round(unitPrice * (1 - discountPct / 100));
 
       totalPrice += salePrice * item.quantity;
+offerDiscountTotal += Math.round(unitPrice * (discountPct / 100)) * item.quantity; 
+
       orderItems.push({
         product: product._id,
         variantId: item.variantId || null,
         quantity: item.quantity,
+
         price: salePrice,
         status: "Pending"
       });
@@ -474,6 +478,7 @@ if (isCategoryInvalid || isProductInactive) {
       orderItems,
       totalPrice: finalTotalPrice,
       discount: couponDiscountAmount,
+      offerDiscount: offerDiscountTotal,
       shippingAddress: {
         fullName: address.fullName,
         addressline1: address.addressline1,

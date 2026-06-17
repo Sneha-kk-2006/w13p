@@ -468,6 +468,12 @@
                         <span style="color: #cc0000;">- ₹<%= cancellationReduction.toLocaleString() %></span>
                     </div>
                 <% } %>
+                <% if (order.offerDiscount > 0) { %>
+    <div class="summary-row">
+      <span>Offer Discount</span>
+      <span style="color: #28a745;">- ₹<%= order.offerDiscount.toLocaleString() %></span>
+    </div>
+  <% } %>
                 <div class="summary-row">
                     <span>Discount</span>
                     <span style="color: #28a745;">- ₹<%= (order.discount || 0).toLocaleString() %></span>

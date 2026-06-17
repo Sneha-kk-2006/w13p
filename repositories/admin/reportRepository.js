@@ -35,7 +35,7 @@ const getSalesData = async (filter) => {
   ]);
 };
 
-const getSalesReport = async (filter, startDate, endDate) => {
+const getSalesReport = async (filter, startDate, endDate, page , limit ) => {
   let matchStage = { orderStatus: 'Delivered' };
 
   if (startDate && endDate) {
@@ -64,20 +64,62 @@ const getSalesReport = async (filter, startDate, endDate) => {
       matchStage.createdAt = { $gte: lastMonth };
     }
   }
+   const skip = (page - 1) * limit;
 
-  return await Order.aggregate([
-    { $match: matchStage },
-    {
-      $group: {
-        _id: null,
-        totalSales: { $sum: 1 },
-        totalAmount: { $sum: '$totalPrice' },
-        totalDiscount: { $sum: '$discount' },
-        orders: { $push: '$$ROOT' }
+  // Run summary + paginated orders in parallel
+  const [summary, orders, totalCount] = await Promise.all([
+
+    // Summary — always from ALL matched orders (not paginated)
+    Order.aggregate([
+      { $match: matchStage },
+      {
+        $group: {
+          _id: null,
+          totalSales: { $sum: 1 },
+          totalAmount: { $sum: '$totalPrice' },
+          totalDiscount: { $sum: '$discount' },
+        }
       }
+    ]),
+
+    // Paginated orders list
+    Order.find(matchStage)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+       .populate('userId', 'name')
+      .lean(),
+
+    // Total count for pagination
+    Order.countDocuments(matchStage)
+  ]);;
+
+
+
+  return {
+    summary: summary[0] || { totalSales: 0, totalAmount: 0, totalDiscount: 0 },
+    orders,
+    pagination: {
+      currentPage: page,
+      totalPages: Math.ceil(totalCount / limit),
+      totalItems: totalCount,
+      limit
     }
-  ]);
-};
+    };
+}
+  // return await Order.aggregate([
+  //   { $match: matchStage },
+  //   {
+  //     $group: {
+  //       _id: null,
+  //       totalSales: { $sum: 1 },
+  //       totalAmount: { $sum: '$totalPrice' },
+  //       totalDiscount: { $sum: '$discount' },
+  //       orders: { $push: '$$ROOT' }
+  //     }
+  //   }
+  // ]);
+// };
 
 const getTopProducts = async () => {
   return await Order.aggregate([

@@ -29,26 +29,26 @@ const getDashboardData = async (filter = 'monthly') => {
   };
 };
 
-const getSalesReportData = async (filter, startDate, endDate) => {
-  const data = await repo.getSalesReport(filter, startDate, endDate);
-  return data[0] || { totalSales: 0, totalAmount: 0, totalDiscount: 0, orders: [] };
+const getSalesReportData = async (filter, startDate, endDate, page, limit) => {
+  const data = await repo.getSalesReport(filter, startDate, endDate, page, limit);
+  return data;
 };
 
 
 
-
 const generateExcel = async (res, filter, startDate, endDate) => {
-  const data = await getSalesReportData(filter, startDate, endDate);
+  const data = await getSalesReportData(filter, startDate, endDate, 1, 10000); // bug 1: missing page & limit
 
-  const workbook  = new ExcelJS.Workbook();
+  const workbook = new ExcelJS.Workbook();
   const sheet = workbook.addWorksheet('Sales Report');
 
-  sheet.addRow(['Order ID', 'Date', 'Customer ID', 'Amount', 'Discount', 'Payment']);
+  sheet.addRow(['Order ID', 'Date', 'Customer', 'Amount', 'Discount', 'Payment']);
+
   data.orders.forEach(order => {
     sheet.addRow([
       order.orderId,
       new Date(order.createdAt).toLocaleDateString(),
-      order.userId.toString(),
+      order.userId?.name || 'N/A',        // bug 2: was order.userId.toString() — crashes after populate
       order.totalPrice,
       order.discount || 0,
       order.paymentMethod
@@ -56,9 +56,9 @@ const generateExcel = async (res, filter, startDate, endDate) => {
   });
 
   sheet.addRow([]);
-  sheet.addRow(['Total Sales', data.totalSales]);
-  sheet.addRow(['Total Amount', data.totalAmount]);
-  sheet.addRow(['Total Discount', data.totalDiscount]);
+  sheet.addRow(['Total Sales',    data.summary.totalSales]);    // bug 3: was data.totalSales — wrong, it's data.summary.totalSales
+  sheet.addRow(['Total Amount',   data.summary.totalAmount]);
+  sheet.addRow(['Total Discount', data.summary.totalDiscount]);
 
   res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   res.setHeader('Content-Disposition', 'attachment; filename=sales_report.xlsx');

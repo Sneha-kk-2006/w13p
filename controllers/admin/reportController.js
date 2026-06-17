@@ -19,9 +19,20 @@ const getSalesReport = async (req, res) => {
     const filter = req.query.filter || 'monthly';
     const startDate = req.query.startDate || '';
     const endDate = req.query.endDate || '';
+      const page  = parseInt(req.query.page)  || 1;
+    const limit = parseInt(req.query.limit) || 5;
+
     
-    const data = await reportService.getSalesReportData(filter, startDate, endDate);
-    res.render('admin/salesreport', { ...data, filter, startDate, endDate });
+    const data = await reportService.getSalesReportData(filter, startDate, endDate,page,limit);
+console.log('Data in controller:', data);
+
+    res.render('admin/salesreport', {
+        totalSales:    data.summary.totalSales,
+      totalAmount:   data.summary.totalAmount,
+      totalDiscount: data.summary.totalDiscount,
+      orders:        data.orders,
+      pagination:    data.pagination,
+       filter, startDate, endDate });
   } catch (err) {
     console.error('Sales report error:', err);
     res.status(500).send('Server error');

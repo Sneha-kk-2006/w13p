@@ -148,7 +148,7 @@
     <main class="admin-main">
         <header class="page-header" style="border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom:30px;">
             <h1 class="page-title" style="margin:0;">Snova Inventory</h1>
-            <button class="btn-minimal" onclick="openModal('addProductModal')">+ Create New Article</button>
+            <button class="btn-minimal" onclick="openModal('addProductModal')">+ Create New Product</button>
         </header>
 
         <div style="margin-bottom: 40px;">
@@ -442,19 +442,11 @@
                 </div>
 
                 <!-- NEW: Manage Variants section inside Edit Product -->
-                <div class="form-group" style="margin-top:20px; border-top:1px solid #eee; padding-top:15px;">
-                    <label style="display:flex; justify-content:space-between; align-items:center;">
-                        Variants
-                        <button class="btn-minimal" style="padding:5px 10px; font-size:12px;" onclick="openAddVariantModal(document.getElementById('editProductId').value)">+ Add Variant</button>
-                    </label>
-                    <div id="editVariantsList" style="margin-top:10px;">
-                        <!-- Variants will be listed here -->
-                    </div>
-                </div>
+               
 
                 <div class="modal-footer">
                     <button class="btn-minimal" style="border:none; color:#999;" onclick="closeModal('editProductModal')">Cancel</button>
-                    <button class="btn-minimal" onclick="submitEditProduct()">Update Inventory</button>
+                    <button class="btn-minimal" onclick="submitEditProduct()">Update</button>
                 </div>
             </div>
         </div>
@@ -466,8 +458,8 @@
                 <h2>Archive Article?</h2>
                 <p style="color:#999; font-size:0.75rem; text-transform:uppercase; letter-spacing:1px; margin-bottom:40px;">This action will remove the article from active inventory and customer views.</p>
                 <div style="display:flex; flex-direction:column; gap:15px;">
-                    <button id="confirmDeleteBtn" class="btn-minimal" style="background:#000; color:#fff;">Confirm Archive</button>
-                    <button class="btn-minimal" style="border:none; color:#999;" onclick="closeModal('deleteModal')">Keep Article</button>
+                    <button id="confirmDeleteBtn" class="btn-minimal" style="background:#000; color:#fff;">Confirm delete</button>
+                    <button class="btn-minimal" style="border:none; color:#999;" onclick="closeModal('deleteModal')">Keep </button>
                 </div>
             </div>
         </div>
@@ -1102,31 +1094,31 @@
                     cur.appendChild(wrap);
                 });
 
-                // Show Variants
-                const vList = document.getElementById('editVariantsList');
-                vList.innerHTML = '';
-                if (p.variants && p.variants.length > 0) {
-                    p.variants.forEach((v, vIdx) => {
-                        const div = document.createElement('div');
-                        div.style = 'display:flex; justify-content:space-between; align-items:center; background:#f5f5f5; padding:8px 12px; border-radius:6px; margin-bottom:5px; font-size:13px;';
+                // // Show Variants
+                // const vList = document.getElementById('editVariantsList');
+                // vList.innerHTML = '';
+                // if (p.variants && p.variants.length > 0) {
+                //     p.variants.forEach((v, vIdx) => {
+                //         const div = document.createElement('div');
+                //         div.style = 'display:flex; justify-content:space-between; align-items:center; background:#f5f5f5; padding:8px 12px; border-radius:6px; margin-bottom:5px; font-size:13px;';
                         
-                        // Using data attributes to safely store index and avoid quote issues in onclick
-                        div.innerHTML = `
-                            <span><strong>${v.size}</strong> - ${v.color} (Stock: ${v.stock})</span>
-                            <div style="display:flex; gap:8px;">
-                                <button type="button" class="btn-orange" style="padding:4px 10px; font-size:11px;" 
-                                    onclick='openEditVariantByIndex("${p._id}", ${vIdx})'>Edit</button>
-                                <button type="button" style="background:#e74c3c; color:white; border:none; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:11px;" 
-                                    onclick='confirmDeleteVariant("${p._id}", "${v._id}")'>Delete</button>
-                            </div>
-                        `;
-                        vList.appendChild(div);
-                    });
-                } else {
-                    vList.innerHTML = '<p style="color:#888; font-size:12px;">No variants added yet.</p>';
-                }
+                //         // Using data attributes to safely store index and avoid quote issues in onclick
+                //         div.innerHTML = `
+                //             <span><strong>${v.size}</strong> - ${v.color} (Stock: ${v.stock})</span>
+                //             <div style="display:flex; gap:8px;">
+                //                 <button type="button" class="btn-orange" style="padding:4px 10px; font-size:11px;" 
+                //                     onclick='openEditVariantByIndex("${p._id}", ${vIdx})'>Edit</button>
+                //                 <button type="button" style="background:#e74c3c; color:white; border:none; padding:4px 10px; border-radius:4px; cursor:pointer; font-size:11px;" 
+                //                     onclick='confirmDeleteVariant("${p._id}", "${v._id}")'>Delete</button>
+                //             </div>
+                //         `;
+                //         vList.appendChild(div);
+                //     });
+                // } else {
+                //     vList.innerHTML = '<p style="color:#888; font-size:12px;">No variants added yet.</p>';
+                // }
 
-                // Store current variants for the modal to reference by index
+                // // Store current variants for the modal to reference by index
                 window.currentEditVariants = p.variants || [];
                 openModal('editProductModal');
             }

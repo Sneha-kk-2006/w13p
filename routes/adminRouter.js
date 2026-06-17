@@ -47,7 +47,7 @@ router.patch('/category/toggle/:id', categoryController.toggleCategoryStatus)
 
 
 router.get('/product', productController.loadProduct)
-// router.post('/addProduct',productController.addProduct)
+
 router.post(
   "/addProduct",
   uploads.array("images", 10),
@@ -89,7 +89,7 @@ router.get('/offers', adminAuth, offerController.loadoffers);
 router.post('/offers/add', adminAuth, offerController.addOffer);
 router.patch('/offers/toggle/:id', adminAuth, offerController.toggleOfferStatus);
 router.delete('/offers/delete/:id', adminAuth, offerController.deleteOffer);
-
+router.put('/offers/edit/:id',adminAuth,offerController.editOffer);
 
 
 

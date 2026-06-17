@@ -1,7 +1,7 @@
 const Offer = require('../../models/offerSchema');
 const Product = require('../../models/productSchema');
 const Category = require('../../models/categorySchema');
-
+const offerService=require('../../services/admin/offerService')
 const loadoffers = async (req, res) => {
     try {
         const offers = await Offer.find()
@@ -62,6 +62,19 @@ const addOffer = async (req, res) => {
 };
 
 
+const editOffer = async (req, res) => {
+  try {
+    await offerService.editOffer(req.params.id, req.body);
+    res.json({ success: true, message: "Offer updated successfully" });
+  } catch (error) {
+    console.error("error editing offer:", error);
+    res.status(error.status || 500).json({
+      success: false,
+      message: error.message || "Error updating offer"
+    });
+  }
+};
+
 
 const toggleOfferStatus = async (req, res) => {
     try {
@@ -87,4 +100,4 @@ const deleteOffer = async (req, res) => {
     }
 };
 
-module.exports = { loadoffers, addOffer, toggleOfferStatus, deleteOffer };
+module.exports = { loadoffers, addOffer, toggleOfferStatus, deleteOffer ,editOffer};

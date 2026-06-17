@@ -48,6 +48,10 @@ const orderSchema = new Schema(
       type: Number,
       default: 0,
     },
+    offerDiscount: {
+  type: Number,
+  default: 0,
+},
     gst: {
       type: Number,
       default: 0,

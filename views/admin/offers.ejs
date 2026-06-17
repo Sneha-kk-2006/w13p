@@ -105,9 +105,11 @@
                                     <%= offer.isActive ? 'Active' : 'Inactive' %>
                                 </span>
                             </td>
-                            <td style="text-align: right;">
-                                <button class="action-icon" style="color: #e74c3c" onclick="confirmDelete('<%= offer._id %>')">Delete</button>
-                            </td>
+                         
+                          <td style="text-align: right;">
+  <button class="action-icon" onclick="openEditModal('<%= offer._id %>', '<%= offer.name %>', '<%= offer.offerType %>', '<%= offer.offerType === "product" ? (offer.product?._id || "") : (offer.category?._id || "") %>', '<%= offer.discount %>', '<%= offer.startDate.toISOString().split("T")[0] %>', '<%= offer.endDate.toISOString().split("T")[0] %>')">Edit</button>
+  <button class="action-icon" style="color: #e74c3c" onclick="confirmDelete('<%= offer._id %>')">Delete</button>
+</td>
                         </tr>
                     <% }) %>
                 <% } else { %>
@@ -166,6 +168,55 @@
             </form>
         </div>
     </div>
+    <!-- Edit Offer Modal -->
+<div class="modal-overlay" id="editOfferModal">
+  <div class="modal-box">
+    <h3>Edit Offer</h3>
+    <form id="editOfferForm" class="modal-form">
+      <input type="hidden" id="editOfferId">
+
+      <div class="form-group">
+        <label class="form-label">Offer Name</label>
+        <input type="text" id="editOfferName" placeholder="E.G. SUMMER SALE" required>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Offer Type</label>
+        <select id="editOfferType" required onchange="handleEditTypeChange()">
+          <option value="">SELECT TYPE</option>
+          <option value="product">PRODUCT</option>
+          <option value="category">CATEGORY</option>
+        </select>
+      </div>
+
+      <div class="form-group" id="editTargetContainer" style="display: none;">
+        <label class="form-label">Target Item</label>
+        <select id="editReferenceId" required>
+          <option value="">SELECT ITEM</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Discount (%)</label>
+        <input type="number" id="editOfferDiscount" placeholder="10" min="1" max="100" required>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div class="form-group">
+          <label class="form-label">Start Date</label>
+          <input type="date" id="editStartDate" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">End Date</label>
+          <input type="date" id="editEndDate" required>
+        </div>
+      </div>
+
+      <button type="submit" class="btn-minimal" style="margin-top: 20px; width: 100%;">Update Offer</button>
+      <button type="button" class="btn-minimal" style="width:100%; border:none; color:#999; margin-top:10px;" onclick="closeModal('editOfferModal')">Cancel</button>
+    </form>
+  </div>
+</div>
 
     <script>
         const products = <%- JSON.stringify(typeof products !== 'undefined' ? products : []) %>;
@@ -247,6 +298,83 @@
                 }
             });
         }
+
+
+        function openEditModal(id, name, type, refId, discount, startDate, endDate) {
+  document.getElementById('editOfferId').value = id;
+  document.getElementById('editOfferName').value = name;
+  document.getElementById('editOfferDiscount').value = discount;
+  document.getElementById('editStartDate').value = startDate;
+  document.getElementById('editEndDate').value = endDate;
+
+  
+  document.getElementById('editOfferType').value = type;
+  handleEditTypeChange(refId);
+
+  openModal('editOfferModal');
+}
+
+function handleEditTypeChange(preselectedId = null) {
+  const type = document.getElementById('editOfferType').value;
+  const container = document.getElementById('editTargetContainer');
+  const select = document.getElementById('editReferenceId');
+
+  select.innerHTML = '<option value="">SELECT ITEM</option>';
+
+  if (type === 'product') {
+    products.forEach(p => {
+      select.innerHTML += `<option value="${p._id}" ${preselectedId === p._id.toString() ? 'selected' : ''}>${p.name}</option>`;
+    });
+    container.style.display = 'block';
+    select.required = true;
+  } else if (type === 'category') {
+    categories.forEach(c => {
+      select.innerHTML += `<option value="${c._id}" ${preselectedId === c._id.toString() ? 'selected' : ''}>${c.name}</option>`;
+    });
+    container.style.display = 'block';
+    select.required = true;
+  } else {
+    container.style.display = 'none';
+    select.required = false;
+  }
+}
+
+document.getElementById('editOfferForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const id = document.getElementById('editOfferId').value;
+  const name = document.getElementById('editOfferName').value.trim();
+  const offerType = document.getElementById('editOfferType').value;
+  const referenceId = document.getElementById('editReferenceId').value;
+  const discount = document.getElementById('editOfferDiscount').value;
+  const startDate = document.getElementById('editStartDate').value;
+  const endDate = document.getElementById('editEndDate').value;
+
+  // Client-side validation
+  if (!name || name.length < 3) return showToast('Name must be at least 3 characters', 'error');
+  if (!offerType) return showToast('Please select an offer type', 'error');
+  if (!referenceId) return showToast('Please select a target item', 'error');
+  if (!discount || discount < 1 || discount > 100) return showToast('Discount must be between 1 and 100', 'error');
+  if (!startDate || !endDate) return showToast('Please select both dates', 'error');
+  if (new Date(endDate) <= new Date(startDate)) return showToast('End date must be after start date', 'error');
+
+  try {
+    const res = await fetch(`/admin/offers/edit/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, offerType, referenceId, discount, startDate, endDate })
+    });
+    const data = await res.json();
+    if (data.success) {
+      showToast('Offer updated');
+      setTimeout(() => location.reload(), 1000);
+    } else {
+      showToast(data.message || 'Error', 'error');
+    }
+  } catch (err) {
+    showToast('Server error', 'error');
+  }
+});
     </script>
 </body>
 </html>

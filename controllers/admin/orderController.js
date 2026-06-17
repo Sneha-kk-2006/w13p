@@ -98,7 +98,7 @@ const updateOrderStatus = async (req, res) => {
       }
       
       // Refund for full order return or cancellation
-      if (order.paymentStatus === "Paid" && order.totalPrice > 0) {
+      if ((order.paymentStatus === "Paid" || order.paymentMethod === "COD")&& order.totalPrice > 0) {
         if (isCancelling) {
           await walletService.refundForCancellation(
             order.userId,
@@ -196,7 +196,7 @@ const updateItemStatus = async (req, res) => {
 
         order.totalPrice = Math.max(0, order.totalPrice - refundAmount);
 
-        if (order.paymentStatus === "Paid" && refundAmount > 0) {
+        if ((order.paymentStatus === "Paid" || order.paymentMethod === "COD")&& refundAmount > 0) {
           await walletService.refundForCancellation(
             order.userId,
             refundAmount,
@@ -207,7 +207,7 @@ const updateItemStatus = async (req, res) => {
       }
 
 
-      if (isNewReturn && order.paymentStatus === "Paid") {
+      if (isNewReturn && (order.paymentStatus === "Paid"|| order.paymentMethod === "COD")) {
         const itemTotalPrice = item.price * item.quantity;
         const orderSubtotal = order.orderItems.reduce((sum, i) => sum + i.price * i.quantity, 0);
         const discount = order.discount || 0;
