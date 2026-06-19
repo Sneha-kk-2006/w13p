@@ -130,7 +130,6 @@ const loadProductDetails = async (req, res) => {
       }).populate('category').limit(8);
     }
 
-    const firstAttemptCount = relatedProducts.length;
 
     if (relatedProducts.length < 4) {
       const extra = await Product.find({

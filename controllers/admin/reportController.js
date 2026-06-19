@@ -46,7 +46,7 @@ const getChartData = async (req, res) => {
     const salesData = await reportRepo.getSalesData(filter);
     res.json({ success: true, salesData });
   } catch (err) {
-    res.status(500).json({ success: false });
+    res.status(500).json({ success: false,err });
   }
 };
 

@@ -1,5 +1,5 @@
 const User = require("../models/userSchema");
-const mongoose = require("mongoose");
+
 
 const userAuth = async (req, res, next) => {
   if (req.session.user) {

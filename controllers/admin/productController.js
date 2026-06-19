@@ -1,6 +1,5 @@
 const product = require('../../models/productSchema');
 const category = require('../../models/categorySchema')
-const user=require('../../models/userSchema');
 const Order = require('../../models/orderSchema');
 
 
@@ -75,10 +74,9 @@ const loadProduct = async (req, res) => {
 const addProduct = async (req, res) => {
     try {
 
-        const { name, description, image, price, stock, category, size, color } = req.body;
-        
-
-        const images = req.files?.map(file => '/uploads/products/' + file.filename) || [];
+        const { name, description, price, stock, category, size, color } = req.body;
+         const images = req.files?.map(file => '/uploads/products/' + file.filename) || [];
+       
         const stockVal = parseInt(stock);
         const priceVal = parseFloat(price);
         if (isNaN(priceVal) || priceVal <= 0) {
@@ -94,7 +92,7 @@ const addProduct = async (req, res) => {
         if (trimmedName.length < 3 || trimmedName.length > 100) {
             return res.status(400).json({ success: false, message: "Product name must be between 3 and 100 characters" });
         }
-        const nameRegex = /^(?![0-9]+$)[a-zA-Z0-9][a-zA-Z0-9\s'&()\-.\/,+%]*$/;
+        const nameRegex = /^(?![0-9]+$)[a-zA-Z0-9][a-zA-Z0-9\s'&()\-./,+%]*$/;
         if (!nameRegex.test(trimmedName)) {
             return res.status(400).json({ success: false, message: "Product name can only contain letters, numbers, spaces, and basic symbols (%, -, &, etc.) and must not be purely numeric" });
         }
@@ -420,7 +418,7 @@ const setPrimaryImage = async (req, res) => {
         }
         res.status(400).json({ success: false, message: 'Image not found in product' });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
+        res.status(500).json({ success: false, message: 'Server error',error });
     }
 }
 

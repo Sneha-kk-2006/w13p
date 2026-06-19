@@ -1,5 +1,4 @@
 const Wishlist = require('../../models/wishlistSchema');
-const Product = require('../../models/productSchema');
 const { attachOffers } = require('./productController');
 
 

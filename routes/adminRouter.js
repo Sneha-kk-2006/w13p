@@ -5,7 +5,7 @@ const categoryController = require('../controllers/admin/categoryController')
 const productController = require('../controllers/admin/productController')
 const orderController = require('../controllers/admin/orderController');
 const couponController = require('../controllers/admin/couponController');
-const { userAuth, adminAuth } = require("../middlewares/auth");
+const {adminAuth}=require('../middlewares/auth')
 const uploads = require('../config/multer')
 const offerController = require('../controllers/admin/offerController');
 

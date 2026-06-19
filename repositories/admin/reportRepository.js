@@ -1,10 +1,10 @@
 const Order = require('../../models/orderSchema');
-const Product = require('../../models/productSchema');
-const Category = require('../../models/categorySchema');
+
+
 
 const getSalesData = async (filter) => {
-  let matchStage = {};
-  let groupBy = {};
+  let matchStage;
+  let groupBy;
 
   const now = new Date();
   if (filter === 'weekly') {
@@ -44,7 +44,7 @@ const getSalesReport = async (filter, startDate, endDate, page , limit ) => {
       $lte: new Date(endDate)
     };
   } else {
-    const now = new Date();
+    // const now = new Date();
     if (filter === 'daily') {
       const startOfDay = new Date();
       startOfDay.setHours(0, 0, 0, 0);

@@ -4,6 +4,7 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+     "lint": "eslint .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -34,5 +35,10 @@
     "pdfkit-table": "^0.1.99",
     "razorpay": "^2.9.6",
     "uuid": "^14.0.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.5.0",
+    "globals": "^17.6.0"
   }
 }

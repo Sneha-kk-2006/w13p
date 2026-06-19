@@ -1,7 +1,7 @@
 const Address = require('../../models/addressSchema');
 const User=require('../../models/userSchema')
 const addressService=require('../../services/user/addressService')
-const addressRepository = require("../../repositories/user");
+
 // load address page
 const loadAddress = async (req, res) => {
   try {

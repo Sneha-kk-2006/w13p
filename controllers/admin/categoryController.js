@@ -142,7 +142,7 @@ const deleteCategory=async(req,res)=>{
     res.json({success:true,message:"category deleted"});
 
     }catch(error){
-       res.json({message:"error deleting category"}) 
+       res.json({message:"error deleting category",error}) 
     }
 }
 

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+
 const Cart = require("../../models/cartSchema");
 const Address = require("../../models/addressSchema");
 const Product = require("../../models/productSchema");
@@ -169,9 +169,9 @@ const placeOrder = async (req, res) => {
       addressId,
       paymentMethod,
       paymentStatus: forcedPaymentStatus,
-      razorpayPaymentId,
-      razorpayOrderId,
-      razorpaySignature
+    
+      // razorpayOrderId,
+  
     } = req.body;
 
     console.log("Place Order Request:", { userId, addressId, paymentMethod });
@@ -564,7 +564,7 @@ const loadOrders = async (req, res) => {
     const search = req.query.search || "";
     const page = parseInt(req.query.page) || 1;
     const limit=5;
-    const skip=(page-1)*limit;
+  
 
 
     let query = { userId };
@@ -789,7 +789,7 @@ const downloadInvoice = async (req, res) => {
 const createRazorpayOrder = async (req, res) => {
   try {
     const userId = typeof req.session.user === 'object' ? req.session.user._id : req.session.user;
-    const { addressId } = req.body;
+    // const { addressId } = req.body;
     const cart = await Cart.findOne({ userId }).populate("items.productId");
     if (!cart || cart.items.length === 0) {
       return res.status(400).json({ success: false, message: "Cart is empty" });
@@ -911,7 +911,7 @@ if (!product.category || product.category.isDeleted === true) {
 
 const verifyRazorpayPayment = async (req, res) => {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, addressId } = req.body;
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature} = req.body;
 
     console.log(req.body)
     const razorpayOrder = await razorpay.orders.fetch(razorpay_order_id);
@@ -1057,7 +1057,7 @@ const removeCoupon = async (req, res) => {
     delete req.session.appliedCoupon;
     res.json({ success: true, message: "Coupon removed" });
   } catch (error) {
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: "Server error" ,error});
   }
 };
 const retryRazorpayPayment = async (req, res) => {

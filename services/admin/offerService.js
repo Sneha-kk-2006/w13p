@@ -1,5 +1,5 @@
 const Offer=require('../../models/offerSchema')
-const Product=require('../../models/productSchema')
+// const Product=require('../../models/productSchema')
 const offerRepo=require('../../repositories/admin/offerRepo')
 
 
@@ -21,9 +21,9 @@ const getBestOffer=async(productId,categoryId)=>{
 };
 
 
-const calulateDiscountPrice=(original,offer)=>{
+const calulateDiscountPrice=(originalPrice,offer)=>{
     if(!offer) return originalPrice;
-    let discount=0;
+    let discount;
 
     if(offer.discountType==='percentage'){
         discount=(originalPrice*offer.discountValue)/100;
@@ -62,7 +62,7 @@ const editOffer = async (id, body) => {
         const today = new Date();
         today.setHours(0,0,0,0);
         
-        if (isNaN(start.getTime()) || isNaN(end.getTime())) return res.status(400).json({ success: false, message: "Invalid dates provided" });
+        if (isNaN(start.getTime()) || isNaN(end.getTime())) throw { status: 400, message: "Invalid dates provided" };
         if (start < today) throw{ status:400,success: false, message: "Start date cannot be in the past" };
         if (end <= start) throw{ status:400,success: false, message: "End date must be after start date" };
 

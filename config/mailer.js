@@ -1,1 +1,1 @@
-const nodemailer=require('nodemailer')
+// Unused mailer configuration

@@ -1,3 +1,4 @@
+/* global Toastify */
 
 export function showToast(msg, type = "success") {
   const colors = {
