@@ -176,6 +176,8 @@ const getTopCategories = async () => {
       }
     },
     { $unwind: '$categoryInfo' },
+    // Exclude deleted categories
+    { $match: { 'categoryInfo.isDeleted': false } },
     {
       $group: {
         _id: '$categoryInfo.name',
