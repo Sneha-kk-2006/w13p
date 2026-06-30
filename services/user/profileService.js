@@ -25,6 +25,10 @@ const changeUserPassword = async (userId, currentPassword, newPassword, confirmP
     return { success: false, message: ERRORS.USER_NOT_FOUND };
   }
 
+  if (!user.password) {
+    return { success: false, message: "You don't have a password set. You might have signed up with Google." };
+  }
+
   const isMatch = await bcrypt.compare(currentPassword, user.password);
   if (!isMatch) {
     return { success: false, message: ERRORS.CURRENT_PASSWORD_INCORRECT };

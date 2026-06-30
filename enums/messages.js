@@ -15,6 +15,8 @@ const ERRORS = {
   OTP_RESENT: "OTP resent successfully"
 };
 
+
+
 const SUCCESS = {
   OTP_SENT: "OTP sent successfully",
   LOGIN_SUCCESS: "Login successful",

@@ -169,7 +169,14 @@
                                         <%= order.orderStatus %>
                                     </span>
                                 </td>
-                                <td style="font-weight: 600;">₹<%= order.totalPrice %></td>
+                                <%
+                                    let displayTotal = order.totalPrice;
+                                    if (displayTotal === 0 && order.orderStatus === 'Cancelled') {
+                                        let subtotal = order.orderItems.reduce((acc, item) => acc + ((item.price || 0) * (item.quantity || 1)), 0);
+                                        displayTotal = Math.max(0, subtotal + (order.gst || 0) - (order.discount || 0) - (order.offerDiscount || 0));
+                                    }
+                                %>
+                                <td style="font-weight: 600;">₹<%= displayTotal.toLocaleString() %></td>
                                 <td style="text-align: right; display: flex; align-items: center; justify-content: flex-end; gap: 15px;">
                                     <% if (order.paymentMethod === 'Razorpay' && (order.paymentStatus === 'Failed' || order.paymentStatus === 'Pending') && order.orderStatus !== 'Cancelled') { %>
                                         <button onclick="retryPayment('<%= order._id %>')" class="btn-clear" style="color: #000; border-color: #000; padding: 4px 10px;">Retry Payment</button>

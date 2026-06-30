@@ -50,7 +50,7 @@ const attachOffers = async (products) => {
 const getProducts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = 8;
+    const limit = 4;
     const skip = (page - 1) * limit;
 
     const activeCategories = await Category.find({ isDeleted: false, status: 'Active' }).select('_id');
@@ -62,14 +62,11 @@ const getProducts = async (req, res) => {
       category: { $in: activeCategoryIds }
     };
 
-    const totalProducts = await Product.countDocuments(filter);
-    const totalPages = Math.ceil(totalProducts / limit);
+    const sortParam = req.query.sort || 'newest';
 
     const rawProducts = await Product.find(filter)
       .populate('category')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+      .sort({ createdAt: -1 });
 
     let wishlistProductIds = [];
     const userId = req.session.user?._id;
@@ -80,15 +77,18 @@ const getProducts = async (req, res) => {
       }
     }
 
+    let products = await attachOffers(rawProducts);
 
+    if (sortParam === 'price_asc') {
+      products.sort((a, b) => (a.offerPrice || a.price) - (b.offerPrice || b.price));
+    } else if (sortParam === 'price_desc') {
+      products.sort((a, b) => (b.offerPrice || b.price) - (a.offerPrice || a.price));
+    }
 
-
-
-
-
-
-
-    const products = await attachOffers(rawProducts);
+    const totalProducts = products.length;
+    const totalPages = Math.ceil(totalProducts / limit);
+    
+    products = products.slice(skip, skip + limit);
 
     res.render('user/products', {
       products,
@@ -96,7 +96,8 @@ const getProducts = async (req, res) => {
       isLoggedIn: !!userId,
       currentPage: page,
       totalPages,
-      totalProducts
+      totalProducts,
+      sortParam
     });
   } catch (err) {
     console.error(err);

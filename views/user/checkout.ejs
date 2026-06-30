@@ -383,7 +383,7 @@
                                             </p>
                                             <div style="margin-top: 12px; display: flex; gap: 10px;">
                                                 <button class="action-btn"
-                                                    onclick="openEditAddressModal('<%= JSON.stringify(addr) %>')"
+                                                    onclick="openEditAddressModal(event, '<%= JSON.stringify(addr) %>')"
                                                     style="font-size: 0.8rem; color: var(--accent); background: none; border: none; cursor: pointer;">Edit</button>
                                             </div>
                                 </div>
@@ -628,11 +628,35 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         let selectedAddressId = '<%= addresses.find(a => a.isDefault)?._id || (addresses[0] ? addresses[0]._id : "") %>';
+        let preFetchedRazorpayData = null;
+
+        async function preFetchRazorpayOrder() {
+            if (!selectedAddressId) return;
+            try {
+                const res = await fetch('/checkout/razorpayOrder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ addressId: selectedAddressId })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    preFetchedRazorpayData = data;
+                }
+            } catch (err) {
+                console.error("Razorpay pre-fetch failed:", err);
+            }
+        }
 
         function selectAddress(element) {
             document.querySelectorAll('.address-card').forEach(card => card.classList.remove('selected'));
             element.classList.add('selected');
             selectedAddressId = element.getAttribute('data-id');
+            
+            // Re-fetch Razorpay order with the new address if Razorpay is selected
+            const activePayment = document.querySelector('input[name="paymentMethod"]:checked');
+            if (activePayment && activePayment.value === 'Razorpay') {
+                preFetchRazorpayOrder();
+            }
         }
 
         function closeModal() {
@@ -646,8 +670,9 @@
             document.getElementById('addressModal').style.display = 'flex';
         }
 
-        function openEditAddressModal(addressJson) {
-            event.stopPropagation();
+        function openEditAddressModal(event, addressJson) {
+            if (event && event.stopPropagation) event.stopPropagation();
+            else if (window.event) window.event.stopPropagation();
             const address = JSON.parse(addressJson);
             document.getElementById('modalTitle').innerText = 'Edit Address';
             document.getElementById('addrId').value = address._id;
@@ -673,12 +698,16 @@
 
         // ── Dynamically update button label based on selected payment ──
         document.querySelectorAll('input[name="paymentMethod"]').forEach(radio => {
-            radio.addEventListener('change', () => {
+            radio.addEventListener('change', async () => {
                 const val = radio.value;
                 const btn = document.getElementById('placeOrderBtn');
                 if (val === 'COD') btn.innerText = 'Place Order (COD)';
                 else if (val === 'Wallet') btn.innerText = 'Pay with Wallet';
-                else if (val === 'Razorpay') btn.innerText = 'Pay Online (Razorpay)';
+                else if (val === 'Razorpay') {
+                    btn.innerText = 'Pay Online (Razorpay)';
+                    // Pre-fetch Razorpay order details to avoid popup blockers blocking async window opening
+                    await preFetchRazorpayOrder();
+                }
             });
         });
 
@@ -778,26 +807,39 @@
         // ── Razorpay flow ──
         async function handleRazorpayPayment() {
             const btn = document.getElementById('placeOrderBtn');
-            btn.disabled = true;
-            btn.innerHTML = 'OPENING PAYMENT...';
+            
+            let data = preFetchedRazorpayData;
+            
+            // If data wasn't pre-fetched, fetch it now
+            if (!data) {
+                btn.disabled = true;
+                btn.innerHTML = 'OPENING PAYMENT...';
 
-            try {
-                // Step 1: Create Razorpay order on backend
-                const res = await fetch('/checkout/razorpayOrder', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ addressId: selectedAddressId })
-                });
-
-                const data = await res.json();
-                if (!data.success) {
-                    showZaraToast(data.message || 'FAILED TO INITIATE PAYMENT', 'error');
+                try {
+                    const res = await fetch('/checkout/razorpayOrder', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ addressId: selectedAddressId })
+                    });
+                    data = await res.json();
+                } catch (error) {
+                    console.error('Razorpay error:', error);
+                    showZaraToast('AN UNEXPECTED ERROR OCCURRED', 'error');
                     btn.disabled = false;
                     btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
                     return;
                 }
+            }
 
-                // Step 2: Open Razorpay checkout
+            if (!data || !data.success) {
+                showZaraToast(data ? data.message : 'FAILED TO INITIATE PAYMENT', 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'PAY ONLINE (RAZORPAY)';
+                return;
+            }
+
+            try {
+                // Open Razorpay checkout synchronously/immediately
                 const options = {
                     key: data.keyId,
                     amount: data.amount,

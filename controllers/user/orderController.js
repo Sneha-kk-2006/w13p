@@ -745,9 +745,10 @@ const downloadInvoice = async (req, res) => {
       rows: order.orderItems.map(item => {
         const itemStatus = item.status || "Pending";
         const isCancelled = itemStatus === "Cancelled";
-        const itemTotal = isCancelled ? 0 : (item.quantity * item.price);
+        const isReturned = itemStatus === "Returned";
+        const itemTotal = item.quantity * item.price;
 
-        if (!isCancelled) {
+        if (!isCancelled && !isReturned) {
           invoiceTotal += itemTotal;
         }
 
@@ -756,7 +757,7 @@ const downloadInvoice = async (req, res) => {
           itemStatus,
           item.quantity.toString(),
           `INR ${item.price.toLocaleString()}`,
-          isCancelled ? "CANCELLED" : `INR ${itemTotal.toLocaleString()}`
+          isCancelled || isReturned ? `INR 0 (Was ${itemTotal.toLocaleString()})` : `INR ${itemTotal.toLocaleString()}`
         ];
       }),
     };

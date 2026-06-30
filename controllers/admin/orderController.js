@@ -48,6 +48,7 @@ const totalOrders = await Order.countDocuments(query);
       orders,
       currentPage: page,
       totalPages,
+     
       totalOrders,
       search,
       filterStatus,

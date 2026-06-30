@@ -38,27 +38,40 @@ const loadcat = async (req, res) => {
                 query.category = new mongoose.Types.ObjectId(categoryId);
             }
         }
+        // Fetch products matching category and search (without price database filter)
+        const products = await product.find(query).populate('category');
+        const productsWithOffers = await attachOffers(products);
+
+        // Calculate actual selling price for each product
+        let processedProducts = productsWithOffers.map(p => {
+            const sellingPrice = p.offerPrice || Math.round(p.price - (p.price * (p.discount || 0) / 100));
+            return { ...p, sellingPrice };
+        });
+
+        // Filter by min/max price based on sellingPrice
         if (minPrice || maxPrice) {
-            query.price = {};
-            if (minPrice) query.price.$gte = parseInt(minPrice);
-            if (maxPrice) query.price.$lte = parseInt(maxPrice);
+            processedProducts = processedProducts.filter(p => {
+                if (minPrice && p.sellingPrice < parseInt(minPrice)) return false;
+                if (maxPrice && p.sellingPrice > parseInt(maxPrice)) return false;
+                return true;
+            });
         }
 
- 
-        let sortOption = { createdAt: -1 };
-        if (sort === 'price-low')  sortOption = { price:  1 };
-        if (sort === 'price-high') sortOption = { price: -1 };
-        if (sort === 'az')         sortOption = { name:   1 };
-        if (sort === 'za')         sortOption = { name:  -1 };
+        // Sort by sellingPrice, name, or date
+        if (sort === 'price-low') {
+            processedProducts.sort((a, b) => a.sellingPrice - b.sellingPrice);
+        } else if (sort === 'price-high') {
+            processedProducts.sort((a, b) => b.sellingPrice - a.sellingPrice);
+        } else if (sort === 'az') {
+            processedProducts.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (sort === 'za') {
+            processedProducts.sort((a, b) => b.name.localeCompare(a.name));
+        } else {
+            processedProducts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        }
 
-        const total    = await product.countDocuments(query);
-        const products = await product.find(query)
-            .populate('category')
-            .sort(sortOption)
-            .skip(skip)
-            .limit(limit);
-
-        const productsWithOffers = await attachOffers(products);
+        const total = processedProducts.length;
+        const paginatedProducts = processedProducts.slice(skip, skip + limit);
 
         const categories = await category.find({ isDeleted: false, status: 'Active' });
 
@@ -75,7 +88,7 @@ const loadcat = async (req, res) => {
         }
 
         res.render('user/category', {
-            products: productsWithOffers,
+            products: paginatedProducts,
             categories,  
             search,
             sort,

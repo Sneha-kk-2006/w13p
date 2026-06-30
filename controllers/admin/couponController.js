@@ -69,6 +69,9 @@ const addCoupon = async (req, res) => {
           msg: "Max discount must be less than minimum purchase amount",
         });
     }
+    if (isNaN(expDate.getTime())) {
+      return res.status(400).json({ success: false, msg: "Invalid expiry date provided" });
+    }
     if (expDate <= new Date()) {
       return res
         .status(400)

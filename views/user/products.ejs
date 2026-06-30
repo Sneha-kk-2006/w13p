@@ -250,6 +250,13 @@
   </header>
 
   <div class="section-wrapper">
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 20px;">
+      <select id="sortSelect" onchange="window.location.href='/products?sort=' + this.value" style="padding: 10px; border: 1px solid #eee; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; outline: none; cursor: pointer;">
+        <option value="newest" <%= locals.sortParam === 'newest' ? 'selected' : '' %>>Newest Arrivals</option>
+        <option value="price_asc" <%= locals.sortParam === 'price_asc' ? 'selected' : '' %>>Price: Low to High</option>
+        <option value="price_desc" <%= locals.sortParam === 'price_desc' ? 'selected' : '' %>>Price: High to Low</option>
+      </select>
+    </div>
     <div class="product-grid">
       <% if (products.length === 0) { %>
         <div style="grid-column: 1/-1; text-align: center; padding: 100px 0;">
@@ -344,15 +351,15 @@
     <% if (totalPages > 1) { %>
       <div class="pagination-container">
         <% if (currentPage > 1) { %>
-          <a href="/products?page=<%= currentPage - 1 %>" class="pg-link">Back</a>
+          <a href="/products?page=<%= currentPage - 1 %>&sort=<%= locals.sortParam %>" class="pg-link">Back</a>
         <% } %>
         
         <% for(let i=1; i <= totalPages; i++) { %>
-          <a href="/products?page=<%= i %>" class="pg-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
+          <a href="/products?page=<%= i %>&sort=<%= locals.sortParam %>" class="pg-link <%= i === currentPage ? 'active' : '' %>"><%= i %></a>
         <% } %>
 
         <% if (currentPage < totalPages) { %>
-          <a href="/products?page=<%= currentPage + 1 %>" class="pg-link">Next</a>
+          <a href="/products?page=<%= currentPage + 1 %>&sort=<%= locals.sortParam %>" class="pg-link">Next</a>
         <% } %>
       </div>
     <% } %>

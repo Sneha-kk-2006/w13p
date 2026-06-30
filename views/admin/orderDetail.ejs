@@ -262,7 +262,14 @@
                     <h2 class="card-title">Financial Summary</h2>
                     <div class="summary-row">
                         <span>Subtotal</span>
-                        <span>₹<%= order.totalPrice.toLocaleString() %></span>
+                        <%
+                            let displayTotal = order.totalPrice;
+                            if (displayTotal === 0 && order.orderStatus === 'Cancelled') {
+                                let subtotal = order.orderItems.reduce((acc, item) => acc + ((item.price || 0) * (item.quantity || 1)), 0);
+                                displayTotal = Math.max(0, subtotal + (order.gst || 0) - (order.discount || 0) - (order.offerDiscount || 0));
+                            }
+                        %>
+                        <span>₹<%= displayTotal.toLocaleString() %></span>
                     </div>
                     <div class="summary-row">
                         <span>Shipping</span>
@@ -278,7 +285,14 @@
                     </div>
                     <div class="summary-row summary-total">
                         <span>Total Revenue</span>
-                        <span>₹<%= order.totalPrice.toLocaleString() %></span>
+                        <%
+                            let finalDisplayTotal = order.totalPrice;
+                            if (finalDisplayTotal === 0 && order.orderStatus === 'Cancelled') {
+                                let subtotal = order.orderItems.reduce((acc, item) => acc + ((item.price || 0) * (item.quantity || 1)), 0);
+                                finalDisplayTotal = Math.max(0, subtotal + (order.gst || 0) - (order.discount || 0) - (order.offerDiscount || 0));
+                            }
+                        %>
+                        <span>₹<%= finalDisplayTotal.toLocaleString() %></span>
                     </div>
                 </div>
 
