@@ -312,7 +312,14 @@
                                         <span class="user-email"><%= order.userId ? order.userId.email : '' %></span>
                                     </div>
                                 </td>
-                                <td style="font-weight: 600;">₹<%= order.totalPrice.toLocaleString() %></td>
+                                <%
+                                    let displayTotal = order.totalPrice;
+                                    if (displayTotal === 0 && order.orderStatus === 'Cancelled') {
+                                        let subtotal = order.orderItems.reduce((acc, item) => acc + ((item.price || 0) * (item.quantity || 1)), 0);
+                                        displayTotal = Math.max(0, subtotal + (order.gst || 0) - (order.discount || 0) - (order.offerDiscount || 0));
+                                    }
+                                %>
+                                <td style="font-weight: 600;">₹<%= displayTotal.toLocaleString() %></td>
                                 <td>
                                     <% if (order.paymentStatus === 'Paid') { %>
                                         <span class="status-badge" style="background: #e6fffa; color: #2c7a7b;">PAID</span>

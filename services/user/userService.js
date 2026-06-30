@@ -199,7 +199,7 @@ const forgotPasswordService = async (email, session) => {
   if (!emailPattern.test(email)) return { success: false, message: ERRORS.INVALID_EMAIL };
 
   const user = await userRepository.findUserByEmail(email);
-  if (!user) return { success: true }; // don't reveal if email exists
+  if (!user) return { success: false, message: "User not found with this email" };
   
   const otp = generateOtp();
   const emailSent = await sendVerificationEmail(email, otp);

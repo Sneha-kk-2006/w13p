@@ -790,7 +790,7 @@
             canvas.toBlob(blob => {
                 croppedImages[currentSlotIndex] = blob;
                 const slot = document.querySelectorAll('#imgSlots .img-slot')[currentSlotIndex];
-                slot.innerHTML = `<img src="${canvas.toDataURL()}">`;
+                slot.innerHTML = `<img src="${URL.createObjectURL(blob)}">`;
                 closeModal('cropModal');
             }, 'image/jpeg', 0.9);
         });

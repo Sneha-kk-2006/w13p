@@ -140,9 +140,97 @@
 
     .sign-out-btn:hover { color: #000; }
 
+    /* Admin Responsiveness Styles */
+    .admin-mobile-header {
+        display: none;
+    }
+
+    @media (max-width: 992px) {
+        body {
+            flex-direction: column !important;
+        }
+
+        .sidebar {
+            position: fixed !important;
+            left: -280px !important;
+            top: 0 !important;
+            z-index: 2000 !important;
+            transition: left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+            box-shadow: 5px 0 25px rgba(0,0,0,0.15) !important;
+        }
+
+        .sidebar.active {
+            left: 0 !important;
+        }
+
+        .admin-mobile-header {
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+            background: #ffffff;
+            padding: 15px 20px;
+            border-bottom: 0.5px solid var(--sidebar-border);
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            width: 100%;
+        }
+
+        .admin-main {
+            padding: 20px !important;
+        }
+
+        .dash-header {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 15px !important;
+            margin-bottom: 30px !important;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr !important;
+            gap: 15px !important;
+        }
+
+        .analytics-grid {
+            grid-template-columns: 1fr !important;
+            gap: 20px !important;
+        }
+
+        /* Adjust forms and card layouts globally in admin */
+        .card {
+            padding: 20px !important;
+        }
+
+        .table-responsive, table {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .btn-action {
+            width: 100%;
+            text-align: center;
+        }
+
+        .header-actions {
+            width: 100%;
+            flex-direction: column;
+            gap: 10px;
+        }
+    }
 </style>
 
-<aside class="sidebar">
+<div class="admin-mobile-header">
+    <button class="admin-hamburger-btn" onclick="toggleAdminSidebar(event)" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #000;">
+        <i class="fa-solid fa-bars"></i>
+    </button>
+    <a href="/admin/dashboard" class="admin-logo" style="font-size: 1.1rem; letter-spacing: 2px;">SNOVA</a>
+    <div style="width: 20px;"></div>
+</div>
+
+<aside class="sidebar" id="adminSidebar">
     <div>
         <div class="logo-box">
             <a href="/admin/dashboard" class="admin-logo">SNOVA</a>
@@ -195,3 +283,29 @@
         </a>
     </div>
 </aside>
+
+<script>
+    function toggleAdminSidebar(event) {
+        event.stopPropagation();
+        const sidebar = document.getElementById('adminSidebar');
+        sidebar.classList.toggle('active');
+        const icon = event.currentTarget.querySelector('i');
+        if (sidebar.classList.contains('active')) {
+            icon.className = 'fa-solid fa-xmark';
+        } else {
+            icon.className = 'fa-solid fa-bars';
+        }
+    }
+
+    // Close admin sidebar when clicking outside
+    window.addEventListener('click', function(event) {
+        const sidebar = document.getElementById('adminSidebar');
+        if (sidebar && sidebar.classList.contains('active')) {
+            if (!event.target.closest('#adminSidebar') && !event.target.closest('.admin-hamburger-btn')) {
+                sidebar.classList.remove('active');
+                const btnIcon = document.querySelector('.admin-hamburger-btn i');
+                if (btnIcon) btnIcon.className = 'fa-solid fa-bars';
+            }
+        }
+    });
+</script>

@@ -488,7 +488,14 @@
                 </div>
                 <div class="summary-row total">
                     <span>Grand Total</span>
-                    <span>₹<%= order.totalPrice.toLocaleString() %></span>
+                    <%
+                        let finalDisplayTotal = order.totalPrice;
+                        if (finalDisplayTotal === 0 && order.orderStatus === 'Cancelled') {
+                            let subtotal = order.orderItems.reduce((acc, item) => acc + ((item.price || 0) * (item.quantity || 1)), 0);
+                            finalDisplayTotal = Math.max(0, subtotal + (order.gst || 0) - (order.discount || 0) - (order.offerDiscount || 0));
+                        }
+                    %>
+                    <span>₹<%= finalDisplayTotal.toLocaleString() %></span>
                 </div>
 
                 <% if (order.orderStatus === 'Delivered') { %>
