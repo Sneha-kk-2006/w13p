@@ -12,7 +12,10 @@ const ERRORS = {
   INVALID_REQUEST: "Invalid request",
   PASSWORD_LENGTH: "Password must be at least 6 characters",
   INVALID_NAME: "Name should contain only letters (min 3 chars)",
-  OTP_RESENT: "OTP resent successfully"
+  OTP_RESENT: "OTP resent successfully",
+  USER_NOT_FOUND: "User not found",
+  CURRENT_PASSWORD_INCORRECT: "Current password is incorrect",
+  NEW_PASSWORD_SAME: "New password must be different from the current password"
 };
 
 
@@ -20,7 +23,8 @@ const ERRORS = {
 const SUCCESS = {
   OTP_SENT: "OTP sent successfully",
   LOGIN_SUCCESS: "Login successful",
-  PASSWORD_RESET: "Password updated successfully"
+  PASSWORD_RESET: "Password updated successfully",
+  PASSWORD_CHANGED: "Password changed successfully"
 };
 
 module.exports = { ERRORS, SUCCESS };

@@ -144,13 +144,13 @@ const forgotPassword = async (req, res) => {
     const result = await authService.forgotPasswordService(req.body.email, req.session);
 
     if (!result.success) {
-      return res.render("user/forgotPassword", { message: result.message });
+      return res.status(400).json({ success: false, message: result.message });
     }
 
-    return res.render("user/verify-otp");
+    return res.json({ success: true, message: result.message });
   } catch (error) {
     console.error("Forgot password error:", error);
-    return res.status(500).render("user/forgotPassword", { message: ERROR.SERVER_ERROR });
+    return res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
   }
 };
 
@@ -170,9 +170,16 @@ const loadVerify = (req, res) => {
 
 const loadreset = async (req, res) => {
   try {
-    res.render("user/resetPassword");
+    // Guard: only allow access if arrived via the forgot-password OTP flow
+    if (!req.session.auth || req.session.auth.type !== "forgot" || req.session.auth.otp !== null) {
+      // otp is nulled out after OTP verified (see verifyOtpService), so null means verified
+      // If no session.auth at all, redirect to start the flow
+      if (!req.session.auth) return res.redirect("/forgotPassword");
+    }
+    res.render("user/resetPassword", { message: null });
   } catch (error) {
     console.error("Load reset error:", error);
+    res.redirect("/forgotPassword");
   }
 };
 
@@ -181,14 +188,14 @@ const resetPassword = async (req, res) => {
     const result = await authService.resetPasswordService(req.body, req.session);
 
     if (!result.success) {
-      if (result.redirect) return res.redirect(result.redirect);
-      return res.render("user/resetPassword", { message: result.message });
+      if (result.redirect) return res.status(400).json({ success: false, message: result.message, redirect: result.redirect });
+      return res.status(400).json({ success: false, message: result.message });
     }
 
-    return res.redirect(result.redirectUrl || "/login");
+    return res.json({ success: true, message: result.message, redirectUrl: result.redirectUrl || "/login" });
   } catch (error) {
     console.error("Reset Password Error:", error);
-    return res.redirect("/errorPage");
+    return res.status(500).json({ success: false, message: "Something went wrong. Please try again." });
   }
 };
 

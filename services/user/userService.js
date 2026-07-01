@@ -217,13 +217,28 @@ const resetPasswordService = async (data, session) => {
 
   if (!password || !confirmPassword) return { success: false, message: ERRORS.REQUIRED_FIELDS };
   if (password !== confirmPassword) return { success: false, message: ERRORS.PASSWORD_MISMATCH };
-  const pwdError = validatePassword(password);
-if (pwdError) return { success: false, message: pwdError };
 
-  if (!session.auth || !session.auth.email) return { success: false, message: ERRORS.SESSION_EXPIRED };
+  const pwdError = validatePassword(password);
+  if (pwdError) return { success: false, message: pwdError };
+
+  if (!session.auth || !session.auth.email) {
+    return { success: false, message: "Session expired. Please restart the forgot password process." };
+  }
+
+  if (session.auth.type !== "forgot") {
+    return { success: false, message: ERRORS.INVALID_REQUEST };
+  }
 
   const user = await userRepository.findUserByEmail(session.auth.email);
   if (!user) return { success: false, message: ERRORS.INVALID_CREDENTIALS };
+
+  // Prevent resetting to the same password
+  if (user.password) {
+    const isSame = await bcrypt.compare(password, user.password);
+    if (isSame) {
+      return { success: false, message: "New password must be different from your current password" };
+    }
+  }
 
   const hashedPassword = await bcrypt.hash(password, 10);
   await userRepository.updatePasswordByEmail(session.auth.email, hashedPassword);
